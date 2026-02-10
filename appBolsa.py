@@ -15,19 +15,19 @@ from sklearn.ensemble import RandomForestClassifier
 # ==========================================
 # 0. CONFIGURACIÓN E IDIOMAS
 # ==========================================
-# COSTES ETORO (Hardcoded para precisión)
-ETORO_FEE_PER_ORDER = 1.0  # $1 por abrir
-ETORO_ROUND_TRIP = 2.0     # $1 abrir + $1 cerrar
+ETORO_FEE_PER_ORDER = 1.0  
+ETORO_ROUND_TRIP = 2.0     
 
 LANG = {
     "ES": {
-        "app_title": "Gestor Pro v18.1 (eToro Edition)",
+        "app_title": "Gestor Pro v19.1 (Stable)",
         "port_title": "📂 MI CARTERA & VIGILANCIA",
         "opp_title": "💎 OPORTUNIDADES & OBJETIVOS",
         "scan_own": "⚡ ACTUALIZAR",
         "save": "💾 GUARDAR",
         "sell": "💰 VENDER",
         "del_btn": "🗑 OLVIDAR",
+        "viz_btn": "📊 VISUALIZAR",
         "hist": "📜 HISTORIAL",
         "exp": "📄 EXP",
         "scan_mkt": "🔍 ESCANEAR",
@@ -49,6 +49,7 @@ LANG = {
         "msg_del_confirm": "¿Seguro? Se borrará de la lista sin guardar en historial.",
         "hist_title": "Historial de Operaciones (Neto)",
         "hist_tot": "P/L Neto Realizado (tras fees):",
+        "viz_title": "Distribución de Cartera",
         "conf_title": "Configuración",
         "conf_lang": "Idioma / Language:",
         "conf_logout": "🔒 SALIR",
@@ -64,9 +65,11 @@ LANG = {
         "bench_rel": "Rendimiento Relativo:",
         "ai_title": "🤖 PREDICCIÓN IA (Random Forest):",
         "ai_prob": "Probabilidad Subida:",
-        "tech_title": "📐 TECH EXTRA:",
-        "tech_sup": "Soporte Detectado:",
-        "tech_res": "Resistencia Detectada:",
+        "tech_title": "📐 TECH & STOP LOSS (ATR):",
+        "tech_sup": "Soporte:",
+        "tech_res": "Resistencia:",
+        "tech_sl": "Stop Loss Sugerido:",
+        "trend_wk": "Tendencia Semanal:",
         "target_title": "🎯 OBJETIVO TÉCNICO (Take Profit):",
         "news_title": "📰 NOTICIAS & SENTIMIENTO:",
         "calc_title": "Calculadora Riesgo",
@@ -81,7 +84,7 @@ LANG = {
         "dash_pl": "Neto P/L (eToro):",
         "login_title": "ACCESO", "user": "Usuario:", "pass": "Clave:", "btn_enter": "ENTRAR", "btn_reg": "REGISTRO", "err_login": "Error", "ok_reg": "OK", "err_reg": "Existe"
     },
-    "EN": { "app_title": "Pro Manager v18.1", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "💾 SAVE", "sell": "💰 SELL", "del_btn": "🗑 FORGET", "hist": "📜 HISTORY", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis / Target", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "msg_del_confirm": "Delete?", "hist_title": "Trade History", "hist_tot": "Total Net P/L:", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Prob:", "tech_title": "📐 TECH EXTRA:", "tech_sup": "Support:", "tech_res": "Resistance:", "target_title": "🎯 TARGET PRICE:", "news_title": "📰 NEWS:", "calc_title": "Risk Calc", "calc_cap": "Capital:", "calc_risk": "Risk %:", "calc_stop": "Stop Loss:", "calc_btn": "CALCULATE", "calc_res": "Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Value:", "dash_pl": "Net P/L (eToro):", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Error", "ok_reg": "OK", "err_reg": "Exists" },
+    "EN": { "app_title": "Pro Manager v19.1", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "💾 SAVE", "sell": "💰 SELL", "del_btn": "🗑 FORGET", "viz_btn": "📊 VISUALIZE", "hist": "📜 HISTORY", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis / Target", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "msg_del_confirm": "Delete?", "hist_title": "Trade History", "hist_tot": "Total Net P/L:", "viz_title": "Portfolio Allocation", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Prob:", "tech_title": "📐 TECH & STOP LOSS:", "tech_sup": "Support:", "tech_res": "Resistance:", "tech_sl": "Suggested Stop:", "trend_wk": "Weekly Trend:", "target_title": "🎯 TARGET PRICE:", "news_title": "📰 NEWS:", "calc_title": "Risk Calc", "calc_cap": "Capital:", "calc_risk": "Risk %:", "calc_stop": "Stop Loss:", "calc_btn": "CALCULATE", "calc_res": "Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Value:", "dash_pl": "Net P/L (eToro):", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Error", "ok_reg": "OK", "err_reg": "Exists" },
 }
 if "FR" not in LANG: LANG["FR"] = LANG["EN"]
 if "PT" not in LANG: LANG["PT"] = LANG["EN"]
@@ -92,6 +95,7 @@ CANDIDATOS_VIP = [
     "UBER", "ABNB", "PLTR", "SHOP", "SBUX", "NKE", "MCD", "V", "MA"
 ]
 
+# --- COLORES TEMA OSCURO (CORREGIDO) ---
 C_BG = "#1e1e1e"       
 C_FG = "#ffffff"       
 C_ACCENT = "#007acc"   
@@ -99,12 +103,13 @@ C_PANEL = "#252526"
 C_GREEN = "#4ec9b0"
 C_RED = "#f44747"
 C_GOLD = "#ffd700"
+C_PURPLE = "#8a2be2" # AÑADIDO PARA SOLUCIONAR EL ERROR
 
 # ==========================================
 # 1. BASE DE DATOS
 # ==========================================
 class DatabaseManager:
-    def __init__(self, db_name="bolsa_datos_v18.db"):
+    def __init__(self, db_name="bolsa_datos_v19.db"):
         self.conn = sqlite3.connect(db_name, check_same_thread=False)
         self.crear_tablas()
 
@@ -141,24 +146,18 @@ class DatabaseManager:
         return self.conn.execute("SELECT ticker, precio_compra, cantidad, fecha_guardado, id FROM cartera WHERE user_id=?", (uid,)).fetchall()
 
     def borrar_posicion(self, pid):
-        self.conn.execute("DELETE FROM cartera WHERE id=?", (pid,))
-        self.conn.commit()
+        self.conn.execute("DELETE FROM cartera WHERE id=?", (pid,)); self.conn.commit()
 
     def cerrar_posicion(self, uid, pid, sell_price):
         data = self.conn.execute("SELECT ticker, precio_compra, cantidad FROM cartera WHERE id=?", (pid,)).fetchone()
         if not data: return
         tkr, buy_p, qty = data
-        
-        # --- CALCULO ETORO REAL ---
-        # Profit Bruto - (Fee Entrada + Fee Salida)
         gross_profit = (sell_price - buy_p) * qty
         net_profit = gross_profit - ETORO_ROUND_TRIP 
-        
         date_out = datetime.datetime.now().strftime("%Y-%m-%d")
         self.conn.execute("INSERT INTO historial (user_id, ticker, buy_price, sell_price, qty, profit, date_out) VALUES (?,?,?,?,?,?,?)", 
                           (uid, tkr, buy_p, sell_price, qty, net_profit, date_out))
-        self.conn.execute("DELETE FROM cartera WHERE id=?", (pid,))
-        self.conn.commit()
+        self.conn.execute("DELETE FROM cartera WHERE id=?", (pid,)); self.conn.commit()
 
     def obtener_historial_completo(self, uid):
         return self.conn.execute("SELECT ticker, buy_price, sell_price, profit, date_out FROM historial WHERE user_id=?", (uid,)).fetchall()
@@ -174,15 +173,22 @@ class DatabaseManager:
 # ==========================================
 class AnalistaBolsa:
     def __init__(self):
-        self.data = None; self.ticker = ""; self.spy_data = None
+        self.data = None; self.ticker = ""; self.spy_data = None; self.data_weekly = None
 
     def descargar_datos(self, ticker):
         self.ticker = ticker.upper()
         try:
+            # Diario
             d = yf.download(self.ticker, period="2y", progress=False)
             if d.empty: raise ValueError
             if isinstance(d.columns, pd.MultiIndex): d.columns = d.columns.droplevel(1)
             self.data = d.astype(float)
+            
+            # Semanal
+            w = yf.download(self.ticker, period="2y", interval="1wk", progress=False)
+            if isinstance(w.columns, pd.MultiIndex): w.columns = w.columns.droplevel(1)
+            self.data_weekly = w.astype(float)
+            
             return d
         except: raise ValueError("Error descarga")
 
@@ -194,7 +200,6 @@ class AnalistaBolsa:
             div = i.get('dividendYield'); 
             if div is None: div = i.get('trailingAnnualDividendYield')
             if div is None: div = 0
-            
             sec = i.get('sector', 'N/A'); ind = i.get('industry', 'N/A')
             if cap > 1e12: s_cap = f"{cap/1e12:.2f}T"
             elif cap > 1e9: s_cap = f"{cap/1e9:.2f}B"
@@ -204,23 +209,29 @@ class AnalistaBolsa:
 
     def calcular_indicadores(self):
         if self.data is None or self.data.empty: return self.data
-        for col in ['ADX', 'Vol_Osc', 'CRSI', 'SMA_50', 'SMA_200', 'MACD', 'UpperBB', 'LowerBB']: self.data[col] = 0.0
+        for col in ['ADX', 'Vol_Osc', 'CRSI', 'SMA_50', 'SMA_200', 'MACD', 'UpperBB', 'LowerBB', 'ATR']: self.data[col] = 0.0
         
         df = self.data.copy()
         df['SMA_50'] = df['Close'].rolling(50).mean()
         df['SMA_200'] = df['Close'].rolling(200).mean()
         
+        # Bollinger
         df['SMA_20'] = df['Close'].rolling(20).mean()
         df['StdDev'] = df['Close'].rolling(20).std()
         df['UpperBB'] = df['SMA_20'] + (df['StdDev'] * 2)
         df['LowerBB'] = df['SMA_20'] - (df['StdDev'] * 2)
         
+        # MACD
         exp12 = df['Close'].ewm(span=12, adjust=False).mean()
         exp26 = df['Close'].ewm(span=26, adjust=False).mean()
         df['MACD'] = exp12 - exp26
         
+        # ATR (Volatilidad)
         df['Prev'] = df['Close'].shift(1)
         df['TR'] = np.maximum(df['High']-df['Low'], np.maximum(abs(df['High']-df['Prev']), abs(df['Low']-df['Prev'])))
+        df['ATR'] = df['TR'].rolling(14).mean()
+        
+        # ADX
         tr14 = df['TR'].ewm(alpha=1/14).mean()
         up = df['High'] - df['High'].shift(1); down = df['Low'].shift(1) - df['Low']
         pdm = np.where((up>down)&(up>0), up, 0.0); mdm = np.where((down>up)&(down>0), down, 0.0)
@@ -229,25 +240,31 @@ class AnalistaBolsa:
             mdi = 100*(pd.Series(mdm, index=df.index).ewm(alpha=1/14).mean()/tr14)
             df['ADX'] = (100*abs(pdi-mdi)/(pdi+mdi)).ewm(alpha=1/14).mean()
         
+        # Vol Osc
         vol_ma = df['Volume'].rolling(10).mean().replace(0, np.nan)
         df['Vol_Osc'] = ((df['Volume'].rolling(5).mean()-vol_ma)/vol_ma)*100
         
+        # RSI Simple (CRSI proxy)
         delta = df['Close'].diff()
         gain = (delta.where(delta > 0, 0)).rolling(3).mean()
         loss = (-delta.where(delta < 0, 0)).rolling(3).mean()
         with np.errstate(divide='ignore', invalid='ignore'):
             rs = gain / loss
-            df['RSI_P'] = 100 - (100 / (1 + rs))
+            df['CRSI'] = 100 - (100 / (1 + rs))
         
-        chg = df['Close'].diff().values; st = np.zeros(len(df))
-        for i in range(1, len(chg)):
-            if chg[i]>0: st[i] = st[i-1]+1 if st[i-1]>=0 else 1
-            elif chg[i]<0: st[i] = st[i-1]-1 if st[i-1]<=0 else -1
-        
-        df['CRSI'] = df['RSI_P'].rolling(3).mean()
         df = df.fillna(0)
         self.data = df
         return self.data
+
+    # --- ANALISIS SEMANAL ---
+    def analizar_tendencia_semanal(self):
+        try:
+            if self.data_weekly is None or len(self.data_weekly) < 30: return "Neutral"
+            last = self.data_weekly.iloc[-1]
+            ma30 = self.data_weekly['Close'].rolling(30).mean().iloc[-1]
+            if last['Close'] > ma30: return "Alcista"
+            else: return "Bajista"
+        except: return "Neutral"
 
     def calcular_probabilidad_ia(self):
         try:
@@ -332,12 +349,19 @@ class AnalistaBolsa:
     def generar_diagnostico_interno(self, p_compra=0):
         try:
             last = self.data.iloc[-1]
-            adx = last.get('ADX', 0); crsi = last.get('CRSI', 50); curr = last['Close']
+            adx = last.get('ADX', 0); crsi = last.get('CRSI', 50); curr = last['Close']; atr = last.get('ATR', 0)
+            
+            # --- MULTI-TIMEFRAME FILTER ---
+            trend_weekly = self.analizar_tendencia_semanal()
+            
             raw_score = 100 - crsi
             if adx > 25: raw_score += 10
+            if trend_weekly == "Alcista": raw_score += 10 # Bonus por tendencia semanal
+            if trend_weekly == "Bajista": raw_score -= 20 # Penalizacion
+            
             score = max(0, min(100, int(raw_score)))
             
-            # Target
+            # Target & Stop Loss Dinamico
             min_p = self.data['Low'].tail(60).min()
             max_p = self.data['High'].tail(60).max()
             target = max_p
@@ -346,23 +370,24 @@ class AnalistaBolsa:
                 if target < curr: target = curr * 1.05 
             
             profit_pot = ((target - curr) / curr) * 100
+            stop_loss = curr - (atr * 2) # Stop Loss tecnico (2x ATR)
             
             msg = "Neutro"; tag = ""
             if p_compra > 0: 
                  price = last['Close']
                  if crsi > 80: msg = "⚠️ VENDER"; tag = "sell"
                  elif price < p_compra*0.9: msg = "🛑 STOP LOSS"; tag = "sell"
-                 elif crsi < 20 and adx > 25: msg = "💎 ACUMULAR"; tag = "buy"
+                 elif crsi < 20 and adx > 25 and trend_weekly == "Alcista": msg = "💎 ACUMULAR"; tag = "buy"
                  else: msg = "✋ MANTENER"; tag = "hold"
-                 return {"valid": True, "ticker": self.ticker, "score": score, "msg": msg, "tag": tag, "crsi": crsi, "adx": adx, "price": curr, "target": target, "profit": profit_pot}
+                 return {"valid": True, "ticker": self.ticker, "score": score, "msg": msg, "tag": tag, "crsi": crsi, "adx": adx, "price": curr, "target": target, "profit": profit_pot, "stop_loss": stop_loss, "weekly": trend_weekly}
             
             if score >= 90: msg = "🚀 COMPRA"; tag = "buy"
             elif score >= 75: msg = "👀 BARATO"; tag = "near"
             elif score >= 60: msg = "📈 TENDENCIA"; tag = "trend"
             elif score <= 20: msg = "⚠️ CARO"; tag = "sell"
             elif score <= 40: msg = "💤 DÉBIL"; tag = "weak"
-            return {"valid": True, "ticker": self.ticker, "score": score, "msg": msg, "tag": tag, "crsi": crsi, "adx": adx, "price": curr, "target": target, "profit": profit_pot}
-        except: return {"valid": False, "msg": "Error", "score": 0, "tag": "", "target": 0, "profit": 0}
+            return {"valid": True, "ticker": self.ticker, "score": score, "msg": msg, "tag": tag, "crsi": crsi, "adx": adx, "price": curr, "target": target, "profit": profit_pot, "stop_loss": stop_loss, "weekly": trend_weekly}
+        except: return {"valid": False, "msg": "Error", "score": 0, "tag": "", "target": 0, "profit": 0, "stop_loss": 0, "weekly": "N/A"}
 
 # ==========================================
 # 3. GUI THEME MANAGER
@@ -389,7 +414,7 @@ def apply_dark_theme(root):
 class LoginWindow:
     def __init__(self, root, db, on_success):
         self.root = root; self.db = db; self.on_success = on_success
-        self.win = tk.Toplevel(root); self.win.title("Acceso v18.1"); self.win.geometry("350x300")
+        self.win = tk.Toplevel(root); self.win.title("Acceso v19.1"); self.win.geometry("350x300")
         apply_dark_theme(self.win)
         self.texts = LANG["ES"]
         ttk.Label(self.win, text=self.texts["login_title"], font=("Segoe UI", 16, "bold"), foreground=C_ACCENT).pack(pady=30)
@@ -448,6 +473,8 @@ class AppBolsa:
         f_xtra = ttk.Frame(f1); f_xtra.pack(fill=tk.X, pady=2)
         self.btn_exp = tk.Button(f_xtra, text=self.texts["exp"], bg="#333", fg="white", relief="flat", command=self.exportar_cartera); self.btn_exp.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
         self.btn_hist = tk.Button(f_xtra, text=self.texts["hist"], bg="#333", fg="white", relief="flat", command=self.ver_historial); self.btn_hist.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        # BOTON VIZ NUEVO
+        self.btn_viz = tk.Button(f_xtra, text=self.texts["viz_btn"], bg=C_PURPLE, fg="white", relief="flat", command=self.ver_distribucion); self.btn_viz.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
 
         self.lf2 = ttk.LabelFrame(side, padding=5); self.lf2.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
         cols2 = ("tk", "sc", "ms")
@@ -536,6 +563,27 @@ class AppBolsa:
         if total_pl >= 0: lbl_tot.config(foreground=C_GREEN)
         else: lbl_tot.config(foreground=C_RED)
         lbl_tot.pack(pady=10)
+
+    # --- NUEVA VISUALIZACION ---
+    def ver_distribucion(self):
+        db_data = self.db.obtener_cartera(self.uid)
+        if not db_data: return
+        
+        tickers = [row[0] for row in db_data]
+        values = [row[1] * row[2] for row in db_data] # Precio Compra * Qty (Inversion)
+        
+        if sum(values) == 0: return
+
+        vw = tk.Toplevel(self.root); vw.title(self.texts["viz_title"]); vw.geometry("600x500")
+        apply_dark_theme(vw)
+        
+        fig = Figure(figsize=(5,4), dpi=100, facecolor=C_BG)
+        ax = fig.add_subplot(111)
+        ax.pie(values, labels=tickers, autopct='%1.1f%%', startangle=90, textprops={'color':"w"})
+        ax.set_title(self.texts["viz_title"], color="white")
+        
+        cv = FigureCanvasTkAgg(fig, master=vw)
+        cv.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
     def abrir_calculadora(self):
         cw = tk.Toplevel(self.root); cw.title(self.texts["calc_title"]); cw.geometry("250x350")
@@ -706,6 +754,10 @@ class AppBolsa:
             ax1.fill_between(d.index, d['UpperBB'], d['LowerBB'], color='gray', alpha=0.15, label='BB')
             if sop > 0: ax1.axhline(sop, color=C_GREEN, linestyle='--', linewidth=0.8, alpha=0.7)
             if resi > 0: ax1.axhline(resi, color=C_RED, linestyle='--', linewidth=0.8, alpha=0.7)
+            
+            # STOP LOSS DINAMICO EN GRAFICO
+            if ev['stop_loss'] > 0: ax1.axhline(ev['stop_loss'], color='red', linestyle=':', linewidth=1.5, label='Stop Loss')
+
             if spy is not None:
                 d_spy = spy.tail(150)
                 ax1b = ax1.twinx() 
@@ -742,9 +794,16 @@ class AppBolsa:
             self.txt.insert(tk.END, f"\n{self.texts['ai_title']}\n", "w")
             ai_tag = "ai_good" if prob_ai > 55 else "ai_bad" if prob_ai < 45 else "w"
             self.txt.insert(tk.END, f"{self.texts['ai_prob']} {prob_ai:.1f}%\n", ai_tag)
+            
             self.txt.insert(tk.END, f"\n{self.texts['tech_title']}\n", "gold")
             self.txt.insert(tk.END, f"{self.texts['tech_sup']} ${sop:.2f}\n", "p")
             self.txt.insert(tk.END, f"{self.texts['tech_res']} ${resi:.2f}\n", "n")
+            self.txt.insert(tk.END, f"{self.texts['tech_sl']} ${ev['stop_loss']:.2f}\n", "n")
+            
+            # TENDENCIA SEMANAL
+            w_col = "p" if ev['weekly'] == "Alcista" else "n" if ev['weekly'] == "Bajista" else "w"
+            self.txt.insert(tk.END, f"{self.texts['trend_wk']} {ev['weekly']}\n", w_col)
+
             self.txt.insert(tk.END, f"\n{self.texts['bench_title']}\n", "gold")
             b_col = "news_bull" if bench_stats['rel_perf'] > 0 else "news_bear"
             self.txt.insert(tk.END, f"{self.texts['bench_beta']} {bench_stats['beta']:.2f} | {self.texts['bench_rel']} ", "w")
