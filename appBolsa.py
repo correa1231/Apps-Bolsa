@@ -17,9 +17,9 @@ from sklearn.ensemble import RandomForestClassifier
 # ==========================================
 LANG = {
     "ES": {
-        "app_title": "Gestor Pro v17.1 (Clean UI)",
+        "app_title": "Gestor Pro v18.0 (Targets)",
         "port_title": "📂 MI CARTERA & VIGILANCIA",
-        "opp_title": "💎 OPORTUNIDADES",
+        "opp_title": "💎 OPORTUNIDADES & OBJETIVOS",
         "scan_own": "⚡ ACTUALIZAR",
         "save": "💾 GUARDAR",
         "sell": "💰 VENDER",
@@ -35,7 +35,7 @@ LANG = {
         "col_entry": "Entrada",
         "col_state": "Estado",
         "col_score": "Pts",
-        "col_diag": "Diagnóstico",
+        "col_diag": "Diagnóstico / Objetivo",
         "vigil": "👁 VIGILANDO",
         "msg_wait": "⏳...",
         "msg_scan": "⏳ ANALIZANDO...",
@@ -63,6 +63,7 @@ LANG = {
         "tech_title": "📐 TECH EXTRA:",
         "tech_sup": "Soporte Detectado:",
         "tech_res": "Resistencia Detectada:",
+        "target_title": "🎯 OBJETIVO TÉCNICO (Take Profit):",
         "news_title": "📰 NOTICIAS & SENTIMIENTO:",
         "calc_title": "Calculadora Riesgo",
         "calc_cap": "Capital Total ($):",
@@ -76,7 +77,7 @@ LANG = {
         "dash_pl": "Total P/L:",
         "login_title": "ACCESO", "user": "Usuario:", "pass": "Clave:", "btn_enter": "ENTRAR", "btn_reg": "REGISTRO", "err_login": "Error", "ok_reg": "OK", "err_reg": "Existe"
     },
-    "EN": { "app_title": "Pro Manager v17.1", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "💾 SAVE", "sell": "💰 SELL", "del_btn": "🗑 FORGET", "hist": "📜 HISTORY", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "msg_del_confirm": "Delete from list? No history saved.", "hist_title": "Trade History", "hist_tot": "Total Realized P/L:", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Probability:", "tech_title": "📐 TECH EXTRA:", "tech_sup": "Support:", "tech_res": "Resistance:", "news_title": "📰 NEWS & SENTIMENT:", "calc_title": "Risk Calculator", "calc_cap": "Total Capital ($):", "calc_risk": "Max Risk (%):", "calc_stop": "Stop Loss ($):", "calc_btn": "CALCULATE", "calc_res": "Shares to Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Cur. Value:", "dash_pl": "Total P/L:", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Invalid", "ok_reg": "OK", "err_reg": "Exists" },
+    "EN": { "app_title": "Pro Manager v18.0", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "💾 SAVE", "sell": "💰 SELL", "del_btn": "🗑 FORGET", "hist": "📜 HISTORY", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis / Target", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "msg_del_confirm": "Delete?", "hist_title": "Trade History", "hist_tot": "Total P/L:", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Prob:", "tech_title": "📐 TECH EXTRA:", "tech_sup": "Support:", "tech_res": "Resistance:", "target_title": "🎯 TARGET PRICE:", "news_title": "📰 NEWS:", "calc_title": "Risk Calc", "calc_cap": "Capital:", "calc_risk": "Risk %:", "calc_stop": "Stop Loss:", "calc_btn": "CALCULATE", "calc_res": "Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Value:", "dash_pl": "Total P/L:", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Error", "ok_reg": "OK", "err_reg": "Exists" },
 }
 if "FR" not in LANG: LANG["FR"] = LANG["EN"]
 if "PT" not in LANG: LANG["PT"] = LANG["EN"]
@@ -87,7 +88,6 @@ CANDIDATOS_VIP = [
     "UBER", "ABNB", "PLTR", "SHOP", "SBUX", "NKE", "MCD", "V", "MA"
 ]
 
-# COLORES TEMA OSCURO
 C_BG = "#1e1e1e"       
 C_FG = "#ffffff"       
 C_ACCENT = "#007acc"   
@@ -100,7 +100,7 @@ C_GOLD = "#ffd700"
 # 1. BASE DE DATOS
 # ==========================================
 class DatabaseManager:
-    def __init__(self, db_name="bolsa_datos_v17.db"):
+    def __init__(self, db_name="bolsa_datos_v18.db"):
         self.conn = sqlite3.connect(db_name, check_same_thread=False)
         self.crear_tablas()
 
@@ -327,6 +327,21 @@ class AnalistaBolsa:
             raw_score = 100 - crsi
             if adx > 25: raw_score += 10
             score = max(0, min(100, int(raw_score)))
+            
+            # --- CALCULO TARGET ---
+            # Objetivo = Resistencia Maxima Reciente (60 dias)
+            # Si precio actual esta cerca del maximo, objetivo = Bollinger Superior
+            min_p = self.data['Low'].tail(60).min()
+            max_p = self.data['High'].tail(60).max()
+            
+            target = max_p
+            if curr >= max_p * 0.98: # Si estamos a un 2% del maximo
+                target = last['UpperBB'] # Usar Bollinger como objetivo dinamico
+                if target < curr: target = curr * 1.05 # Si BB esta baja, usar 5% fijo
+            
+            # Calculo profit potencial
+            profit_pot = ((target - curr) / curr) * 100
+            
             msg = "Neutro"; tag = ""
             if p_compra > 0: 
                  price = last['Close']
@@ -334,14 +349,15 @@ class AnalistaBolsa:
                  elif price < p_compra*0.9: msg = "🛑 STOP LOSS"; tag = "sell"
                  elif crsi < 20 and adx > 25: msg = "💎 ACUMULAR"; tag = "buy"
                  else: msg = "✋ MANTENER"; tag = "hold"
-                 return {"valid": True, "ticker": self.ticker, "score": score, "msg": msg, "tag": tag, "crsi": crsi, "adx": adx, "price": curr}
+                 return {"valid": True, "ticker": self.ticker, "score": score, "msg": msg, "tag": tag, "crsi": crsi, "adx": adx, "price": curr, "target": target, "profit": profit_pot}
+            
             if score >= 90: msg = "🚀 COMPRA"; tag = "buy"
             elif score >= 75: msg = "👀 BARATO"; tag = "near"
             elif score >= 60: msg = "📈 TENDENCIA"; tag = "trend"
             elif score <= 20: msg = "⚠️ CARO"; tag = "sell"
             elif score <= 40: msg = "💤 DÉBIL"; tag = "weak"
-            return {"valid": True, "ticker": self.ticker, "score": score, "msg": msg, "tag": tag, "crsi": crsi, "adx": adx, "price": curr}
-        except: return {"valid": False, "msg": "Error", "score": 0, "tag": ""}
+            return {"valid": True, "ticker": self.ticker, "score": score, "msg": msg, "tag": tag, "crsi": crsi, "adx": adx, "price": curr, "target": target, "profit": profit_pot}
+        except: return {"valid": False, "msg": "Error", "score": 0, "tag": "", "target": 0, "profit": 0}
 
 # ==========================================
 # 3. GUI THEME MANAGER
@@ -368,7 +384,7 @@ def apply_dark_theme(root):
 class LoginWindow:
     def __init__(self, root, db, on_success):
         self.root = root; self.db = db; self.on_success = on_success
-        self.win = tk.Toplevel(root); self.win.title("Acceso v17.1"); self.win.geometry("350x300")
+        self.win = tk.Toplevel(root); self.win.title("Acceso v18.0"); self.win.geometry("350x300")
         apply_dark_theme(self.win)
         self.texts = LANG["ES"]
         ttk.Label(self.win, text=self.texts["login_title"], font=("Segoe UI", 16, "bold"), foreground=C_ACCENT).pack(pady=30)
@@ -420,7 +436,6 @@ class AppBolsa:
         self.btn_act = tk.Button(f1, text=self.texts["scan_own"], bg=C_ACCENT, fg="white", relief="flat", command=self.scan_own); self.btn_act.pack(fill=tk.X, pady=2)
         f_btns = ttk.Frame(f1); f_btns.pack(fill=tk.X)
         
-        # --- BOTONES CARTERA REDISEÑADOS ---
         self.btn_save = tk.Button(f_btns, text=self.texts["save"], bg="#333", fg="white", relief="flat", command=self.save); self.btn_save.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
         self.btn_sell = tk.Button(f_btns, text=self.texts["sell"], bg="#800000", fg="white", relief="flat", command=self.vender_posicion); self.btn_sell.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
         self.btn_del = tk.Button(f_btns, text=self.texts["del_btn"], bg="#333", fg="#999", relief="flat", command=self.dele); self.btn_del.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
@@ -433,6 +448,8 @@ class AppBolsa:
         cols2 = ("tk", "sc", "ms")
         self.tr2 = ttk.Treeview(self.lf2, columns=cols2, show="headings", height=12)
         for c in cols2: self.tr2.column(c, anchor="center", stretch=True)
+        # Ajustar ancho de columna mensaje para que quepa el objetivo
+        self.tr2.column("ms", width=200)
         self.tr2.pack(fill=tk.BOTH, expand=True, pady=5)
         self.tr2.bind("<Double-1>", lambda e: self.sel_load(self.tr2, False))
         self.btn_gem = tk.Button(self.lf2, text=self.texts["scan_mkt"], bg=C_ACCENT, fg="white", font=("Segoe UI", 10, "bold"), relief="flat", command=self.scan_mkt)
@@ -490,7 +507,6 @@ class AppBolsa:
             self.db.cerrar_posicion(self.uid, iid, ask_price)
             self.load_init(); self.scan_own()
 
-    # --- NUEVA FUNCION BORRAR SEGURO ---
     def dele(self):
         s = self.tr1.selection()
         if s: 
@@ -636,7 +652,12 @@ class AppBolsa:
             except: pass
         cands.sort(key=lambda x: x["score"], reverse=True)
         for c in cands:
-            self.root.after(0, self.tr2.insert, "", "end", values=(c["ticker"], c["score"], c["msg"]), tags=(c["tag"],))
+            # MOSTRAR TARGET EN LA LISTA DE OPORTUNIDADES
+            final_msg = c["msg"]
+            if c["score"] > 60:
+                final_msg += f" | 🎯 ${c['target']:.2f} (+{c['profit']:.1f}%)"
+            
+            self.root.after(0, self.tr2.insert, "", "end", values=(c["ticker"], c["score"], final_msg), tags=(c["tag"],))
         self.root.after(0, lambda: self.btn_gem.config(state="normal", text=self.texts["scan_mkt"]))
 
     def sel_load(self, tree, is_own):
@@ -708,6 +729,11 @@ class AppBolsa:
                 pl = (d['Close'].iloc[-1]*qq)-(pp*qq); pc = (pl/(pp*qq))*100
                 tag = "p" if pl>=0 else "n"
                 self.txt.insert(tk.END, f"P&L: {pl:+.2f} ({pc:+.2f}%)\n", tag)
+            
+            # --- MOSTRAR TARGET ---
+            self.txt.insert(tk.END, f"\n{self.texts['target_title']}\n", "gold")
+            self.txt.insert(tk.END, f"${ev['target']:.2f} (Potential: {ev['profit']:.1f}%)\n", "p")
+
             self.txt.insert(tk.END, f"\n{self.texts['ai_title']}\n", "w")
             ai_tag = "ai_good" if prob_ai > 55 else "ai_bad" if prob_ai < 45 else "w"
             self.txt.insert(tk.END, f"{self.texts['ai_prob']} {prob_ai:.1f}%\n", ai_tag)
