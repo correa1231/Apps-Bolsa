@@ -10,8 +10,9 @@ import sqlite3
 import hashlib
 import threading
 import matplotlib.pyplot as plt
-import os # Para gestión de carpetas del reporte
+import os
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
 
 # ==========================================
 # 0. CONFIGURACIÓN E IDIOMAS
@@ -21,7 +22,7 @@ ETORO_ROUND_TRIP = 2.0
 
 LANG = {
     "ES": {
-        "app_title": "Gestor Pro v22.0 (Macro & Journal)",
+        "app_title": "Gestor Pro v23.0 (Institutional Precision)",
         "port_title": "📂 MI CARTERA & VIGILANCIA",
         "opp_title": "💎 OPORTUNIDADES & OBJETIVOS",
         "scan_own": "⚡ ACTUALIZAR",
@@ -63,16 +64,19 @@ LANG = {
         "conf_del": "⚠️ BORRAR CUENTA",
         "conf_del_confirm": "¿Seguro? Se borrarán tus datos.",
         "refresh_all": "🔄 TODO",
-        "fund_title": "📊 FUNDAMENTALES:",
+        "fund_title": "📊 FUNDAMENTALES & WALL STREET:",
         "fund_pe": "PER:",
         "fund_cap": "Mkt Cap:",
         "fund_div": "Div Yield:",
+        "ws_rating": "Analistas:",
+        "ws_target": "Precio Obj. Wall St:",
         "graham_title": "💎 VALOR INTRÍNSECO (Graham):",
         "bench_title": "🆚 MERCADO (vs SPY):",
         "bench_beta": "Beta:",
         "bench_rel": "Rendimiento Relativo:",
         "ai_title": "🤖 PREDICCIÓN IA (Random Forest):",
         "ai_prob": "Probabilidad Subida:",
+        "ai_acc": "Precisión Modelo (Test):",
         "tech_title": "📐 TECH & STOP LOSS (ATR):",
         "tech_sup": "Soporte:",
         "tech_res": "Resistencia:",
@@ -95,7 +99,7 @@ LANG = {
         "macro_neutral": "😐 NEUTRO",
         "login_title": "ACCESO", "user": "Usuario:", "pass": "Clave:", "btn_enter": "ENTRAR", "btn_reg": "REGISTRO", "err_login": "Error", "ok_reg": "OK", "err_reg": "Existe"
     },
-    "EN": { "app_title": "Pro Manager v22.0", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "💾", "sell": "💰 SELL", "del_btn": "🗑", "viz_btn": "📊 VIZ", "stats_btn": "📈 STATS", "risk_btn": "🔥 RISK", "snap_btn": "📷 SNAPSHOT", "hist": "📜 HIST", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis / Target", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_snap_ok": "✅ Report saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "msg_del_confirm": "Delete?", "hist_title": "Trade History", "hist_tot": "Total Net P/L:", "viz_title": "Portfolio Allocation", "stats_title": "Performance Audit", "risk_title": "Correlation Matrix", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "graham_title": "💎 INTRINSIC VALUE (Graham):", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Prob:", "tech_title": "📐 TECH & STOP LOSS:", "tech_sup": "Support:", "tech_res": "Resistance:", "tech_sl": "Suggested Stop:", "trend_wk": "Weekly Trend:", "target_title": "🎯 TARGET PRICE:", "news_title": "📰 NEWS:", "calc_title": "Risk Calc", "calc_cap": "Capital:", "calc_risk": "Risk %:", "calc_stop": "Stop Loss:", "calc_btn": "CALCULATE", "calc_res": "Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Value:", "dash_pl": "Net P/L (eToro):", "macro_fear": "😨 FEAR (High VIX)", "macro_greed": "🤑 GREED (Bull Trend)", "macro_neutral": "😐 NEUTRAL", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Error", "ok_reg": "OK", "err_reg": "Exists" },
+    "EN": { "app_title": "Pro Manager v23.0", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "💾", "sell": "💰 SELL", "del_btn": "🗑", "viz_btn": "📊 VIZ", "stats_btn": "📈 STATS", "risk_btn": "🔥 RISK", "snap_btn": "📷 SNAPSHOT", "hist": "📜 HIST", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis / Target", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_snap_ok": "✅ Report saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "msg_del_confirm": "Delete?", "hist_title": "Trade History", "hist_tot": "Total Net P/L:", "viz_title": "Portfolio Allocation", "stats_title": "Performance Audit", "risk_title": "Correlation Matrix", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "ws_rating": "Analysts:", "ws_target": "Wall St Target:", "graham_title": "💎 INTRINSIC VALUE (Graham):", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Prob:", "ai_acc": "Model Accuracy:", "tech_title": "📐 TECH & STOP LOSS:", "tech_sup": "Support:", "tech_res": "Resistance:", "tech_sl": "Suggested Stop:", "trend_wk": "Weekly Trend:", "target_title": "🎯 TARGET PRICE:", "news_title": "📰 NEWS:", "calc_title": "Risk Calc", "calc_cap": "Capital:", "calc_risk": "Risk %:", "calc_stop": "Stop Loss:", "calc_btn": "CALCULATE", "calc_res": "Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Value:", "dash_pl": "Net P/L (eToro):", "macro_fear": "😨 FEAR (High VIX)", "macro_greed": "🤑 GREED (Bull Trend)", "macro_neutral": "😐 NEUTRAL", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Error", "ok_reg": "OK", "err_reg": "Exists" },
 }
 if "FR" not in LANG: LANG["FR"] = LANG["EN"]
 if "PT" not in LANG: LANG["PT"] = LANG["EN"]
@@ -113,7 +117,7 @@ C_PANEL = "#252526"; C_GREEN = "#4ec9b0"; C_RED = "#f44747"; C_GOLD = "#ffd700";
 # 1. BASE DE DATOS
 # ==========================================
 class DatabaseManager:
-    def __init__(self, db_name="bolsa_datos_v22.db"):
+    def __init__(self, db_name="bolsa_datos_v23.db"):
         self.conn = sqlite3.connect(db_name, check_same_thread=False)
         self.crear_tablas()
 
@@ -192,18 +196,39 @@ class AnalistaBolsa:
             return d
         except: raise ValueError("Error descarga")
 
-    # --- NUEVO: ANALISIS MACRO (MARKET MOOD) ---
+    # --- NUEVO: CALCULADORA FIBONACCI ---
+    def calcular_fibonacci(self):
+        try:
+            # Usamos un periodo de swing trading (ej: 6 meses aprox 126 dias)
+            df = self.data.tail(126)
+            max_p = df['High'].max()
+            min_p = df['Low'].min()
+            diff = max_p - min_p
+            
+            # Niveles principales
+            lev_236 = max_p - 0.236 * diff
+            lev_382 = max_p - 0.382 * diff
+            lev_500 = max_p - 0.5 * diff
+            lev_618 = max_p - 0.618 * diff
+            
+            return {"0": min_p, "1": max_p, "0.236": lev_236, "0.382": lev_382, "0.5": lev_500, "0.618": lev_618}
+        except: return None
+
+    # --- NUEVO: CONSENSO ANALISTAS ---
+    def obtener_consenso_analistas(self, ticker):
+        try:
+            t = yf.Ticker(ticker); i = t.info
+            rec = i.get('recommendationKey', 'none').upper().replace("_", " ")
+            target = i.get('targetMeanPrice', 0)
+            return rec, target
+        except: return "N/A", 0
+
     def obtener_sentimiento_mercado(self):
         try:
-            # Obtener VIX (^VIX) y SPY
             vix = yf.Ticker("^VIX").history(period="1d")['Close'].iloc[-1]
             spy = yf.Ticker("SPY").history(period="6mo")['Close']
-            
-            # Tendencia SPY
             sma50 = spy.rolling(50).mean().iloc[-1]
             price_spy = spy.iloc[-1]
-            
-            # Logica de Sentimiento
             if vix > 25: return "FEAR", vix
             elif vix < 15 and price_spy > sma50: return "GREED", vix
             else: return "NEUTRAL", vix
@@ -280,21 +305,36 @@ class AnalistaBolsa:
             else: return "Bajista"
         except: return "Neutral"
 
+    # --- IA CON SCORE DE PRECISION (BACKTEST) ---
     def calcular_probabilidad_ia(self):
         try:
             df = self.data.copy()
-            if len(df) < 100: return 50.0 
+            if len(df) < 100: return 50.0, 0.0
             df['Retorno'] = df['Close'].pct_change()
             df = df.dropna()
             df['Target'] = (df['Close'].shift(-1) > df['Close']).astype(int)
             features = ['CRSI', 'SMA_50', 'SMA_200', 'MACD', 'UpperBB', 'LowerBB', 'Retorno', 'Vol_Osc']
             X = df[features].iloc[:-1]; y = df['Target'].iloc[:-1]
-            if len(X) < 10: return 50.0
+            
+            # Split para testear precision
+            split = int(len(X) * 0.8)
+            X_train, X_test = X.iloc[:split], X.iloc[split:]
+            y_train, y_test = y.iloc[:split], y.iloc[split:]
+            
             model = RandomForestClassifier(n_estimators=100, min_samples_split=10, random_state=42)
+            model.fit(X_train, y_train)
+            
+            # Validacion
+            preds = model.predict(X_test)
+            acc = accuracy_score(y_test, preds) * 100
+            
+            # Reentrenar con todo para prediccion futura
             model.fit(X, y)
             ultimo_dia = df[features].iloc[[-1]] 
-            return model.predict_proba(ultimo_dia)[0][1] * 100
-        except: return 50.0
+            prob = model.predict_proba(ultimo_dia)[0][1] * 100
+            
+            return prob, acc
+        except: return 50.0, 0.0
 
     def detectar_niveles(self):
         try:
@@ -419,7 +459,7 @@ def apply_dark_theme(root):
 class LoginWindow:
     def __init__(self, root, db, on_success):
         self.root = root; self.db = db; self.on_success = on_success
-        self.win = tk.Toplevel(root); self.win.title("Acceso v22.0"); self.win.geometry("350x300")
+        self.win = tk.Toplevel(root); self.win.title("Acceso v23.0"); self.win.geometry("350x300")
         apply_dark_theme(self.win)
         self.texts = LANG["ES"]
         ttk.Label(self.win, text=self.texts["login_title"], font=("Segoe UI", 16, "bold"), foreground=C_ACCENT).pack(pady=30)
@@ -456,18 +496,15 @@ class AppBolsa:
         side = ttk.Frame(main, width=550, relief=tk.FLAT); main.add(side, weight=1)
         self.lf1 = ttk.LabelFrame(side, padding=5); self.lf1.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
         
-        # --- NUEVO: BARRA DE SENTIMIENTO DE MERCADO SUPERIOR ---
         self.mood_frame = ttk.Frame(self.lf1); self.mood_frame.pack(fill=tk.X, padx=5, pady=2, side=tk.TOP)
         self.lbl_mood = ttk.Label(self.mood_frame, text="MERCADO: ⏳ Cargando...", font=("Segoe UI", 10, "bold"), foreground="gray")
         self.lbl_mood.pack(anchor="center")
         
-        # DASHBOARD
         self.dash_frame = ttk.Frame(self.lf1); self.dash_frame.pack(fill=tk.X, padx=5, pady=5, side=tk.TOP)
         self.lbl_invested = ttk.Label(self.dash_frame, text="---", font=("Segoe UI", 10)); self.lbl_invested.pack(anchor="w")
         self.lbl_current = ttk.Label(self.dash_frame, text="---", font=("Segoe UI", 10)); self.lbl_current.pack(anchor="w")
         self.lbl_pl = ttk.Label(self.dash_frame, text="---", font=("Segoe UI", 10)); self.lbl_pl.pack(anchor="w")
 
-        # BOTONES
         f_controls = ttk.Frame(self.lf1); f_controls.pack(side=tk.BOTTOM, fill=tk.X, pady=5)
         self.btn_act = tk.Button(f_controls, text=self.texts["scan_own"], bg=C_ACCENT, fg="white", relief="flat", command=self.scan_own); self.btn_act.pack(fill=tk.X, pady=2)
         
@@ -515,7 +552,6 @@ class AppBolsa:
         tk.Button(ctrl, text="🗑", command=self.limpiar_campos, bg="#333", fg="white", relief="flat").pack(side=tk.LEFT, padx=2)
         tk.Button(ctrl, text="🧮", command=self.abrir_calculadora, bg="#333", fg="white", relief="flat").pack(side=tk.LEFT, padx=2)
         
-        # --- NUEVO BOTON SNAPSHOT ---
         self.btn_snap = tk.Button(ctrl, text=self.texts["snap_btn"], bg="teal", fg="white", relief="flat", command=self.generar_reporte); self.btn_snap.pack(side=tk.LEFT, padx=5)
 
         self.btn_conf = tk.Button(ctrl, text="⚙️", bg="#333", fg="white", relief="flat", command=self.abrir_config); self.btn_conf.pack(side=tk.RIGHT, padx=5)
@@ -539,51 +575,30 @@ class AppBolsa:
         
         self.update_ui_language()
         self.load_init()
-        # Iniciar chequeo de mood en segundo plano
         threading.Thread(target=self.actualizar_mood, daemon=True).start()
 
-    # --- NUEVAS FUNCIONES v22.0 ---
     def actualizar_mood(self):
         mood, vix = self.eng.obtener_sentimiento_mercado()
-        txt = ""
-        col = "gray"
-        if mood == "FEAR": 
-            txt = f"{self.texts['macro_fear']} (VIX {vix:.2f})"
-            col = C_RED
-        elif mood == "GREED": 
-            txt = f"{self.texts['macro_greed']} (VIX {vix:.2f})"
-            col = C_GREEN
-        else:
-            txt = f"{self.texts['macro_neutral']} (VIX {vix:.2f})"
-            col = C_GOLD
-        
+        txt = ""; col = "gray"
+        if mood == "FEAR": txt = f"{self.texts['macro_fear']} (VIX {vix:.2f})"; col = C_RED
+        elif mood == "GREED": txt = f"{self.texts['macro_greed']} (VIX {vix:.2f})"; col = C_GREEN
+        else: txt = f"{self.texts['macro_neutral']} (VIX {vix:.2f})"; col = C_GOLD
         self.lbl_mood.config(text=f"MERCADO: {txt}", foreground=col)
 
     def generar_reporte(self):
         tkr = self.e_tk.get()
         if not tkr: return
-        
-        # Crear carpeta Reports si no existe
         if not os.path.exists("Reports"): os.makedirs("Reports")
-        
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M")
         fname = f"Reports/{tkr}_{timestamp}"
-        
-        # 1. Guardar Grafico
-        try:
-            self.fig.savefig(f"{fname}.png")
+        try: self.fig.savefig(f"{fname}.png")
         except: pass
-        
-        # 2. Guardar Texto
         try:
             content = self.txt.get("1.0", tk.END)
-            with open(f"{fname}.txt", "w", encoding="utf-8") as f:
-                f.write(content)
+            with open(f"{fname}.txt", "w", encoding="utf-8") as f: f.write(content)
             messagebox.showinfo("Snapshot", self.texts["msg_snap_ok"])
-        except Exception as e:
-            messagebox.showerror("Error", str(e))
+        except Exception as e: messagebox.showerror("Error", str(e))
 
-    # --- FUNCIONES EXISTENTES ---
     def vender_posicion(self):
         s = self.tr1.selection()
         if not s: return
@@ -680,8 +695,7 @@ class AppBolsa:
             ax.set_title(self.texts["risk_title"], color="white", pad=20)
             cv = FigureCanvasTkAgg(fig, master=cw)
             cv.get_tk_widget().pack(fill=tk.BOTH, expand=True)
-        except Exception as e:
-            messagebox.showerror("Error", str(e))
+        except Exception as e: messagebox.showerror("Error", str(e))
 
     def ver_distribucion(self):
         db_data = self.db.obtener_cartera(self.uid)
@@ -793,7 +807,6 @@ class AppBolsa:
         self.root.after(0, lambda: self.btn_act.config(state="normal", text=self.texts["scan_own"]))
 
     def update_dashboard_ui(self, inv, val):
-        # CALCULO DASHBOARD CON FEES
         pl = val - inv - (ETORO_ROUND_TRIP * len(self.db.obtener_cartera(self.uid)))
         pl_pct = (pl / inv * 100) if inv > 0 else 0.0
         color = C_GREEN if pl >= 0 else C_RED
@@ -848,9 +861,11 @@ class AppBolsa:
         
         try:
             self.eng.descargar_datos(tkr); df = self.eng.calcular_indicadores()
-            prob_ai = self.eng.calcular_probabilidad_ia()
+            prob_ai, acc = self.eng.calcular_probabilidad_ia() # AHORA DEVUELVE 2 VALORES
             spy = self.eng.obtener_benchmark() 
             fund = self.eng.obtener_fundamentales(tkr)
+            ws_rec, ws_target = self.eng.obtener_consenso_analistas(tkr) # NUEVO: CONSENSO
+            fibo = self.eng.calcular_fibonacci() # NUEVO: FIBONACCI
             noticias = self.eng.obtener_noticias_analizadas(tkr)
             sop, resi = self.eng.detectar_niveles()
             sim = self.eng.simular(); ev = self.eng.generar_diagnostico_interno(pp)
@@ -866,9 +881,15 @@ class AppBolsa:
             ax1.plot(d.index, d['SMA_50'], color='orange', linestyle='--', linewidth=1, label='SMA 50')
             ax1.plot(d.index, d['SMA_200'], color='cyan', linewidth=1.5, label='SMA 200')
             ax1.fill_between(d.index, d['UpperBB'], d['LowerBB'], color='gray', alpha=0.15, label='BB')
+            
+            # --- FIBONACCI EN EL GRAFICO ---
+            if fibo:
+                ax1.axhline(fibo['0.382'], color=C_GOLD, linestyle=':', alpha=0.6, label="Fib 0.382")
+                ax1.axhline(fibo['0.5'], color=C_GOLD, linestyle='--', alpha=0.6, label="Fib 0.5")
+                ax1.axhline(fibo['0.618'], color=C_GOLD, linestyle=':', alpha=0.6, label="Fib 0.618")
+
             if sop > 0: ax1.axhline(sop, color=C_GREEN, linestyle='--', linewidth=0.8, alpha=0.7)
             if resi > 0: ax1.axhline(resi, color=C_RED, linestyle='--', linewidth=0.8, alpha=0.7)
-            
             if ev['stop_loss'] > 0: ax1.axhline(ev['stop_loss'], color='red', linestyle=':', linewidth=1.5, label='Stop Loss')
 
             if spy is not None:
@@ -881,6 +902,7 @@ class AppBolsa:
             ax1.legend(fontsize=8, facecolor=C_BG, edgecolor="white", labelcolor="white")
             ax1.grid(True, alpha=0.1, color="white")
             ax1.tick_params(colors='white')
+            
             ax2.plot(d.index, d['CRSI'], color=C_ACCENT, linewidth=1.2)
             ax2.axhline(80, color=C_RED, linestyle=':', alpha=0.5); ax2.axhline(20, color=C_GREEN, linestyle=':', alpha=0.5)
             ax2.set_ylabel("CRSI", fontsize=8, color="white"); ax2.set_ylim(-5, 105); ax2.grid(True, alpha=0.1, color="white")
@@ -894,7 +916,6 @@ class AppBolsa:
             
             self.txt.delete(1.0, tk.END); self.txt.insert(tk.END, f"{tkr} - ${d['Close'].iloc[-1]:.2f}\n", "t")
             if pos:
-                # --- CALCULO P/L VISUAL (ANALYSIS) CON FEES ---
                 gross_pl = (d['Close'].iloc[-1]*qq) - (pp*qq)
                 net_pl = gross_pl - ETORO_ROUND_TRIP
                 pc = (net_pl/(pp*qq))*100
@@ -907,22 +928,33 @@ class AppBolsa:
             self.txt.insert(tk.END, f"\n{self.texts['ai_title']}\n", "w")
             ai_tag = "ai_good" if prob_ai > 55 else "ai_bad" if prob_ai < 45 else "w"
             self.txt.insert(tk.END, f"{self.texts['ai_prob']} {prob_ai:.1f}%\n", ai_tag)
-            self.txt.insert(tk.END, f"\n{self.texts['graham_title']}\n", "gold")
+            # MOSTRAR ACCURACY (NUEVO)
+            acc_tag = "p" if acc > 60 else "n"
+            self.txt.insert(tk.END, f"{self.texts['ai_acc']} {acc:.1f}%\n", acc_tag)
+            
+            # MOSTRAR CONSENSO WALL STREET (NUEVO)
+            self.txt.insert(tk.END, f"\n{self.texts['fund_title']}\n", "gold")
+            ws_col = "p" if "BUY" in ws_rec or "STRONG" in ws_rec else "n" if "SELL" in ws_rec else "w"
+            self.txt.insert(tk.END, f"{self.texts['ws_rating']} {ws_rec}\n", ws_col)
+            if ws_target > 0: self.txt.insert(tk.END, f"{self.texts['ws_target']} ${ws_target:.2f}\n", "w")
+            
+            self.txt.insert(tk.END, f"PER: {fund['per']} | Div: {fund['div']}\n")
             g_tag = "p" if fund['graham'] > ev['price'] else "n"
-            self.txt.insert(tk.END, f"Intrinsic: ${fund['graham']:.2f}\n", g_tag)
+            self.txt.insert(tk.END, f"Intrinsic (Graham): ${fund['graham']:.2f}\n", g_tag)
+
             self.txt.insert(tk.END, f"\n{self.texts['tech_title']}\n", "gold")
             self.txt.insert(tk.END, f"{self.texts['tech_sup']} ${sop:.2f}\n", "p")
             self.txt.insert(tk.END, f"{self.texts['tech_res']} ${resi:.2f}\n", "n")
             self.txt.insert(tk.END, f"{self.texts['tech_sl']} ${ev['stop_loss']:.2f}\n", "n")
+            
             w_col = "p" if ev['weekly'] == "Alcista" else "n" if ev['weekly'] == "Bajista" else "w"
             self.txt.insert(tk.END, f"{self.texts['trend_wk']} {ev['weekly']}\n", w_col)
+
             self.txt.insert(tk.END, f"\n{self.texts['bench_title']}\n", "gold")
             b_col = "news_bull" if bench_stats['rel_perf'] > 0 else "news_bear"
             self.txt.insert(tk.END, f"{self.texts['bench_beta']} {bench_stats['beta']:.2f} | {self.texts['bench_rel']} ", "w")
             self.txt.insert(tk.END, f"{bench_stats['rel_perf']:.2f}%\n", b_col)
-            self.txt.insert(tk.END, f"\n{self.texts['fund_title']}\n", "gold")
-            self.txt.insert(tk.END, f"{self.texts['fund_pe']} {fund['per']} | {self.texts['fund_div']} {fund['div']}\n")
-            self.txt.insert(tk.END, f"{self.texts['fund_cap']} {fund['cap']}\n")
+            
             self.txt.insert(tk.END, f"\nADX: {ev.get('adx',0):.1f} | CRSI: {ev.get('crsi',0):.1f}\n")
             self.txt.insert(tk.END, f"DX: {ev['msg']} (Score: {ev['score']})\n", "t")
             self.txt.insert(tk.END, f"\n{self.texts['news_title']}\n", "w")
