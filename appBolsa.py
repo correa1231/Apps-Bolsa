@@ -16,17 +16,17 @@ import matplotlib.pyplot as plt
 # ==========================================
 LANG = {
     "ES": {
-        "app_title": "Gestor Pro v14.0 (History)",
+        "app_title": "Gestor Pro v15.2 (Dark Fix)",
         "port_title": "📂 MI CARTERA",
         "opp_title": "💎 OPORTUNIDADES",
         "scan_own": "⚡ ACTUALIZAR",
-        "save": "Guardar",
+        "save": "GUARDAR",
         "sell": "💰 VENDER",
         "hist": "📜 HISTORIAL",
         "exp": "📄 EXP",
         "scan_mkt": "🔍 ESCANEAR",
         "analyze": "▶ ANALIZAR",
-        "reset_zoom": "RESET ZOOM",
+        "reset_zoom": "RESET",
         "buy_price": "Compra:",
         "qty": "Cant:",
         "col_ticker": "Ticker",
@@ -68,10 +68,10 @@ LANG = {
         "dash_pl": "Total P/L:",
         "login_title": "ACCESO", "user": "Usuario:", "pass": "Clave:", "btn_enter": "ENTRAR", "btn_reg": "REGISTRO", "err_login": "Error", "ok_reg": "OK", "err_reg": "Existe"
     },
-    "EN": { "app_title": "Pro Manager v14.0", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "Save", "sell": "💰 SELL", "hist": "📜 HISTORY", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "hist_title": "Trade History", "hist_tot": "Total Realized P/L:", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "news_title": "📰 NEWS & SENTIMENT:", "calc_title": "Risk Calculator", "calc_cap": "Total Capital ($):", "calc_risk": "Max Risk (%):", "calc_stop": "Stop Loss ($):", "calc_btn": "CALCULATE", "calc_res": "Shares to Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Cur. Value:", "dash_pl": "Total P/L:", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Invalid", "ok_reg": "OK", "err_reg": "Exists" },
-    "FR": { "app_title": "Gestion Pro v14.0", "port_title": "📂 PORTEFEUILLE", "opp_title": "💎 OPPORTUNITÉS", "scan_own": "⚡ ACTUALISER", "save": "Sauver", "sell": "💰 VENDRE", "hist": "📜 HISTOIRE", "exp": "📄 EXP", "scan_mkt": "🔍 SCANNER", "analyze": "▶ ANALYSER", "reset_zoom": "ZOOM", "buy_price": "Prix:", "qty": "Qté:", "col_ticker": "Ticker", "col_entry": "Entrée", "col_state": "État", "col_score": "Pts", "col_diag": "Diagnostic", "vigil": "👁 VOIR", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Sauvé.", "msg_sell_title": "Fermer Position", "msg_sell_ask": "Prix Vente ($):", "hist_title": "Historique", "hist_tot": "P/L Total Réalisé:", "conf_title": "Paramètres", "conf_lang": "Langue:", "conf_logout": "🔒 SORTIR", "conf_del": "⚠️ SUPPRIMER", "conf_del_confirm": "Sûr?", "refresh_all": "🔄 TOUT", "fund_title": "📊 FONDAMENTAUX:", "fund_pe": "PER:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARCHÉ (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Perf. Rel:", "news_title": "📰 NOUVELLES:", "calc_title": "Calculateur Risque", "calc_cap": "Capital Total:", "calc_risk": "Risque (%):", "calc_stop": "Stop Loss:", "calc_btn": "CALCULER", "calc_res": "Acheter:", "calc_apply": "APPLIQUER", "dash_inv": "Investi:", "dash_val": "Val. Act:", "dash_pl": "Total P/L:", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "ENTRER", "btn_reg": "CREER", "err_login": "Erreur", "ok_reg": "OK", "err_reg": "Existe" },
-    "PT": { "app_title": "Gestor Pro v14.0", "port_title": "📂 CARTEIRA", "opp_title": "💎 OPORTUNIDADES", "scan_own": "⚡ ATUALIZAR", "save": "Salvar", "sell": "💰 VENDER", "hist": "📜 HISTÓRICO", "exp": "📄 EXP", "scan_mkt": "🔍 BUSCAR", "analyze": "▶ ANALISAR", "reset_zoom": "ZOOM", "buy_price": "Preço:", "qty": "Qtd:", "col_ticker": "Ticker", "col_entry": "Entrada", "col_state": "Estado", "col_score": "Pts", "col_diag": "Diagnóstico", "vigil": "👁 VIGIAR", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Salvo.", "msg_sell_title": "Fechar Posição", "msg_sell_ask": "Preço Venda ($):", "hist_title": "Histórico", "hist_tot": "Lucro Realizado:", "conf_title": "Config", "conf_lang": "Idioma:", "conf_logout": "🔒 SAIR", "conf_del": "⚠️ APAGAR", "conf_del_confirm": "Certeza?", "refresh_all": "🔄 TUDO", "fund_title": "📊 FUNDAMENTAIS:", "fund_pe": "P/L:", "fund_cap": "Val. Merc:", "fund_div": "Div:", "bench_title": "🆚 MERCADO (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Perf. Rel:", "news_title": "📰 NOTÍCIAS:", "calc_title": "Calculadora Risco", "calc_cap": "Capital Total:", "calc_risk": "Risco (%):", "calc_stop": "Stop Loss:", "calc_btn": "CALCULAR", "calc_res": "Comprar:", "calc_apply": "APLICAR", "dash_inv": "Investido:", "dash_val": "Val. Atual:", "dash_pl": "Total P/L:", "login_title": "LOGIN", "user": "User:", "pass": "Senha:", "btn_enter": "ENTRAR", "btn_reg": "CRIAR", "err_login": "Erro", "ok_reg": "OK", "err_reg": "Existe" }
+    "EN": { "app_title": "Pro Manager v15.2", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "SAVE", "sell": "💰 SELL", "hist": "📜 HISTORY", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "hist_title": "Trade History", "hist_tot": "Total Realized P/L:", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "news_title": "📰 NEWS & SENTIMENT:", "calc_title": "Risk Calculator", "calc_cap": "Total Capital ($):", "calc_risk": "Max Risk (%):", "calc_stop": "Stop Loss ($):", "calc_btn": "CALCULATE", "calc_res": "Shares to Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Cur. Value:", "dash_pl": "Total P/L:", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Invalid", "ok_reg": "OK", "err_reg": "Exists" },
 }
+if "FR" not in LANG: LANG["FR"] = LANG["EN"]
+if "PT" not in LANG: LANG["PT"] = LANG["EN"]
 
 CANDIDATOS_VIP = [
     "AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NVDA", "META", "NFLX", 
@@ -79,11 +79,20 @@ CANDIDATOS_VIP = [
     "UBER", "ABNB", "PLTR", "SHOP", "SBUX", "NKE", "MCD", "V", "MA"
 ]
 
+# COLORES TEMA OSCURO
+C_BG = "#1e1e1e"       
+C_FG = "#ffffff"       
+C_ACCENT = "#007acc"   
+C_PANEL = "#252526"    
+C_GREEN = "#4ec9b0"
+C_RED = "#f44747"
+C_GOLD = "#ffd700"
+
 # ==========================================
 # 1. BASE DE DATOS
 # ==========================================
 class DatabaseManager:
-    def __init__(self, db_name="bolsa_datos_v14.db"):
+    def __init__(self, db_name="bolsa_datos_v15.db"):
         self.conn = sqlite3.connect(db_name, check_same_thread=False)
         self.crear_tablas()
 
@@ -94,7 +103,6 @@ class DatabaseManager:
         cursor.execute('''CREATE TABLE IF NOT EXISTS cartera (
             id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, ticker TEXT NOT NULL, 
             precio_compra REAL, cantidad REAL, fecha_guardado TEXT, FOREIGN KEY(user_id) REFERENCES usuarios(id))''')
-        # NUEVA TABLA HISTORIAL
         cursor.execute('''CREATE TABLE IF NOT EXISTS historial (
             id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, ticker TEXT, 
             buy_price REAL, sell_price REAL, qty REAL, profit REAL, date_out TEXT)''')
@@ -124,22 +132,14 @@ class DatabaseManager:
         self.conn.execute("DELETE FROM cartera WHERE id=?", (pid,))
         self.conn.commit()
 
-    # NUEVO: MOVER A HISTORIAL
     def cerrar_posicion(self, uid, pid, sell_price):
-        # 1. Obtener datos originales
         data = self.conn.execute("SELECT ticker, precio_compra, cantidad FROM cartera WHERE id=?", (pid,)).fetchone()
         if not data: return
         tkr, buy_p, qty = data
-        
-        # 2. Calcular profit
         profit = (sell_price - buy_p) * qty
         date_out = datetime.datetime.now().strftime("%Y-%m-%d")
-        
-        # 3. Insertar en historial
         self.conn.execute("INSERT INTO historial (user_id, ticker, buy_price, sell_price, qty, profit, date_out) VALUES (?,?,?,?,?,?,?)", 
                           (uid, tkr, buy_p, sell_price, qty, profit, date_out))
-        
-        # 4. Borrar de cartera activa
         self.conn.execute("DELETE FROM cartera WHERE id=?", (pid,))
         self.conn.commit()
 
@@ -157,8 +157,7 @@ class DatabaseManager:
 # ==========================================
 class AnalistaBolsa:
     def __init__(self):
-        self.data = None; self.ticker = ""
-        self.spy_data = None
+        self.data = None; self.ticker = ""; self.spy_data = None
 
     def descargar_datos(self, ticker):
         self.ticker = ticker.upper()
@@ -199,13 +198,17 @@ class AnalistaBolsa:
             per = i.get('trailingPE', i.get('forwardPE', 0))
             cap = i.get('marketCap', 0)
             div = i.get('dividendYield', 0)
-            sec = i.get('sector', 'N/A'); ind = i.get('industry', 'N/A')
+            
+            # FIX: Asegurar que extraemos Sector e Industria
+            sec = i.get('sector', 'N/A')
+            ind = i.get('industry', 'N/A')
             
             if cap > 1e12: s_cap = f"{cap/1e12:.2f}T"
             elif cap > 1e9: s_cap = f"{cap/1e9:.2f}B"
             elif cap > 1e6: s_cap = f"{cap/1e6:.2f}M"
             else: s_cap = str(cap)
             
+            # FIX: Devolver 'sec' e 'ind' para que no falle el gráfico
             return {"per": f"{per:.2f}" if per else "N/A", "cap": s_cap, "div": f"{div*100:.2f}%" if div else "0%", "sec": sec, "ind": ind, "valid": True}
         except: return {"per": "-", "cap": "-", "div": "-", "sec": "-", "ind": "-", "valid": False}
 
@@ -237,11 +240,9 @@ class AnalistaBolsa:
         if self.data is None or self.data.empty: return self.data
         for col in ['ADX', 'Vol_Osc', 'CRSI', 'SMA_50', 'SMA_200']: self.data[col] = 0.0
         if len(self.data) < 50: return self.data
-
         df = self.data.copy(); w = 14
         df['SMA_50'] = df['Close'].rolling(window=50).mean()
         df['SMA_200'] = df['Close'].rolling(window=200).mean()
-
         df['Prev'] = df['Close'].shift(1)
         df['TR'] = np.maximum(df['High']-df['Low'], np.maximum(abs(df['High']-df['Prev']), abs(df['Low']-df['Prev'])))
         tr14 = df['TR'].ewm(alpha=1/w).mean()
@@ -251,11 +252,9 @@ class AnalistaBolsa:
             pdi = 100*(pd.Series(pdm, index=df.index).ewm(alpha=1/w).mean()/tr14)
             mdi = 100*(pd.Series(mdm, index=df.index).ewm(alpha=1/w).mean()/tr14)
             df['ADX'] = (100*abs(pdi-mdi)/(pdi+mdi)).ewm(alpha=1/w).mean()
-        
         v_s, v_l = 5, 10
         vol_ma = df['Volume'].rolling(v_l).mean().replace(0, np.nan)
         df['Vol_Osc'] = ((df['Volume'].rolling(v_s).mean()-vol_ma)/vol_ma)*100
-        
         df['RSI_P'] = self._rsi(df['Close'], 3)
         chg = df['Close'].diff().values; st = np.zeros(len(df))
         for i in range(1, len(chg)):
@@ -265,7 +264,6 @@ class AnalistaBolsa:
         df['PRank'] = df['Close'].pct_change().rolling(100).rank(pct=True)*100
         df['PRank'] = df['PRank'].fillna(50) 
         df['CRSI'] = (df['RSI_P'] + df['St_RSI'] + df['PRank'])/3
-        
         df['ADX'] = df['ADX'].fillna(20); df['CRSI'] = df['CRSI'].fillna(50); df['Vol_Osc'] = df['Vol_Osc'].fillna(0)
         self.data = df
         return self.data
@@ -305,124 +303,125 @@ class AnalistaBolsa:
             return {"valid": True, "ticker": self.ticker, "score": score, "msg": msg, "tag": tag, "crsi": crsi, "adx": adx, "price": curr}
         except: return {"valid": False, "msg": "Error"}
 
-    def evaluar_candidato_externo(self, ticker):
-        try:
-            self.descargar_datos(ticker); self.calcular_indicadores()
-            return self.generar_diagnostico_interno(0)
-        except: return {"valid": False}
+# ==========================================
+# 3. GUI THEME MANAGER (DARK PRO)
+# ==========================================
+def apply_dark_theme(root):
+    style = ttk.Style(root)
+    style.theme_use('clam')
+    style.configure(".", background=C_BG, foreground=C_FG, font=("Segoe UI", 9))
+    style.configure("TLabel", background=C_BG, foreground=C_FG)
+    style.configure("TLabelFrame", background=C_BG, foreground=C_ACCENT, borderwidth=1, relief="solid")
+    style.configure("TLabelFrame.Label", background=C_BG, foreground=C_ACCENT, font=("Segoe UI", 10, "bold"))
+    style.configure("TButton", background=C_PANEL, foreground=C_FG, borderwidth=0, padding=5)
+    style.map("TButton", background=[('active', C_ACCENT), ('pressed', C_ACCENT)], foreground=[('active', 'white')])
+    style.configure("TEntry", fieldbackground=C_PANEL, foreground=C_FG, borderwidth=0)
+    style.configure("Treeview", background=C_PANEL, foreground=C_FG, fieldbackground=C_PANEL, borderwidth=0)
+    style.configure("Treeview.Heading", background="#333", foreground="white", relief="flat")
+    style.map("Treeview", background=[('selected', C_ACCENT)], foreground=[('selected', 'white')])
+    style.configure("TPanedwindow", background=C_BG)
+    root.configure(bg=C_BG)
 
 # ==========================================
-# 3. LOGIN GUI
+# 4. APP PRINCIPAL
 # ==========================================
 class LoginWindow:
     def __init__(self, root, db, on_success):
         self.root = root; self.db = db; self.on_success = on_success
-        self.win = tk.Toplevel(root); self.win.title("Acceso v14.0"); self.win.geometry("350x300")
+        self.win = tk.Toplevel(root); self.win.title("Acceso v15.2"); self.win.geometry("350x300")
+        apply_dark_theme(self.win)
         self.texts = LANG["ES"]
-        ttk.Label(self.win, text=self.texts["login_title"], font=("Arial", 14, "bold")).pack(pady=20)
-        ttk.Label(self.win, text=self.texts["user"]).pack(); self.e_u = ttk.Entry(self.win); self.e_u.pack(pady=5)
-        ttk.Label(self.win, text=self.texts["pass"]).pack(); self.e_p = ttk.Entry(self.win, show="*"); self.e_p.pack(pady=5)
-        tk.Button(self.win, text=self.texts["btn_enter"], command=self.log, bg="#007acc", fg="white", font=("bold",10)).pack(pady=15, fill=tk.X, padx=30)
-        tk.Button(self.win, text=self.texts["btn_reg"], command=self.reg, bg="#555", fg="white").pack(pady=5, fill=tk.X, padx=30)
+        ttk.Label(self.win, text=self.texts["login_title"], font=("Segoe UI", 16, "bold"), foreground=C_ACCENT).pack(pady=30)
+        f = ttk.Frame(self.win); f.pack(pady=10)
+        ttk.Label(f, text=self.texts["user"]).grid(row=0, column=0, padx=5, pady=5, sticky="e")
+        self.e_u = ttk.Entry(f); self.e_u.grid(row=0, column=1, padx=5, pady=5)
+        ttk.Label(f, text=self.texts["pass"]).grid(row=1, column=0, padx=5, pady=5, sticky="e")
+        self.e_p = ttk.Entry(f, show="*"); self.e_p.grid(row=1, column=1, padx=5, pady=5)
+        tk.Button(self.win, text=self.texts["btn_enter"], command=self.log, bg=C_ACCENT, fg="white", font=("Segoe UI", 10, "bold"), relief="flat").pack(pady=15, fill=tk.X, padx=40)
+        tk.Button(self.win, text=self.texts["btn_reg"], command=self.reg, bg="#333", fg="white", relief="flat").pack(pady=5, fill=tk.X, padx=40)
         self.win.protocol("WM_DELETE_WINDOW", root.destroy)
 
     def log(self):
-        u_val = self.e_u.get(); p_val = self.e_p.get()
-        uid = self.db.verificar_usuario(u_val, p_val)
-        if uid: self.win.destroy(); self.on_success(uid, u_val)
-        else: messagebox.showerror("Error", self.texts["err_login"])
+        user_val = self.e_u.get()
+        pass_val = self.e_p.get()
+        uid = self.db.verificar_usuario(user_val, pass_val)
+        if uid:
+            self.win.destroy()
+            self.on_success(uid, user_val)
+        else:
+            messagebox.showerror("Error", self.texts["err_login"])
 
     def reg(self):
         if self.db.registrar_usuario(self.e_u.get(), self.e_p.get()): messagebox.showinfo("OK", self.texts["ok_reg"])
         else: messagebox.showerror("Error", self.texts["err_reg"])
 
-# ==========================================
-# 4. APP PRINCIPAL
-# ==========================================
 class AppBolsa:
     def __init__(self, root, uid, uname, db):
         self.root = root; self.uid = uid; self.db = db; self.eng = AnalistaBolsa()
         self.current_lang = "ES"; self.texts = LANG[self.current_lang]
         self.root.geometry("1600x950")
-        ttk.Style().theme_use('clam')
+        apply_dark_theme(root)
         
         main = ttk.PanedWindow(root, orient=tk.HORIZONTAL); main.pack(fill=tk.BOTH, expand=True)
-        side = ttk.Frame(main, width=450, relief=tk.RAISED); main.add(side, weight=1)
-        
+        side = ttk.Frame(main, width=450, relief=tk.FLAT); main.add(side, weight=1)
         self.lf1 = ttk.LabelFrame(side, padding=5); self.lf1.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
         
-        self.dash_frame = ttk.LabelFrame(self.lf1, text="💰 RESUMEN PATRIMONIO", padding=5)
-        self.dash_frame.pack(fill=tk.X, padx=5, pady=5)
-        self.lbl_invested = ttk.Label(self.dash_frame, text="---", font=("bold", 10)); self.lbl_invested.pack(anchor="w")
-        self.lbl_current = ttk.Label(self.dash_frame, text="---", font=("bold", 10)); self.lbl_current.pack(anchor="w")
-        self.lbl_pl = ttk.Label(self.dash_frame, text="---", font=("bold", 10)); self.lbl_pl.pack(anchor="w")
+        self.dash_frame = ttk.Frame(self.lf1); self.dash_frame.pack(fill=tk.X, padx=5, pady=5)
+        self.lbl_invested = ttk.Label(self.dash_frame, text="---", font=("Segoe UI", 10)); self.lbl_invested.pack(anchor="w")
+        self.lbl_current = ttk.Label(self.dash_frame, text="---", font=("Segoe UI", 10)); self.lbl_current.pack(anchor="w")
+        self.lbl_pl = ttk.Label(self.dash_frame, text="---", font=("Segoe UI", 10)); self.lbl_pl.pack(anchor="w")
 
         cols = ("tk", "pr", "sg")
         self.tr1 = ttk.Treeview(self.lf1, columns=cols, show="headings", height=10)
         for c in cols: self.tr1.column(c, anchor="center", stretch=True)
-        self.tr1.pack(fill=tk.BOTH, expand=True)
+        self.tr1.pack(fill=tk.BOTH, expand=True, pady=5)
         self.tr1.bind("<Double-1>", lambda e: self.sel_load(self.tr1, True))
         
         f1 = ttk.Frame(self.lf1); f1.pack(fill=tk.X)
-        self.btn_act = tk.Button(f1, bg="orange", command=self.scan_own); self.btn_act.pack(fill=tk.X, pady=2)
-        self.btn_save = ttk.Button(f1, command=self.save); self.btn_save.pack(side=tk.LEFT, fill=tk.X, expand=True)
-        
-        # BOTON VENDER NUEVO
-        self.btn_sell = tk.Button(f1, bg="#ffcccb", command=self.vender_posicion); self.btn_sell.pack(side=tk.LEFT, fill=tk.X, expand=True)
-        
-        self.btn_exp = tk.Button(f1, bg="#90ee90", command=self.exportar_cartera); self.btn_exp.pack(side=tk.LEFT, fill=tk.X, expand=True)
-        
-        # BOTON HISTORIAL NUEVO
-        self.btn_hist = tk.Button(f1, bg="#add8e6", command=self.ver_historial); self.btn_hist.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        self.btn_act = tk.Button(f1, bg=C_ACCENT, fg="white", relief="flat", command=self.scan_own); self.btn_act.pack(fill=tk.X, pady=2)
+        f_btns = ttk.Frame(f1); f_btns.pack(fill=tk.X)
+        self.btn_save = tk.Button(f_btns, bg="#333", fg="white", relief="flat", command=self.save); self.btn_save.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_sell = tk.Button(f_btns, bg="#800000", fg="white", relief="flat", command=self.vender_posicion); self.btn_sell.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_del = tk.Button(f_btns, bg="#333", fg="white", relief="flat", command=self.dele); self.btn_del.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        f_xtra = ttk.Frame(f1); f_xtra.pack(fill=tk.X, pady=2)
+        self.btn_exp = tk.Button(f_xtra, bg="#333", fg="white", relief="flat", command=self.exportar_cartera); self.btn_exp.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_hist = tk.Button(f_xtra, bg="#333", fg="white", relief="flat", command=self.ver_historial); self.btn_hist.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
 
         self.lf2 = ttk.LabelFrame(side, padding=5); self.lf2.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
         cols2 = ("tk", "sc", "ms")
         self.tr2 = ttk.Treeview(self.lf2, columns=cols2, show="headings", height=12)
         for c in cols2: self.tr2.column(c, anchor="center", stretch=True)
-        self.tr2.pack(fill=tk.BOTH, expand=True)
+        self.tr2.pack(fill=tk.BOTH, expand=True, pady=5)
         self.tr2.bind("<Double-1>", lambda e: self.sel_load(self.tr2, False))
-        
-        for tr in [self.tr1, self.tr2]:
-            tr.tag_configure('buy', background='#00ff00', foreground='black')
-            tr.tag_configure('near', background='#ccffcc', foreground='black')
-            tr.tag_configure('trend', background='#fffacd', foreground='black')
-            tr.tag_configure('sell', background='#ffcccc', foreground='black')
-            tr.tag_configure('hold', foreground='black')
-
-        self.btn_gem = tk.Button(self.lf2, bg="#007acc", fg="white", font=("bold",10), command=self.scan_mkt)
+        self.btn_gem = tk.Button(self.lf2, bg=C_ACCENT, fg="white", font=("Segoe UI", 10, "bold"), relief="flat", command=self.scan_mkt)
         self.btn_gem.pack(fill=tk.X, pady=5)
 
         cont = ttk.Frame(main); main.add(cont, weight=4)
-        
-        ctrl = ttk.LabelFrame(cont, text=" Analizar ", padding=5); ctrl.pack(fill=tk.X, padx=10, pady=5)
+        ctrl = ttk.LabelFrame(cont, text=" Control ", padding=5); ctrl.pack(fill=tk.X, padx=10, pady=5)
         ttk.Label(ctrl, text="TICKER:").pack(side=tk.LEFT)
         self.e_tk = ttk.Entry(ctrl, width=10); self.e_tk.pack(side=tk.LEFT, padx=5)
         self.e_tk.bind('<Return>', lambda e: self.run())
-        self.btn_run = tk.Button(ctrl, command=self.run, bg="#ddd"); self.btn_run.pack(side=tk.LEFT)
-        self.b_rst = tk.Button(ctrl, command=self.zoom_rst, state="disabled"); self.b_rst.pack(side=tk.LEFT, padx=5)
-        
+        self.btn_run = tk.Button(ctrl, command=self.run, bg="#eee", fg="black", relief="flat"); self.btn_run.pack(side=tk.LEFT)
+        self.b_rst = tk.Button(ctrl, command=self.zoom_rst, state="disabled", bg="#333", fg="white", relief="flat"); self.b_rst.pack(side=tk.LEFT, padx=5)
         self.lbl_buy = ttk.Label(ctrl); self.lbl_buy.pack(side=tk.LEFT)
         self.e_pr = ttk.Entry(ctrl, width=8); self.e_pr.pack(side=tk.LEFT)
         self.lbl_qty = ttk.Label(ctrl); self.lbl_qty.pack(side=tk.LEFT)
         self.e_qt = ttk.Entry(ctrl, width=8); self.e_qt.pack(side=tk.LEFT)
-        self.btn_clean = tk.Button(ctrl, text="🗑", command=self.limpiar_campos, bg="#ffcccc"); self.btn_clean.pack(side=tk.LEFT, padx=5)
-        
-        tk.Button(ctrl, text="🧮", command=self.abrir_calculadora, bg="#e6e6fa").pack(side=tk.LEFT, padx=2)
-
-        self.btn_conf = ttk.Button(ctrl, text="⚙️ CONFIG", command=self.abrir_config)
-        self.btn_conf.pack(side=tk.RIGHT, padx=5)
-        self.btn_refresh = tk.Button(ctrl, bg="purple", fg="white", font=("bold", 9), command=self.refresh_all)
-        self.btn_refresh.pack(side=tk.RIGHT, padx=5)
+        tk.Button(ctrl, text="🗑", command=self.limpiar_campos, bg="#333", fg="white", relief="flat").pack(side=tk.LEFT, padx=2)
+        tk.Button(ctrl, text="🧮", command=self.abrir_calculadora, bg="#333", fg="white", relief="flat").pack(side=tk.LEFT, padx=2)
+        self.btn_conf = tk.Button(ctrl, text="⚙️", bg="#333", fg="white", relief="flat", command=self.abrir_config); self.btn_conf.pack(side=tk.RIGHT, padx=5)
+        self.btn_refresh = tk.Button(ctrl, bg="#8a2be2", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", command=self.refresh_all); self.btn_refresh.pack(side=tk.RIGHT, padx=5)
 
         pan = ttk.PanedWindow(cont, orient=tk.HORIZONTAL); pan.pack(fill=tk.BOTH, expand=True, padx=10)
-        self.txt = tk.Text(pan, width=40, bg="#111", fg="#0f0", font=("Consolas", 10)); pan.add(self.txt, weight=1)
-        self.txt.tag_config("t", foreground="cyan", font=("bold",12))
-        self.txt.tag_config("p", foreground="#0f0"); self.txt.tag_config("n", foreground="#f44")
-        self.txt.tag_config("gold", foreground="gold"); self.txt.tag_config("w", foreground="white")
-        self.txt.tag_config("news_bull", foreground="#00ff00"); self.txt.tag_config("news_bear", foreground="#ff4444")
+        self.txt = tk.Text(pan, width=40, bg=C_PANEL, fg=C_FG, font=("Consolas", 10), borderwidth=0); pan.add(self.txt, weight=1)
+        self.txt.tag_config("t", foreground=C_ACCENT, font=("Consolas", 11, "bold"))
+        self.txt.tag_config("p", foreground=C_GREEN); self.txt.tag_config("n", foreground=C_RED)
+        self.txt.tag_config("gold", foreground=C_GOLD); self.txt.tag_config("w", foreground="white")
+        self.txt.tag_config("news_bull", foreground=C_GREEN); self.txt.tag_config("news_bear", foreground=C_RED)
         
         frg = ttk.Frame(pan)
-        self.fig = Figure(figsize=(5,5), dpi=100)
+        plt.style.use('dark_background')
+        self.fig = Figure(figsize=(5,5), dpi=100, facecolor=C_BG)
         self.cv = FigureCanvasTkAgg(self.fig, master=frg)
         self.tb = NavigationToolbar2Tk(self.cv, frg); self.tb.update()
         self.cv.get_tk_widget().pack(fill=tk.BOTH, expand=True)
@@ -431,81 +430,65 @@ class AppBolsa:
         self.update_ui_language()
         self.load_init()
 
-    # --- NUEVAS FUNCIONES DE CIERRE ---
     def vender_posicion(self):
         s = self.tr1.selection()
         if not s: return
         iid = int(s[0])
-        
-        # Buscar datos actuales en DB
         item = None
         for d in self.db.obtener_cartera(self.uid):
             if d[4] == iid: item = d; break
-        
-        if not item: return # Error
-        
-        # Pedir precio de venta
+        if not item: return
         precio_actual = 0
         try:
-            # Intentar obtener precio actual rápido
             data = yf.Ticker(item[0]).history(period='1d')
             if not data.empty: precio_actual = data['Close'].iloc[-1]
         except: pass
-        
         ask_price = simpledialog.askfloat(self.texts["msg_sell_title"], f"{self.texts['msg_sell_ask']} {item[0]}", initialvalue=precio_actual)
-        
         if ask_price is not None:
             self.db.cerrar_posicion(self.uid, iid, ask_price)
-            self.load_init()
-            self.scan_own() # Recalcular totales dashboard
+            self.load_init(); self.scan_own()
 
     def ver_historial(self):
-        hw = tk.Toplevel(self.root); hw.title(self.texts["hist_title"]); hw.geometry("500x400")
-        
+        hw = tk.Toplevel(self.root); hw.title(self.texts["hist_title"]); hw.geometry("600x400")
+        apply_dark_theme(hw)
         cols = ("Ticker", "Buy", "Sell", "P/L", "Date")
         trh = ttk.Treeview(hw, columns=cols, show="headings")
         for c in cols: trh.heading(c, text=c); trh.column(c, width=80, anchor="center")
-        trh.pack(fill=tk.BOTH, expand=True)
-        
+        trh.pack(fill=tk.BOTH, expand=True, pady=10, padx=10)
         total_pl = 0.0
         data = self.db.obtener_historial_completo(self.uid)
-        
         for d in data:
-            pl = d[3]
-            total_pl += pl
+            pl = d[3]; total_pl += pl
             tag = "win" if pl >= 0 else "loss"
             trh.insert("", "end", values=(d[0], f"{d[1]:.2f}", f"{d[2]:.2f}", f"{pl:+.2f}", d[4]), tags=(tag,))
-            
-        trh.tag_configure("win", foreground="green")
-        trh.tag_configure("loss", foreground="red")
-        
-        lbl_tot = ttk.Label(hw, text=f"{self.texts['hist_tot']} ${total_pl:+.2f}", font=("bold", 12))
-        if total_pl >= 0: lbl_tot.config(foreground="green")
-        else: lbl_tot.config(foreground="red")
+        trh.tag_configure("win", foreground=C_GREEN); trh.tag_configure("loss", foreground=C_RED)
+        lbl_tot = ttk.Label(hw, text=f"{self.texts['hist_tot']} ${total_pl:+.2f}", font=("Segoe UI", 12, "bold"))
+        if total_pl >= 0: lbl_tot.config(foreground=C_GREEN)
+        else: lbl_tot.config(foreground=C_RED)
         lbl_tot.pack(pady=10)
 
-    # --- CALCULADORA RIESGO ---
     def abrir_calculadora(self):
         cw = tk.Toplevel(self.root); cw.title(self.texts["calc_title"]); cw.geometry("250x350")
+        apply_dark_theme(cw)
         ttk.Label(cw, text=self.texts["calc_cap"]).pack(pady=2); e_cap = ttk.Entry(cw); e_cap.pack(); e_cap.insert(0, "10000") 
         ttk.Label(cw, text=self.texts["calc_risk"]).pack(pady=2); e_risk = ttk.Entry(cw); e_risk.pack(); e_risk.insert(0, "1") 
         ttk.Label(cw, text="Entry ($):").pack(pady=2); e_ent = ttk.Entry(cw); e_ent.pack()
         if self.e_pr.get(): e_ent.insert(0, self.e_pr.get())
         ttk.Label(cw, text=self.texts["calc_stop"]).pack(pady=2); e_stop = ttk.Entry(cw); e_stop.pack()
-        lbl_res = ttk.Label(cw, text="---", font=("bold", 12), foreground="blue"); lbl_res.pack(pady=10)
+        lbl_res = ttk.Label(cw, text="---", font=("bold", 12), foreground=C_ACCENT); lbl_res.pack(pady=10)
         def calcular():
             try:
                 cap = float(e_cap.get()); r_pct = float(e_risk.get()); ent = float(e_ent.get()); stop = float(e_stop.get())
-                if ent <= stop: lbl_res.config(text="Entry <= Stop!", foreground="red"); return
+                if ent <= stop: lbl_res.config(text="Entry <= Stop!", foreground=C_RED); return
                 risk_amt = cap * (r_pct/100); diff = ent - stop; qty = int(risk_amt / diff)
-                lbl_res.config(text=f"{qty} Shares", foreground="green"); return qty
-            except: lbl_res.config(text="Error", foreground="red")
+                lbl_res.config(text=f"{qty} Shares", foreground=C_GREEN); return qty
+            except: lbl_res.config(text="Error", foreground=C_RED)
         def aplicar():
             qty = calcular()
             if qty and qty > 0:
                 self.e_qt.delete(0, tk.END); self.e_qt.insert(0, str(qty)); self.e_pr.delete(0, tk.END); self.e_pr.insert(0, e_ent.get()); cw.destroy()
-        tk.Button(cw, text=self.texts["calc_btn"], command=calcular).pack(fill=tk.X, padx=20, pady=2)
-        tk.Button(cw, text=self.texts["calc_apply"], command=aplicar, bg="#90ee90").pack(fill=tk.X, padx=20, pady=5)
+        tk.Button(cw, text=self.texts["calc_btn"], command=calcular, bg="#333", fg="white", relief="flat").pack(fill=tk.X, padx=20, pady=2)
+        tk.Button(cw, text=self.texts["calc_apply"], command=aplicar, bg=C_GREEN, fg="black", relief="flat").pack(fill=tk.X, padx=20, pady=5)
 
     def exportar_cartera(self):
         datos = self.db.obtener_cartera(self.uid)
@@ -520,6 +503,7 @@ class AppBolsa:
 
     def abrir_config(self):
         cw = tk.Toplevel(self.root); cw.title(self.texts["conf_title"]); cw.geometry("300x300")
+        apply_dark_theme(cw)
         ttk.Label(cw, text=self.texts["conf_lang"], font=("bold", 10)).pack(pady=10)
         cb = ttk.Combobox(cw, values=["ES", "EN", "FR", "PT"], state="readonly")
         cb.set(self.current_lang); cb.pack(pady=5)
@@ -527,8 +511,8 @@ class AppBolsa:
         cb.bind("<<ComboboxSelected>>", change_lang)
         ttk.Separator(cw, orient='horizontal').pack(fill='x', pady=20)
         def realizar_logout(): cw.destroy(); self.logout()
-        tk.Button(cw, text=self.texts["conf_logout"], bg="#555", fg="white", font=("bold", 10), command=realizar_logout).pack(pady=5, fill=tk.X, padx=20)
-        tk.Button(cw, text=self.texts["conf_del"], bg="red", fg="white", font=("bold", 10), command=self.borrar_cuenta).pack(pady=5, fill=tk.X, padx=20)
+        tk.Button(cw, text=self.texts["conf_logout"], bg="#333", fg="white", font=("bold", 10), relief="flat", command=realizar_logout).pack(pady=5, fill=tk.X, padx=20)
+        tk.Button(cw, text=self.texts["conf_del"], bg="#800000", fg="white", font=("bold", 10), relief="flat", command=self.borrar_cuenta).pack(pady=5, fill=tk.X, padx=20)
 
     def update_ui_language(self):
         t = self.texts; self.root.title(f"{t['app_title']} - {self.uid}")
@@ -579,7 +563,7 @@ class AppBolsa:
     def update_dashboard_ui(self, inv, val):
         pl = val - inv
         pl_pct = (pl / inv * 100) if inv > 0 else 0.0
-        color = "green" if pl >= 0 else "red"
+        color = C_GREEN if pl >= 0 else C_RED
         self.lbl_invested.config(text=f"{self.texts['dash_inv']} ${inv:,.2f}")
         self.lbl_current.config(text=f"{self.texts['dash_val']} ${val:,.2f}")
         self.lbl_pl.config(text=f"{self.texts['dash_pl']} ${pl:,.2f} ({pl_pct:+.2f}%)", foreground=color)
@@ -640,9 +624,9 @@ class AppBolsa:
             self.fig.subplots_adjust(left=0.1, right=0.95, top=0.92, bottom=0.15, hspace=0.15)
             
             d = df.tail(150)
-            ax1.plot(d.index, d['Close'], color='#333', linewidth=1.2, label='Precio')
+            ax1.plot(d.index, d['Close'], color='white', linewidth=1.2, label='Precio') # BLANCO PARA CONTRASTE
             ax1.plot(d.index, d['SMA_50'], color='orange', linestyle='--', linewidth=1, label='SMA 50')
-            ax1.plot(d.index, d['SMA_200'], color='purple', linewidth=1.5, label='SMA 200')
+            ax1.plot(d.index, d['SMA_200'], color='cyan', linewidth=1.5, label='SMA 200') # CYAN PARA OSCURO
             
             if spy is not None:
                 d_spy = spy.tail(150)
@@ -650,24 +634,30 @@ class AppBolsa:
                 ax1b.plot(d_spy.index, d_spy['Close'], color='gray', alpha=0.3, linewidth=3, label='SPY (Ref)')
                 ax1b.set_yticks([]) 
             
-            if pos: ax1.axhline(pp, color='blue', linewidth=1.5, label='Entry')
-            ax1.set_title(f"{tkr} (D) - {fund['sec']} / {fund['ind']}", fontsize=10); ax1.legend(fontsize=8); ax1.grid(True, alpha=0.2)
+            if pos: ax1.axhline(pp, color=C_ACCENT, linewidth=1.5, label='Entry')
+            ax1.set_title(f"{tkr} (D) - {fund['sec']} / {fund['ind']}", fontsize=10, color="white"); 
+            ax1.legend(fontsize=8, facecolor=C_BG, edgecolor="white", labelcolor="white")
+            ax1.grid(True, alpha=0.1, color="white")
+            ax1.tick_params(colors='white')
             
-            ax2.plot(d.index, d['CRSI'], color='#007acc', linewidth=1.2)
-            ax2.axhline(80, color='red', linestyle=':', alpha=0.5); ax2.axhline(20, color='green', linestyle=':', alpha=0.5)
-            ax2.set_ylabel("CRSI", fontsize=8); ax2.set_ylim(-5, 105); ax2.grid(True, alpha=0.2)
+            ax2.plot(d.index, d['CRSI'], color=C_ACCENT, linewidth=1.2)
+            ax2.axhline(80, color=C_RED, linestyle=':', alpha=0.5); ax2.axhline(20, color=C_GREEN, linestyle=':', alpha=0.5)
+            ax2.set_ylabel("CRSI", fontsize=8, color="white"); ax2.set_ylim(-5, 105); ax2.grid(True, alpha=0.1, color="white")
+            ax2.tick_params(colors='white')
             
-            cl = np.where(d['Vol_Osc']>0, 'green', 'red')
+            cl = np.where(d['Vol_Osc']>0, C_GREEN, C_RED)
             ax3.bar(d.index, d['Vol_Osc'], color=cl, width=0.8, alpha=0.7)
-            ax3.axhline(0, color='black', linewidth=0.5); ax3.set_ylabel("Vol%", fontsize=8); ax3.grid(True, alpha=0.2)
+            ax3.axhline(0, color='white', linewidth=0.5); ax3.set_ylabel("Vol%", fontsize=8, color="white"); ax3.grid(True, alpha=0.1, color="white")
             ax1.tick_params(axis='x', labelbottom=False); ax2.tick_params(axis='x', labelbottom=False)
+            ax3.tick_params(colors='white')
             
             self.cv.draw(); self.b_rst.config(state="normal")
             
             self.txt.delete(1.0, tk.END); self.txt.insert(tk.END, f"{tkr} - ${d['Close'].iloc[-1]:.2f}\n", "t")
             if pos:
                 pl = (d['Close'].iloc[-1]*qq)-(pp*qq); pc = (pl/(pp*qq))*100
-                self.txt.insert(tk.END, f"P&L: {pl:+.2f} ({pc:+.2f}%)\n", "p" if pl>=0 else "n")
+                tag = "p" if pl>=0 else "n"
+                self.txt.insert(tk.END, f"P&L: {pl:+.2f} ({pc:+.2f}%)\n", tag)
             
             self.txt.insert(tk.END, f"\n{self.texts['bench_title']}\n", "gold")
             b_col = "news_bull" if bench_stats['rel_perf'] > 0 else "news_bear"
