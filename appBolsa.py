@@ -10,6 +10,7 @@ import sqlite3
 import hashlib
 import threading
 import matplotlib.pyplot as plt
+import os # Para gestión de carpetas del reporte
 from sklearn.ensemble import RandomForestClassifier
 
 # ==========================================
@@ -20,7 +21,7 @@ ETORO_ROUND_TRIP = 2.0
 
 LANG = {
     "ES": {
-        "app_title": "Gestor Pro v21.1 (UI Fix)",
+        "app_title": "Gestor Pro v22.0 (Macro & Journal)",
         "port_title": "📂 MI CARTERA & VIGILANCIA",
         "opp_title": "💎 OPORTUNIDADES & OBJETIVOS",
         "scan_own": "⚡ ACTUALIZAR",
@@ -30,6 +31,7 @@ LANG = {
         "viz_btn": "📊 VIZ",
         "stats_btn": "📈 STATS",
         "risk_btn": "🔥 RIESGO",
+        "snap_btn": "📷 SNAPSHOT",
         "hist": "📜 HIST",
         "exp": "📄 EXP",
         "scan_mkt": "🔍 ESCANEAR",
@@ -46,6 +48,7 @@ LANG = {
         "msg_wait": "⏳...",
         "msg_scan": "⏳ ANALIZANDO...",
         "msg_exp_ok": "✅ Guardado.",
+        "msg_snap_ok": "✅ Reporte guardado en carpeta 'Reports'.",
         "msg_sell_title": "Cerrar Posición (eToro)",
         "msg_sell_ask": "Precio de Venta ($):",
         "msg_del_confirm": "¿Seguro? Se borrará de la lista sin guardar en historial.",
@@ -81,15 +84,18 @@ LANG = {
         "calc_cap": "Capital Total ($):",
         "calc_risk": "Riesgo Máx (%):",
         "calc_stop": "Stop Loss ($):",
-        "calc_btn": "CALCULATE",
-        "calc_res": "Acciones:",
+        "calc_btn": "CALCULAR",
+        "calc_res": "Acciones a Comprar:",
         "calc_apply": "APLICAR",
         "dash_inv": "Invertido:",
         "dash_val": "Valor Actual:",
         "dash_pl": "Neto P/L (eToro):",
+        "macro_fear": "😨 MIEDO (VIX Alto)",
+        "macro_greed": "🤑 CODICIA (Tendencia Alcista)",
+        "macro_neutral": "😐 NEUTRO",
         "login_title": "ACCESO", "user": "Usuario:", "pass": "Clave:", "btn_enter": "ENTRAR", "btn_reg": "REGISTRO", "err_login": "Error", "ok_reg": "OK", "err_reg": "Existe"
     },
-    "EN": { "app_title": "Pro Manager v21.1", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "💾", "sell": "💰 SELL", "del_btn": "🗑", "viz_btn": "📊 VIZ", "stats_btn": "📈 STATS", "risk_btn": "🔥 RISK", "hist": "📜 HIST", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis / Target", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "msg_del_confirm": "Delete?", "hist_title": "Trade History", "hist_tot": "Total Net P/L:", "viz_title": "Portfolio Allocation", "stats_title": "Performance Audit", "risk_title": "Correlation Matrix", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "graham_title": "💎 INTRINSIC VALUE (Graham):", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Prob:", "tech_title": "📐 TECH & STOP LOSS:", "tech_sup": "Support:", "tech_res": "Resistance:", "tech_sl": "Suggested Stop:", "trend_wk": "Weekly Trend:", "target_title": "🎯 TARGET PRICE:", "news_title": "📰 NEWS:", "calc_title": "Risk Calc", "calc_cap": "Capital:", "calc_risk": "Risk %:", "calc_stop": "Stop Loss:", "calc_btn": "CALCULATE", "calc_res": "Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Value:", "dash_pl": "Net P/L (eToro):", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Error", "ok_reg": "OK", "err_reg": "Exists" },
+    "EN": { "app_title": "Pro Manager v22.0", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "💾", "sell": "💰 SELL", "del_btn": "🗑", "viz_btn": "📊 VIZ", "stats_btn": "📈 STATS", "risk_btn": "🔥 RISK", "snap_btn": "📷 SNAPSHOT", "hist": "📜 HIST", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis / Target", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_snap_ok": "✅ Report saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "msg_del_confirm": "Delete?", "hist_title": "Trade History", "hist_tot": "Total Net P/L:", "viz_title": "Portfolio Allocation", "stats_title": "Performance Audit", "risk_title": "Correlation Matrix", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "graham_title": "💎 INTRINSIC VALUE (Graham):", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Prob:", "tech_title": "📐 TECH & STOP LOSS:", "tech_sup": "Support:", "tech_res": "Resistance:", "tech_sl": "Suggested Stop:", "trend_wk": "Weekly Trend:", "target_title": "🎯 TARGET PRICE:", "news_title": "📰 NEWS:", "calc_title": "Risk Calc", "calc_cap": "Capital:", "calc_risk": "Risk %:", "calc_stop": "Stop Loss:", "calc_btn": "CALCULATE", "calc_res": "Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Value:", "dash_pl": "Net P/L (eToro):", "macro_fear": "😨 FEAR (High VIX)", "macro_greed": "🤑 GREED (Bull Trend)", "macro_neutral": "😐 NEUTRAL", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Error", "ok_reg": "OK", "err_reg": "Exists" },
 }
 if "FR" not in LANG: LANG["FR"] = LANG["EN"]
 if "PT" not in LANG: LANG["PT"] = LANG["EN"]
@@ -107,7 +113,7 @@ C_PANEL = "#252526"; C_GREEN = "#4ec9b0"; C_RED = "#f44747"; C_GOLD = "#ffd700";
 # 1. BASE DE DATOS
 # ==========================================
 class DatabaseManager:
-    def __init__(self, db_name="bolsa_datos_v21.db"):
+    def __init__(self, db_name="bolsa_datos_v22.db"):
         self.conn = sqlite3.connect(db_name, check_same_thread=False)
         self.crear_tablas()
 
@@ -185,6 +191,23 @@ class AnalistaBolsa:
             self.data_weekly = w.astype(float)
             return d
         except: raise ValueError("Error descarga")
+
+    # --- NUEVO: ANALISIS MACRO (MARKET MOOD) ---
+    def obtener_sentimiento_mercado(self):
+        try:
+            # Obtener VIX (^VIX) y SPY
+            vix = yf.Ticker("^VIX").history(period="1d")['Close'].iloc[-1]
+            spy = yf.Ticker("SPY").history(period="6mo")['Close']
+            
+            # Tendencia SPY
+            sma50 = spy.rolling(50).mean().iloc[-1]
+            price_spy = spy.iloc[-1]
+            
+            # Logica de Sentimiento
+            if vix > 25: return "FEAR", vix
+            elif vix < 15 and price_spy > sma50: return "GREED", vix
+            else: return "NEUTRAL", vix
+        except: return "NEUTRAL", 0
 
     def calcular_valor_graham(self, ticker):
         try:
@@ -396,7 +419,7 @@ def apply_dark_theme(root):
 class LoginWindow:
     def __init__(self, root, db, on_success):
         self.root = root; self.db = db; self.on_success = on_success
-        self.win = tk.Toplevel(root); self.win.title("Acceso v21.1"); self.win.geometry("350x300")
+        self.win = tk.Toplevel(root); self.win.title("Acceso v22.0"); self.win.geometry("350x300")
         apply_dark_theme(self.win)
         self.texts = LANG["ES"]
         ttk.Label(self.win, text=self.texts["login_title"], font=("Segoe UI", 16, "bold"), foreground=C_ACCENT).pack(pady=30)
@@ -430,49 +453,38 @@ class AppBolsa:
         apply_dark_theme(root)
         
         main = ttk.PanedWindow(root, orient=tk.HORIZONTAL); main.pack(fill=tk.BOTH, expand=True)
-        # --- ANCHO PANEL 550PX PARA QUE QUEPAN BOTONES ---
         side = ttk.Frame(main, width=550, relief=tk.FLAT); main.add(side, weight=1)
         self.lf1 = ttk.LabelFrame(side, padding=5); self.lf1.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
         
-        # 1. DASHBOARD SUPERIOR
+        # --- NUEVO: BARRA DE SENTIMIENTO DE MERCADO SUPERIOR ---
+        self.mood_frame = ttk.Frame(self.lf1); self.mood_frame.pack(fill=tk.X, padx=5, pady=2, side=tk.TOP)
+        self.lbl_mood = ttk.Label(self.mood_frame, text="MERCADO: ⏳ Cargando...", font=("Segoe UI", 10, "bold"), foreground="gray")
+        self.lbl_mood.pack(anchor="center")
+        
+        # DASHBOARD
         self.dash_frame = ttk.Frame(self.lf1); self.dash_frame.pack(fill=tk.X, padx=5, pady=5, side=tk.TOP)
         self.lbl_invested = ttk.Label(self.dash_frame, text="---", font=("Segoe UI", 10)); self.lbl_invested.pack(anchor="w")
         self.lbl_current = ttk.Label(self.dash_frame, text="---", font=("Segoe UI", 10)); self.lbl_current.pack(anchor="w")
         self.lbl_pl = ttk.Label(self.dash_frame, text="---", font=("Segoe UI", 10)); self.lbl_pl.pack(anchor="w")
 
-        # 2. BOTONES AL FONDO (PARA QUE NO DESAPAREZCAN)
+        # BOTONES
         f_controls = ttk.Frame(self.lf1); f_controls.pack(side=tk.BOTTOM, fill=tk.X, pady=5)
+        self.btn_act = tk.Button(f_controls, text=self.texts["scan_own"], bg=C_ACCENT, fg="white", relief="flat", command=self.scan_own); self.btn_act.pack(fill=tk.X, pady=2)
         
-        # Fila 1: Actualizar
-        self.btn_act = tk.Button(f_controls, text=self.texts["scan_own"], bg=C_ACCENT, fg="white", relief="flat", command=self.scan_own)
-        self.btn_act.pack(fill=tk.X, pady=2)
-        
-        # Fila 2: Gestion (Save, Sell, Del)
         f_row2 = ttk.Frame(f_controls); f_row2.pack(fill=tk.X, pady=1)
-        self.btn_save = tk.Button(f_row2, text=self.texts["save"], bg="#333", fg="white", relief="flat", command=self.save)
-        self.btn_save.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.btn_sell = tk.Button(f_row2, text=self.texts["sell"], bg="#800000", fg="white", relief="flat", command=self.vender_posicion)
-        self.btn_sell.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.btn_del = tk.Button(f_row2, text=self.texts["del_btn"], bg="#333", fg="#999", relief="flat", command=self.dele)
-        self.btn_del.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_save = tk.Button(f_row2, text=self.texts["save"], bg="#333", fg="white", relief="flat", command=self.save); self.btn_save.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_sell = tk.Button(f_row2, text=self.texts["sell"], bg="#800000", fg="white", relief="flat", command=self.vender_posicion); self.btn_sell.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_del = tk.Button(f_row2, text=self.texts["del_btn"], bg="#333", fg="#999", relief="flat", command=self.dele); self.btn_del.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
         
-        # Fila 3: Analisis (Hist, Stats, Risk)
         f_row3 = ttk.Frame(f_controls); f_row3.pack(fill=tk.X, pady=1)
-        self.btn_hist = tk.Button(f_row3, text=self.texts["hist"], bg="#333", fg="white", relief="flat", command=self.ver_historial)
-        self.btn_hist.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.btn_stats = tk.Button(f_row3, text=self.texts["stats_btn"], bg="#2e8b57", fg="white", relief="flat", command=self.ver_estadisticas)
-        self.btn_stats.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.btn_risk = tk.Button(f_row3, text=self.texts["risk_btn"], bg=C_ORANGE, fg="white", relief="flat", command=self.ver_correlaciones)
-        self.btn_risk.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_hist = tk.Button(f_row3, text=self.texts["hist"], bg="#333", fg="white", relief="flat", command=self.ver_historial); self.btn_hist.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_stats = tk.Button(f_row3, text=self.texts["stats_btn"], bg="#2e8b57", fg="white", relief="flat", command=self.ver_estadisticas); self.btn_stats.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_risk = tk.Button(f_row3, text=self.texts["risk_btn"], bg=C_ORANGE, fg="white", relief="flat", command=self.ver_correlaciones); self.btn_risk.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
         
-        # Fila 4: Extras (Viz, Exp)
         f_row4 = ttk.Frame(f_controls); f_row4.pack(fill=tk.X, pady=1)
-        self.btn_viz = tk.Button(f_row4, text=self.texts["viz_btn"], bg=C_PURPLE, fg="white", relief="flat", command=self.ver_distribucion)
-        self.btn_viz.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.btn_exp = tk.Button(f_row4, text=self.texts["exp"], bg="#333", fg="white", relief="flat", command=self.exportar_cartera)
-        self.btn_exp.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_viz = tk.Button(f_row4, text=self.texts["viz_btn"], bg=C_PURPLE, fg="white", relief="flat", command=self.ver_distribucion); self.btn_viz.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_exp = tk.Button(f_row4, text=self.texts["exp"], bg="#333", fg="white", relief="flat", command=self.exportar_cartera); self.btn_exp.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
 
-        # 3. LISTA DE CARTERA (OCUPA EL RESTO DEL ESPACIO)
         cols = ("tk", "pr", "sg")
         self.tr1 = ttk.Treeview(self.lf1, columns=cols, show="headings", height=10)
         for c in cols: self.tr1.column(c, anchor="center", stretch=True)
@@ -502,6 +514,10 @@ class AppBolsa:
         self.e_qt = ttk.Entry(ctrl, width=8); self.e_qt.pack(side=tk.LEFT)
         tk.Button(ctrl, text="🗑", command=self.limpiar_campos, bg="#333", fg="white", relief="flat").pack(side=tk.LEFT, padx=2)
         tk.Button(ctrl, text="🧮", command=self.abrir_calculadora, bg="#333", fg="white", relief="flat").pack(side=tk.LEFT, padx=2)
+        
+        # --- NUEVO BOTON SNAPSHOT ---
+        self.btn_snap = tk.Button(ctrl, text=self.texts["snap_btn"], bg="teal", fg="white", relief="flat", command=self.generar_reporte); self.btn_snap.pack(side=tk.LEFT, padx=5)
+
         self.btn_conf = tk.Button(ctrl, text="⚙️", bg="#333", fg="white", relief="flat", command=self.abrir_config); self.btn_conf.pack(side=tk.RIGHT, padx=5)
         self.btn_refresh = tk.Button(ctrl, text=self.texts["refresh_all"], bg="#8a2be2", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", command=self.refresh_all); self.btn_refresh.pack(side=tk.RIGHT, padx=5)
 
@@ -523,7 +539,51 @@ class AppBolsa:
         
         self.update_ui_language()
         self.load_init()
+        # Iniciar chequeo de mood en segundo plano
+        threading.Thread(target=self.actualizar_mood, daemon=True).start()
 
+    # --- NUEVAS FUNCIONES v22.0 ---
+    def actualizar_mood(self):
+        mood, vix = self.eng.obtener_sentimiento_mercado()
+        txt = ""
+        col = "gray"
+        if mood == "FEAR": 
+            txt = f"{self.texts['macro_fear']} (VIX {vix:.2f})"
+            col = C_RED
+        elif mood == "GREED": 
+            txt = f"{self.texts['macro_greed']} (VIX {vix:.2f})"
+            col = C_GREEN
+        else:
+            txt = f"{self.texts['macro_neutral']} (VIX {vix:.2f})"
+            col = C_GOLD
+        
+        self.lbl_mood.config(text=f"MERCADO: {txt}", foreground=col)
+
+    def generar_reporte(self):
+        tkr = self.e_tk.get()
+        if not tkr: return
+        
+        # Crear carpeta Reports si no existe
+        if not os.path.exists("Reports"): os.makedirs("Reports")
+        
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M")
+        fname = f"Reports/{tkr}_{timestamp}"
+        
+        # 1. Guardar Grafico
+        try:
+            self.fig.savefig(f"{fname}.png")
+        except: pass
+        
+        # 2. Guardar Texto
+        try:
+            content = self.txt.get("1.0", tk.END)
+            with open(f"{fname}.txt", "w", encoding="utf-8") as f:
+                f.write(content)
+            messagebox.showinfo("Snapshot", self.texts["msg_snap_ok"])
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+
+    # --- FUNCIONES EXISTENTES ---
     def vender_posicion(self):
         s = self.tr1.selection()
         if not s: return
@@ -567,34 +627,6 @@ class AppBolsa:
         else: lbl_tot.config(foreground=C_RED)
         lbl_tot.pack(pady=10)
 
-    def ver_correlaciones(self):
-        db_data = self.db.obtener_cartera(self.uid)
-        if not db_data or len(db_data) < 2: 
-            messagebox.showinfo("Info", "Necesitas al menos 2 acciones en cartera.")
-            return
-        
-        tickers = [row[0] for row in db_data]
-        try:
-            data = yf.download(tickers, period="6mo")['Close']
-            corr_matrix = data.corr()
-            
-            cw = tk.Toplevel(self.root); cw.title(self.texts["risk_title"]); cw.geometry("600x600")
-            apply_dark_theme(cw)
-            
-            fig = Figure(figsize=(6,6), dpi=100, facecolor=C_BG)
-            ax = fig.add_subplot(111)
-            cax = ax.matshow(corr_matrix, cmap='RdYlGn_r') 
-            fig.colorbar(cax)
-            
-            ax.set_xticks(range(len(tickers))); ax.set_yticks(range(len(tickers)))
-            ax.set_xticklabels(tickers, rotation=90, color="white"); ax.set_yticklabels(tickers, color="white")
-            ax.set_title(self.texts["risk_title"], color="white", pad=20)
-            
-            cv = FigureCanvasTkAgg(fig, master=cw)
-            cv.get_tk_widget().pack(fill=tk.BOTH, expand=True)
-        except Exception as e:
-            messagebox.showerror("Error", str(e))
-
     def ver_estadisticas(self):
         data = self.db.obtener_historial_completo(self.uid)
         if not data: return
@@ -627,6 +659,29 @@ class AppBolsa:
         ax.grid(True, alpha=0.1); ax.tick_params(colors='white')
         cv = FigureCanvasTkAgg(fig, master=sw)
         cv.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
+    def ver_correlaciones(self):
+        db_data = self.db.obtener_cartera(self.uid)
+        if not db_data or len(db_data) < 2: 
+            messagebox.showinfo("Info", "Necesitas al menos 2 acciones en cartera.")
+            return
+        tickers = [row[0] for row in db_data]
+        try:
+            data = yf.download(tickers, period="6mo")['Close']
+            corr_matrix = data.corr()
+            cw = tk.Toplevel(self.root); cw.title(self.texts["risk_title"]); cw.geometry("600x600")
+            apply_dark_theme(cw)
+            fig = Figure(figsize=(6,6), dpi=100, facecolor=C_BG)
+            ax = fig.add_subplot(111)
+            cax = ax.matshow(corr_matrix, cmap='RdYlGn_r') 
+            fig.colorbar(cax)
+            ax.set_xticks(range(len(tickers))); ax.set_yticks(range(len(tickers)))
+            ax.set_xticklabels(tickers, rotation=90, color="white"); ax.set_yticklabels(tickers, color="white")
+            ax.set_title(self.texts["risk_title"], color="white", pad=20)
+            cv = FigureCanvasTkAgg(fig, master=cw)
+            cv.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
 
     def ver_distribucion(self):
         db_data = self.db.obtener_cartera(self.uid)
@@ -698,7 +753,7 @@ class AppBolsa:
         self.btn_gem.config(text=t["scan_mkt"]); self.btn_run.config(text=t["analyze"]); self.b_rst.config(text=t["reset_zoom"])
         self.lbl_buy.config(text=t["buy_price"]); self.lbl_qty.config(text=t["qty"]); self.btn_refresh.config(text=t["refresh_all"])
         self.lbl_invested.config(text=f"{t['dash_inv']} ---"); self.lbl_current.config(text=f"{t['dash_val']} ---"); self.lbl_pl.config(text=f"{t['dash_pl']} ---")
-        self.btn_viz.config(text=t["viz_btn"]); self.btn_stats.config(text=t["stats_btn"]); self.btn_risk.config(text=t["risk_btn"])
+        self.btn_viz.config(text=t["viz_btn"]); self.btn_stats.config(text=t["stats_btn"]); self.btn_risk.config(text=t["risk_btn"]); self.btn_snap.config(text=t["snap_btn"])
         self.load_init()
 
     def logout(self):
@@ -839,6 +894,7 @@ class AppBolsa:
             
             self.txt.delete(1.0, tk.END); self.txt.insert(tk.END, f"{tkr} - ${d['Close'].iloc[-1]:.2f}\n", "t")
             if pos:
+                # --- CALCULO P/L VISUAL (ANALYSIS) CON FEES ---
                 gross_pl = (d['Close'].iloc[-1]*qq) - (pp*qq)
                 net_pl = gross_pl - ETORO_ROUND_TRIP
                 pc = (net_pl/(pp*qq))*100
