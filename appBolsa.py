@@ -17,12 +17,13 @@ from sklearn.ensemble import RandomForestClassifier
 # ==========================================
 LANG = {
     "ES": {
-        "app_title": "Gestor Pro v16.1 (Math Fix)",
-        "port_title": "📂 MI CARTERA",
+        "app_title": "Gestor Pro v17.1 (Clean UI)",
+        "port_title": "📂 MI CARTERA & VIGILANCIA",
         "opp_title": "💎 OPORTUNIDADES",
         "scan_own": "⚡ ACTUALIZAR",
-        "save": "GUARDAR",
+        "save": "💾 GUARDAR",
         "sell": "💰 VENDER",
+        "del_btn": "🗑 OLVIDAR",
         "hist": "📜 HISTORIAL",
         "exp": "📄 EXP",
         "scan_mkt": "🔍 ESCANEAR",
@@ -41,6 +42,7 @@ LANG = {
         "msg_exp_ok": "✅ Guardado.",
         "msg_sell_title": "Cerrar Posición",
         "msg_sell_ask": "Precio de Venta ($):",
+        "msg_del_confirm": "¿Seguro? Se borrará de la lista sin guardar en historial.",
         "hist_title": "Historial de Operaciones",
         "hist_tot": "P/L Total Realizado:",
         "conf_title": "Configuración",
@@ -58,6 +60,9 @@ LANG = {
         "bench_rel": "Rendimiento Relativo:",
         "ai_title": "🤖 PREDICCIÓN IA (Random Forest):",
         "ai_prob": "Probabilidad Subida:",
+        "tech_title": "📐 TECH EXTRA:",
+        "tech_sup": "Soporte Detectado:",
+        "tech_res": "Resistencia Detectada:",
         "news_title": "📰 NOTICIAS & SENTIMIENTO:",
         "calc_title": "Calculadora Riesgo",
         "calc_cap": "Capital Total ($):",
@@ -71,7 +76,7 @@ LANG = {
         "dash_pl": "Total P/L:",
         "login_title": "ACCESO", "user": "Usuario:", "pass": "Clave:", "btn_enter": "ENTRAR", "btn_reg": "REGISTRO", "err_login": "Error", "ok_reg": "OK", "err_reg": "Existe"
     },
-    "EN": { "app_title": "Pro Manager v16.1", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "SAVE", "sell": "💰 SELL", "hist": "📜 HISTORY", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "hist_title": "Trade History", "hist_tot": "Total Realized P/L:", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Probability:", "news_title": "📰 NEWS & SENTIMENT:", "calc_title": "Risk Calculator", "calc_cap": "Total Capital ($):", "calc_risk": "Max Risk (%):", "calc_stop": "Stop Loss ($):", "calc_btn": "CALCULATE", "calc_res": "Shares to Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Cur. Value:", "dash_pl": "Total P/L:", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Invalid", "ok_reg": "OK", "err_reg": "Exists" },
+    "EN": { "app_title": "Pro Manager v17.1", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "💾 SAVE", "sell": "💰 SELL", "del_btn": "🗑 FORGET", "hist": "📜 HISTORY", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "msg_del_confirm": "Delete from list? No history saved.", "hist_title": "Trade History", "hist_tot": "Total Realized P/L:", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Probability:", "tech_title": "📐 TECH EXTRA:", "tech_sup": "Support:", "tech_res": "Resistance:", "news_title": "📰 NEWS & SENTIMENT:", "calc_title": "Risk Calculator", "calc_cap": "Total Capital ($):", "calc_risk": "Max Risk (%):", "calc_stop": "Stop Loss ($):", "calc_btn": "CALCULATE", "calc_res": "Shares to Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Cur. Value:", "dash_pl": "Total P/L:", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Invalid", "ok_reg": "OK", "err_reg": "Exists" },
 }
 if "FR" not in LANG: LANG["FR"] = LANG["EN"]
 if "PT" not in LANG: LANG["PT"] = LANG["EN"]
@@ -95,7 +100,7 @@ C_GOLD = "#ffd700"
 # 1. BASE DE DATOS
 # ==========================================
 class DatabaseManager:
-    def __init__(self, db_name="bolsa_datos_v16.db"):
+    def __init__(self, db_name="bolsa_datos_v17.db"):
         self.conn = sqlite3.connect(db_name, check_same_thread=False)
         self.crear_tablas()
 
@@ -156,7 +161,7 @@ class DatabaseManager:
         self.conn.commit()
 
 # ==========================================
-# 2. MOTOR ANALÍTICO (CORREGIDO)
+# 2. MOTOR ANALÍTICO
 # ==========================================
 class AnalistaBolsa:
     def __init__(self):
@@ -172,52 +177,92 @@ class AnalistaBolsa:
             return d
         except: raise ValueError("Error descarga")
 
-    # --- CORRECCIÓN: DIVIDENDOS BLINDADOS ---
     def obtener_fundamentales(self, ticker):
         try:
             t = yf.Ticker(ticker); i = t.info
             per = i.get('trailingPE', i.get('forwardPE', 0))
             cap = i.get('marketCap', 0)
-            
-            # Lógica robusta para dividendos
-            div = i.get('dividendYield')
+            div = i.get('dividendYield'); 
             if div is None: div = i.get('trailingAnnualDividendYield')
             if div is None: div = 0
             
             sec = i.get('sector', 'N/A'); ind = i.get('industry', 'N/A')
-            
             if cap > 1e12: s_cap = f"{cap/1e12:.2f}T"
             elif cap > 1e9: s_cap = f"{cap/1e9:.2f}B"
-            elif cap > 1e6: s_cap = f"{cap/1e6:.2f}M"
             else: s_cap = str(cap)
-            
             return {"per": f"{per:.2f}" if per else "N/A", "cap": s_cap, "div": f"{div*100:.2f}%", "sec": sec, "ind": ind, "valid": True}
         except: return {"per": "-", "cap": "-", "div": "0%", "sec": "-", "ind": "-", "valid": False}
+
+    def calcular_indicadores(self):
+        if self.data is None or self.data.empty: return self.data
+        for col in ['ADX', 'Vol_Osc', 'CRSI', 'SMA_50', 'SMA_200', 'MACD', 'UpperBB', 'LowerBB']: self.data[col] = 0.0
+        
+        df = self.data.copy()
+        df['SMA_50'] = df['Close'].rolling(50).mean()
+        df['SMA_200'] = df['Close'].rolling(200).mean()
+        
+        df['SMA_20'] = df['Close'].rolling(20).mean()
+        df['StdDev'] = df['Close'].rolling(20).std()
+        df['UpperBB'] = df['SMA_20'] + (df['StdDev'] * 2)
+        df['LowerBB'] = df['SMA_20'] - (df['StdDev'] * 2)
+        
+        exp12 = df['Close'].ewm(span=12, adjust=False).mean()
+        exp26 = df['Close'].ewm(span=26, adjust=False).mean()
+        df['MACD'] = exp12 - exp26
+        
+        df['Prev'] = df['Close'].shift(1)
+        df['TR'] = np.maximum(df['High']-df['Low'], np.maximum(abs(df['High']-df['Prev']), abs(df['Low']-df['Prev'])))
+        tr14 = df['TR'].ewm(alpha=1/14).mean()
+        up = df['High'] - df['High'].shift(1); down = df['Low'].shift(1) - df['Low']
+        pdm = np.where((up>down)&(up>0), up, 0.0); mdm = np.where((down>up)&(down>0), down, 0.0)
+        with np.errstate(all='ignore'):
+            pdi = 100*(pd.Series(pdm, index=df.index).ewm(alpha=1/14).mean()/tr14)
+            mdi = 100*(pd.Series(mdm, index=df.index).ewm(alpha=1/14).mean()/tr14)
+            df['ADX'] = (100*abs(pdi-mdi)/(pdi+mdi)).ewm(alpha=1/14).mean()
+        
+        vol_ma = df['Volume'].rolling(10).mean().replace(0, np.nan)
+        df['Vol_Osc'] = ((df['Volume'].rolling(5).mean()-vol_ma)/vol_ma)*100
+        
+        delta = df['Close'].diff()
+        gain = (delta.where(delta > 0, 0)).rolling(3).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(3).mean()
+        with np.errstate(divide='ignore', invalid='ignore'):
+            rs = gain / loss
+            df['RSI_P'] = 100 - (100 / (1 + rs))
+        
+        chg = df['Close'].diff().values; st = np.zeros(len(df))
+        for i in range(1, len(chg)):
+            if chg[i]>0: st[i] = st[i-1]+1 if st[i-1]>=0 else 1
+            elif chg[i]<0: st[i] = st[i-1]-1 if st[i-1]<=0 else -1
+        
+        df['CRSI'] = df['RSI_P'].rolling(3).mean()
+        df = df.fillna(0)
+        self.data = df
+        return self.data
 
     def calcular_probabilidad_ia(self):
         try:
             df = self.data.copy()
             if len(df) < 100: return 50.0 
             df['Retorno'] = df['Close'].pct_change()
-            df['SMA_50'] = df['Close'].rolling(50).mean()
-            df['SMA_200'] = df['Close'].rolling(200).mean()
-            delta = df['Close'].diff()
-            gain = (delta.where(delta > 0, 0)).rolling(14).mean()
-            loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
-            with np.errstate(divide='ignore', invalid='ignore'):
-                rs = gain / loss
-                df['RSI'] = 100 - (100 / (1 + rs))
-            df = df.fillna(50).dropna()
+            df = df.dropna()
             df['Target'] = (df['Close'].shift(-1) > df['Close']).astype(int)
-            features = ['RSI', 'SMA_50', 'SMA_200', 'Retorno', 'Volume']
+            features = ['CRSI', 'SMA_50', 'SMA_200', 'MACD', 'UpperBB', 'LowerBB', 'Retorno', 'Vol_Osc']
             X = df[features].iloc[:-1]; y = df['Target'].iloc[:-1]
             if len(X) < 10: return 50.0
             model = RandomForestClassifier(n_estimators=100, min_samples_split=10, random_state=42)
             model.fit(X, y)
             ultimo_dia = df[features].iloc[[-1]] 
-            probabilidad_subida = model.predict_proba(ultimo_dia)[0][1] 
-            return probabilidad_subida * 100
+            return model.predict_proba(ultimo_dia)[0][1] * 100
         except: return 50.0
+
+    def detectar_niveles(self):
+        try:
+            df = self.data.tail(60) 
+            minimo = df['Low'].min()
+            maximo = df['High'].max()
+            return minimo, maximo
+        except: return 0, 0
 
     def obtener_benchmark(self):
         if self.spy_data is not None: return self.spy_data
@@ -266,42 +311,6 @@ class AnalistaBolsa:
             return analisis_noticias
         except: return []
 
-    def calcular_indicadores(self):
-        if self.data is None or self.data.empty: return self.data
-        for col in ['ADX', 'Vol_Osc', 'CRSI', 'SMA_50', 'SMA_200']: self.data[col] = 0.0
-        if len(self.data) < 50: return self.data
-        df = self.data.copy(); w = 14
-        df['SMA_50'] = df['Close'].rolling(window=50).mean()
-        df['SMA_200'] = df['Close'].rolling(window=200).mean()
-        df['Prev'] = df['Close'].shift(1)
-        df['TR'] = np.maximum(df['High']-df['Low'], np.maximum(abs(df['High']-df['Prev']), abs(df['Low']-df['Prev'])))
-        tr14 = df['TR'].ewm(alpha=1/w).mean()
-        up = df['High'] - df['High'].shift(1); down = df['Low'].shift(1) - df['Low']
-        pdm = np.where((up>down)&(up>0), up, 0.0); mdm = np.where((down>up)&(down>0), down, 0.0)
-        with np.errstate(all='ignore'):
-            pdi = 100*(pd.Series(pdm, index=df.index).ewm(alpha=1/w).mean()/tr14)
-            mdi = 100*(pd.Series(mdm, index=df.index).ewm(alpha=1/w).mean()/tr14)
-            df['ADX'] = (100*abs(pdi-mdi)/(pdi+mdi)).ewm(alpha=1/w).mean()
-        v_s, v_l = 5, 10
-        vol_ma = df['Volume'].rolling(v_l).mean().replace(0, np.nan)
-        df['Vol_Osc'] = ((df['Volume'].rolling(v_s).mean()-vol_ma)/vol_ma)*100
-        df['RSI_P'] = self._rsi(df['Close'], 3)
-        chg = df['Close'].diff().values; st = np.zeros(len(df))
-        for i in range(1, len(chg)):
-            if chg[i]>0: st[i] = st[i-1]+1 if st[i-1]>=0 else 1
-            elif chg[i]<0: st[i] = st[i-1]-1 if st[i-1]<=0 else -1
-        df['St_RSI'] = self._rsi(pd.Series(st, index=df.index), 2)
-        df['PRank'] = df['Close'].pct_change().rolling(100).rank(pct=True)*100
-        df['PRank'] = df['PRank'].fillna(50) 
-        df['CRSI'] = (df['RSI_P'] + df['St_RSI'] + df['PRank'])/3
-        df['ADX'] = df['ADX'].fillna(20); df['CRSI'] = df['CRSI'].fillna(50); df['Vol_Osc'] = df['Vol_Osc'].fillna(0)
-        self.data = df
-        return self.data
-
-    def _rsi(self, s, p):
-        d = s.diff(); g = d.where(d>0,0).ewm(alpha=1/p).mean(); l = -d.where(d<0,0).ewm(alpha=1/p).mean()
-        return 100-(100/(1+(g/l)))
-
     def simular(self, dias=7):
         ret = np.log(self.data['Close']/self.data['Close'].shift(1)).tail(60).dropna()
         if len(ret) < 2: return np.zeros((dias, 1000))
@@ -311,20 +320,13 @@ class AnalistaBolsa:
         for t in range(1,dias): p[t] = p[t-1]*drt[t]
         return p
 
-    # --- CORRECCIÓN: CALCULO DE SCORE CONTINUO ---
     def generar_diagnostico_interno(self, p_compra=0):
         try:
             last = self.data.iloc[-1]
             adx = last.get('ADX', 0); crsi = last.get('CRSI', 50); curr = last['Close']
-            
-            # Formula de Score Continua (0-100)
-            # Base: Inverso del CRSI (Menos es mejor) + Bonus por tendencia
             raw_score = 100 - crsi
             if adx > 25: raw_score += 10
-            
-            # Limitar entre 0 y 100
             score = max(0, min(100, int(raw_score)))
-            
             msg = "Neutro"; tag = ""
             if p_compra > 0: 
                  price = last['Close']
@@ -333,14 +335,11 @@ class AnalistaBolsa:
                  elif crsi < 20 and adx > 25: msg = "💎 ACUMULAR"; tag = "buy"
                  else: msg = "✋ MANTENER"; tag = "hold"
                  return {"valid": True, "ticker": self.ticker, "score": score, "msg": msg, "tag": tag, "crsi": crsi, "adx": adx, "price": curr}
-
-            # Mensajes basados en rangos
             if score >= 90: msg = "🚀 COMPRA"; tag = "buy"
             elif score >= 75: msg = "👀 BARATO"; tag = "near"
             elif score >= 60: msg = "📈 TENDENCIA"; tag = "trend"
             elif score <= 20: msg = "⚠️ CARO"; tag = "sell"
             elif score <= 40: msg = "💤 DÉBIL"; tag = "weak"
-            
             return {"valid": True, "ticker": self.ticker, "score": score, "msg": msg, "tag": tag, "crsi": crsi, "adx": adx, "price": curr}
         except: return {"valid": False, "msg": "Error", "score": 0, "tag": ""}
 
@@ -369,7 +368,7 @@ def apply_dark_theme(root):
 class LoginWindow:
     def __init__(self, root, db, on_success):
         self.root = root; self.db = db; self.on_success = on_success
-        self.win = tk.Toplevel(root); self.win.title("Acceso v16.1"); self.win.geometry("350x300")
+        self.win = tk.Toplevel(root); self.win.title("Acceso v17.1"); self.win.geometry("350x300")
         apply_dark_theme(self.win)
         self.texts = LANG["ES"]
         ttk.Label(self.win, text=self.texts["login_title"], font=("Segoe UI", 16, "bold"), foreground=C_ACCENT).pack(pady=30)
@@ -418,14 +417,17 @@ class AppBolsa:
         self.tr1.bind("<Double-1>", lambda e: self.sel_load(self.tr1, True))
         
         f1 = ttk.Frame(self.lf1); f1.pack(fill=tk.X)
-        self.btn_act = tk.Button(f1, bg=C_ACCENT, fg="white", relief="flat", command=self.scan_own); self.btn_act.pack(fill=tk.X, pady=2)
+        self.btn_act = tk.Button(f1, text=self.texts["scan_own"], bg=C_ACCENT, fg="white", relief="flat", command=self.scan_own); self.btn_act.pack(fill=tk.X, pady=2)
         f_btns = ttk.Frame(f1); f_btns.pack(fill=tk.X)
-        self.btn_save = tk.Button(f_btns, bg="#333", fg="white", relief="flat", command=self.save); self.btn_save.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.btn_sell = tk.Button(f_btns, bg="#800000", fg="white", relief="flat", command=self.vender_posicion); self.btn_sell.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.btn_del = tk.Button(f_btns, bg="#333", fg="white", relief="flat", command=self.dele); self.btn_del.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        
+        # --- BOTONES CARTERA REDISEÑADOS ---
+        self.btn_save = tk.Button(f_btns, text=self.texts["save"], bg="#333", fg="white", relief="flat", command=self.save); self.btn_save.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_sell = tk.Button(f_btns, text=self.texts["sell"], bg="#800000", fg="white", relief="flat", command=self.vender_posicion); self.btn_sell.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_del = tk.Button(f_btns, text=self.texts["del_btn"], bg="#333", fg="#999", relief="flat", command=self.dele); self.btn_del.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        
         f_xtra = ttk.Frame(f1); f_xtra.pack(fill=tk.X, pady=2)
-        self.btn_exp = tk.Button(f_xtra, bg="#333", fg="white", relief="flat", command=self.exportar_cartera); self.btn_exp.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.btn_hist = tk.Button(f_xtra, bg="#333", fg="white", relief="flat", command=self.ver_historial); self.btn_hist.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_exp = tk.Button(f_xtra, text=self.texts["exp"], bg="#333", fg="white", relief="flat", command=self.exportar_cartera); self.btn_exp.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_hist = tk.Button(f_xtra, text=self.texts["hist"], bg="#333", fg="white", relief="flat", command=self.ver_historial); self.btn_hist.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
 
         self.lf2 = ttk.LabelFrame(side, padding=5); self.lf2.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
         cols2 = ("tk", "sc", "ms")
@@ -433,7 +435,7 @@ class AppBolsa:
         for c in cols2: self.tr2.column(c, anchor="center", stretch=True)
         self.tr2.pack(fill=tk.BOTH, expand=True, pady=5)
         self.tr2.bind("<Double-1>", lambda e: self.sel_load(self.tr2, False))
-        self.btn_gem = tk.Button(self.lf2, bg=C_ACCENT, fg="white", font=("Segoe UI", 10, "bold"), relief="flat", command=self.scan_mkt)
+        self.btn_gem = tk.Button(self.lf2, text=self.texts["scan_mkt"], bg=C_ACCENT, fg="white", font=("Segoe UI", 10, "bold"), relief="flat", command=self.scan_mkt)
         self.btn_gem.pack(fill=tk.X, pady=5)
 
         cont = ttk.Frame(main); main.add(cont, weight=4)
@@ -441,16 +443,16 @@ class AppBolsa:
         ttk.Label(ctrl, text="TICKER:").pack(side=tk.LEFT)
         self.e_tk = ttk.Entry(ctrl, width=10); self.e_tk.pack(side=tk.LEFT, padx=5)
         self.e_tk.bind('<Return>', lambda e: self.run())
-        self.btn_run = tk.Button(ctrl, command=self.run, bg="#eee", fg="black", relief="flat"); self.btn_run.pack(side=tk.LEFT)
-        self.b_rst = tk.Button(ctrl, command=self.zoom_rst, state="disabled", bg="#333", fg="white", relief="flat"); self.b_rst.pack(side=tk.LEFT, padx=5)
-        self.lbl_buy = ttk.Label(ctrl); self.lbl_buy.pack(side=tk.LEFT)
+        self.btn_run = tk.Button(ctrl, text=self.texts["analyze"], command=self.run, bg="#eee", fg="black", relief="flat"); self.btn_run.pack(side=tk.LEFT)
+        self.b_rst = tk.Button(ctrl, text=self.texts["reset_zoom"], command=self.zoom_rst, state="disabled", bg="#333", fg="white", relief="flat"); self.b_rst.pack(side=tk.LEFT, padx=5)
+        self.lbl_buy = ttk.Label(ctrl, text=self.texts["buy_price"]); self.lbl_buy.pack(side=tk.LEFT)
         self.e_pr = ttk.Entry(ctrl, width=8); self.e_pr.pack(side=tk.LEFT)
-        self.lbl_qty = ttk.Label(ctrl); self.lbl_qty.pack(side=tk.LEFT)
+        self.lbl_qty = ttk.Label(ctrl, text=self.texts["qty"]); self.lbl_qty.pack(side=tk.LEFT)
         self.e_qt = ttk.Entry(ctrl, width=8); self.e_qt.pack(side=tk.LEFT)
         tk.Button(ctrl, text="🗑", command=self.limpiar_campos, bg="#333", fg="white", relief="flat").pack(side=tk.LEFT, padx=2)
         tk.Button(ctrl, text="🧮", command=self.abrir_calculadora, bg="#333", fg="white", relief="flat").pack(side=tk.LEFT, padx=2)
         self.btn_conf = tk.Button(ctrl, text="⚙️", bg="#333", fg="white", relief="flat", command=self.abrir_config); self.btn_conf.pack(side=tk.RIGHT, padx=5)
-        self.btn_refresh = tk.Button(ctrl, bg="#8a2be2", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", command=self.refresh_all); self.btn_refresh.pack(side=tk.RIGHT, padx=5)
+        self.btn_refresh = tk.Button(ctrl, text=self.texts["refresh_all"], bg="#8a2be2", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", command=self.refresh_all); self.btn_refresh.pack(side=tk.RIGHT, padx=5)
 
         pan = ttk.PanedWindow(cont, orient=tk.HORIZONTAL); pan.pack(fill=tk.BOTH, expand=True, padx=10)
         self.txt = tk.Text(pan, width=40, bg=C_PANEL, fg=C_FG, font=("Consolas", 10), borderwidth=0); pan.add(self.txt, weight=1)
@@ -487,6 +489,14 @@ class AppBolsa:
         if ask_price is not None:
             self.db.cerrar_posicion(self.uid, iid, ask_price)
             self.load_init(); self.scan_own()
+
+    # --- NUEVA FUNCION BORRAR SEGURO ---
+    def dele(self):
+        s = self.tr1.selection()
+        if s: 
+            if messagebox.askyesno("!!!", self.texts["msg_del_confirm"]):
+                self.db.borrar_posicion(s[0])
+                self.load_init()
 
     def ver_historial(self):
         hw = tk.Toplevel(self.root); hw.title(self.texts["hist_title"]); hw.geometry("600x400")
@@ -557,7 +567,7 @@ class AppBolsa:
     def update_ui_language(self):
         t = self.texts; self.root.title(f"{t['app_title']} - {self.uid}")
         self.lf1.config(text=t["port_title"]); self.tr1.heading("tk", text=t["col_ticker"]); self.tr1.heading("pr", text=t["col_entry"]); self.tr1.heading("sg", text=t["col_state"])
-        self.btn_act.config(text=t["scan_own"]); self.btn_save.config(text=t["save"]); self.btn_sell.config(text=t["sell"]); self.btn_exp.config(text=t["exp"]); self.btn_hist.config(text=t["hist"])
+        self.btn_act.config(text=t["scan_own"]); self.btn_save.config(text=t["save"]); self.btn_sell.config(text=t["sell"]); self.btn_exp.config(text=t["exp"]); self.btn_hist.config(text=t["hist"]); self.btn_del.config(text=t["del_btn"])
         self.lf2.config(text=t["opp_title"]); self.tr2.heading("tk", text=t["col_ticker"]); self.tr2.heading("sc", text=t["col_score"]); self.tr2.heading("ms", text=t["col_diag"])
         self.btn_gem.config(text=t["scan_mkt"]); self.btn_run.config(text=t["analyze"]); self.b_rst.config(text=t["reset_zoom"])
         self.lbl_buy.config(text=t["buy_price"]); self.lbl_qty.config(text=t["qty"]); self.btn_refresh.config(text=t["refresh_all"])
@@ -652,10 +662,11 @@ class AppBolsa:
         
         try:
             self.eng.descargar_datos(tkr); df = self.eng.calcular_indicadores()
-            prob_ai = self.eng.calcular_probabilidad_ia() # NUEVO: IA
+            prob_ai = self.eng.calcular_probabilidad_ia()
             spy = self.eng.obtener_benchmark() 
             fund = self.eng.obtener_fundamentales(tkr)
             noticias = self.eng.obtener_noticias_analizadas(tkr)
+            sop, resi = self.eng.detectar_niveles()
             sim = self.eng.simular(); ev = self.eng.generar_diagnostico_interno(pp)
             bench_stats = self.eng.calcular_beta_relativa(df, spy) if spy is not None else {"beta": 0, "rel_perf": 0}
             
@@ -665,33 +676,31 @@ class AppBolsa:
             self.fig.subplots_adjust(left=0.1, right=0.95, top=0.92, bottom=0.15, hspace=0.15)
             
             d = df.tail(150)
-            ax1.plot(d.index, d['Close'], color='white', linewidth=1.2, label='Precio') # BLANCO
+            ax1.plot(d.index, d['Close'], color='white', linewidth=1.2, label='Precio') 
             ax1.plot(d.index, d['SMA_50'], color='orange', linestyle='--', linewidth=1, label='SMA 50')
-            ax1.plot(d.index, d['SMA_200'], color='cyan', linewidth=1.5, label='SMA 200') # CYAN
-            
+            ax1.plot(d.index, d['SMA_200'], color='cyan', linewidth=1.5, label='SMA 200')
+            ax1.fill_between(d.index, d['UpperBB'], d['LowerBB'], color='gray', alpha=0.15, label='BB')
+            if sop > 0: ax1.axhline(sop, color=C_GREEN, linestyle='--', linewidth=0.8, alpha=0.7)
+            if resi > 0: ax1.axhline(resi, color=C_RED, linestyle='--', linewidth=0.8, alpha=0.7)
             if spy is not None:
                 d_spy = spy.tail(150)
                 ax1b = ax1.twinx() 
                 ax1b.plot(d_spy.index, d_spy['Close'], color='gray', alpha=0.3, linewidth=3, label='SPY (Ref)')
                 ax1b.set_yticks([]) 
-            
             if pos: ax1.axhline(pp, color=C_ACCENT, linewidth=1.5, label='Entry')
             ax1.set_title(f"{tkr} (D) - {fund['sec']} / {fund['ind']}", fontsize=10, color="white"); 
             ax1.legend(fontsize=8, facecolor=C_BG, edgecolor="white", labelcolor="white")
             ax1.grid(True, alpha=0.1, color="white")
             ax1.tick_params(colors='white')
-            
             ax2.plot(d.index, d['CRSI'], color=C_ACCENT, linewidth=1.2)
             ax2.axhline(80, color=C_RED, linestyle=':', alpha=0.5); ax2.axhline(20, color=C_GREEN, linestyle=':', alpha=0.5)
             ax2.set_ylabel("CRSI", fontsize=8, color="white"); ax2.set_ylim(-5, 105); ax2.grid(True, alpha=0.1, color="white")
             ax2.tick_params(colors='white')
-            
             cl = np.where(d['Vol_Osc']>0, C_GREEN, C_RED)
             ax3.bar(d.index, d['Vol_Osc'], color=cl, width=0.8, alpha=0.7)
             ax3.axhline(0, color='white', linewidth=0.5); ax3.set_ylabel("Vol%", fontsize=8, color="white"); ax3.grid(True, alpha=0.1, color="white")
             ax1.tick_params(axis='x', labelbottom=False); ax2.tick_params(axis='x', labelbottom=False)
             ax3.tick_params(colors='white')
-            
             self.cv.draw(); self.b_rst.config(state="normal")
             
             self.txt.delete(1.0, tk.END); self.txt.insert(tk.END, f"{tkr} - ${d['Close'].iloc[-1]:.2f}\n", "t")
@@ -699,24 +708,21 @@ class AppBolsa:
                 pl = (d['Close'].iloc[-1]*qq)-(pp*qq); pc = (pl/(pp*qq))*100
                 tag = "p" if pl>=0 else "n"
                 self.txt.insert(tk.END, f"P&L: {pl:+.2f} ({pc:+.2f}%)\n", tag)
-            
-            # --- MOSTRAR IA ---
             self.txt.insert(tk.END, f"\n{self.texts['ai_title']}\n", "w")
             ai_tag = "ai_good" if prob_ai > 55 else "ai_bad" if prob_ai < 45 else "w"
             self.txt.insert(tk.END, f"{self.texts['ai_prob']} {prob_ai:.1f}%\n", ai_tag)
-
+            self.txt.insert(tk.END, f"\n{self.texts['tech_title']}\n", "gold")
+            self.txt.insert(tk.END, f"{self.texts['tech_sup']} ${sop:.2f}\n", "p")
+            self.txt.insert(tk.END, f"{self.texts['tech_res']} ${resi:.2f}\n", "n")
             self.txt.insert(tk.END, f"\n{self.texts['bench_title']}\n", "gold")
             b_col = "news_bull" if bench_stats['rel_perf'] > 0 else "news_bear"
             self.txt.insert(tk.END, f"{self.texts['bench_beta']} {bench_stats['beta']:.2f} | {self.texts['bench_rel']} ", "w")
             self.txt.insert(tk.END, f"{bench_stats['rel_perf']:.2f}%\n", b_col)
-
             self.txt.insert(tk.END, f"\n{self.texts['fund_title']}\n", "gold")
             self.txt.insert(tk.END, f"{self.texts['fund_pe']} {fund['per']} | {self.texts['fund_div']} {fund['div']}\n")
             self.txt.insert(tk.END, f"{self.texts['fund_cap']} {fund['cap']}\n")
-
             self.txt.insert(tk.END, f"\nADX: {ev.get('adx',0):.1f} | CRSI: {ev.get('crsi',0):.1f}\n")
             self.txt.insert(tk.END, f"DX: {ev['msg']} (Score: {ev['score']})\n", "t")
-            
             self.txt.insert(tk.END, f"\n{self.texts['news_title']}\n", "w")
             if noticias:
                 for n in noticias:
@@ -725,7 +731,6 @@ class AppBolsa:
                     elif n['sentiment'] == 'bear': tag = "news_bear"; prefix = "🔴"
                     self.txt.insert(tk.END, f"{prefix} {n['title']} ({n['source']})\n", tag)
             else: self.txt.insert(tk.END, "(Sin noticias)\n")
-
             self.txt.insert(tk.END, "\nFORECAST 7D:\n", "t")
             hoy = datetime.date.today(); prev=d['Close'].iloc[-1]
             for i in range(7):
@@ -738,10 +743,6 @@ class AppBolsa:
         if not p: p="0"; 
         if not q: q="0"
         if t: self.db.guardar_posicion(self.uid, t, float(p), float(q)); self.load_init()
-
-    def dele(self):
-        s = self.tr1.selection()
-        if s: self.db.borrar_posicion(s[0]); self.load_init()
 
     def zoom_rst(self): self.tb.home()
 
