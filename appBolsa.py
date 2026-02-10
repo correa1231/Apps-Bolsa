@@ -20,7 +20,7 @@ ETORO_ROUND_TRIP = 2.0
 
 LANG = {
     "ES": {
-        "app_title": "Gestor Pro v19.1 (Stable)",
+        "app_title": "Gestor Pro v20.1 (Widescreen)",
         "port_title": "📂 MI CARTERA & VIGILANCIA",
         "opp_title": "💎 OPORTUNIDADES & OBJETIVOS",
         "scan_own": "⚡ ACTUALIZAR",
@@ -28,6 +28,7 @@ LANG = {
         "sell": "💰 VENDER",
         "del_btn": "🗑 OLVIDAR",
         "viz_btn": "📊 VISUALIZAR",
+        "stats_btn": "📈 ESTADÍSTICAS",
         "hist": "📜 HISTORIAL",
         "exp": "📄 EXP",
         "scan_mkt": "🔍 ESCANEAR",
@@ -50,6 +51,7 @@ LANG = {
         "hist_title": "Historial de Operaciones (Neto)",
         "hist_tot": "P/L Neto Realizado (tras fees):",
         "viz_title": "Distribución de Cartera",
+        "stats_title": "Auditoría de Rendimiento",
         "conf_title": "Configuración",
         "conf_lang": "Idioma / Language:",
         "conf_logout": "🔒 SALIR",
@@ -84,7 +86,7 @@ LANG = {
         "dash_pl": "Neto P/L (eToro):",
         "login_title": "ACCESO", "user": "Usuario:", "pass": "Clave:", "btn_enter": "ENTRAR", "btn_reg": "REGISTRO", "err_login": "Error", "ok_reg": "OK", "err_reg": "Existe"
     },
-    "EN": { "app_title": "Pro Manager v19.1", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "💾 SAVE", "sell": "💰 SELL", "del_btn": "🗑 FORGET", "viz_btn": "📊 VISUALIZE", "hist": "📜 HISTORY", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis / Target", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "msg_del_confirm": "Delete?", "hist_title": "Trade History", "hist_tot": "Total Net P/L:", "viz_title": "Portfolio Allocation", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Prob:", "tech_title": "📐 TECH & STOP LOSS:", "tech_sup": "Support:", "tech_res": "Resistance:", "tech_sl": "Suggested Stop:", "trend_wk": "Weekly Trend:", "target_title": "🎯 TARGET PRICE:", "news_title": "📰 NEWS:", "calc_title": "Risk Calc", "calc_cap": "Capital:", "calc_risk": "Risk %:", "calc_stop": "Stop Loss:", "calc_btn": "CALCULATE", "calc_res": "Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Value:", "dash_pl": "Net P/L (eToro):", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Error", "ok_reg": "OK", "err_reg": "Exists" },
+    "EN": { "app_title": "Pro Manager v20.1", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "💾 SAVE", "sell": "💰 SELL", "del_btn": "🗑 FORGET", "viz_btn": "📊 VISUALIZE", "stats_btn": "📈 STATS", "hist": "📜 HISTORY", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis / Target", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "msg_del_confirm": "Delete?", "hist_title": "Trade History", "hist_tot": "Total Net P/L:", "viz_title": "Portfolio Allocation", "stats_title": "Performance Audit", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Prob:", "tech_title": "📐 TECH & STOP LOSS:", "tech_sup": "Support:", "tech_res": "Resistance:", "tech_sl": "Suggested Stop:", "trend_wk": "Weekly Trend:", "target_title": "🎯 TARGET PRICE:", "news_title": "📰 NEWS:", "calc_title": "Risk Calc", "calc_cap": "Capital:", "calc_risk": "Risk %:", "calc_stop": "Stop Loss:", "calc_btn": "CALCULATE", "calc_res": "Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Value:", "dash_pl": "Net P/L (eToro):", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Error", "ok_reg": "OK", "err_reg": "Exists" },
 }
 if "FR" not in LANG: LANG["FR"] = LANG["EN"]
 if "PT" not in LANG: LANG["PT"] = LANG["EN"]
@@ -95,21 +97,14 @@ CANDIDATOS_VIP = [
     "UBER", "ABNB", "PLTR", "SHOP", "SBUX", "NKE", "MCD", "V", "MA"
 ]
 
-# --- COLORES TEMA OSCURO (CORREGIDO) ---
-C_BG = "#1e1e1e"       
-C_FG = "#ffffff"       
-C_ACCENT = "#007acc"   
-C_PANEL = "#252526"    
-C_GREEN = "#4ec9b0"
-C_RED = "#f44747"
-C_GOLD = "#ffd700"
-C_PURPLE = "#8a2be2" # AÑADIDO PARA SOLUCIONAR EL ERROR
+C_BG = "#1e1e1e"; C_FG = "#ffffff"; C_ACCENT = "#007acc"
+C_PANEL = "#252526"; C_GREEN = "#4ec9b0"; C_RED = "#f44747"; C_GOLD = "#ffd700"; C_PURPLE = "#8a2be2"
 
 # ==========================================
 # 1. BASE DE DATOS
 # ==========================================
 class DatabaseManager:
-    def __init__(self, db_name="bolsa_datos_v19.db"):
+    def __init__(self, db_name="bolsa_datos_v20.db"):
         self.conn = sqlite3.connect(db_name, check_same_thread=False)
         self.crear_tablas()
 
@@ -178,17 +173,13 @@ class AnalistaBolsa:
     def descargar_datos(self, ticker):
         self.ticker = ticker.upper()
         try:
-            # Diario
             d = yf.download(self.ticker, period="2y", progress=False)
             if d.empty: raise ValueError
             if isinstance(d.columns, pd.MultiIndex): d.columns = d.columns.droplevel(1)
             self.data = d.astype(float)
-            
-            # Semanal
             w = yf.download(self.ticker, period="2y", interval="1wk", progress=False)
             if isinstance(w.columns, pd.MultiIndex): w.columns = w.columns.droplevel(1)
             self.data_weekly = w.astype(float)
-            
             return d
         except: raise ValueError("Error descarga")
 
@@ -210,28 +201,19 @@ class AnalistaBolsa:
     def calcular_indicadores(self):
         if self.data is None or self.data.empty: return self.data
         for col in ['ADX', 'Vol_Osc', 'CRSI', 'SMA_50', 'SMA_200', 'MACD', 'UpperBB', 'LowerBB', 'ATR']: self.data[col] = 0.0
-        
         df = self.data.copy()
         df['SMA_50'] = df['Close'].rolling(50).mean()
         df['SMA_200'] = df['Close'].rolling(200).mean()
-        
-        # Bollinger
         df['SMA_20'] = df['Close'].rolling(20).mean()
         df['StdDev'] = df['Close'].rolling(20).std()
         df['UpperBB'] = df['SMA_20'] + (df['StdDev'] * 2)
         df['LowerBB'] = df['SMA_20'] - (df['StdDev'] * 2)
-        
-        # MACD
         exp12 = df['Close'].ewm(span=12, adjust=False).mean()
         exp26 = df['Close'].ewm(span=26, adjust=False).mean()
         df['MACD'] = exp12 - exp26
-        
-        # ATR (Volatilidad)
         df['Prev'] = df['Close'].shift(1)
         df['TR'] = np.maximum(df['High']-df['Low'], np.maximum(abs(df['High']-df['Prev']), abs(df['Low']-df['Prev'])))
         df['ATR'] = df['TR'].rolling(14).mean()
-        
-        # ADX
         tr14 = df['TR'].ewm(alpha=1/14).mean()
         up = df['High'] - df['High'].shift(1); down = df['Low'].shift(1) - df['Low']
         pdm = np.where((up>down)&(up>0), up, 0.0); mdm = np.where((down>up)&(down>0), down, 0.0)
@@ -239,24 +221,18 @@ class AnalistaBolsa:
             pdi = 100*(pd.Series(pdm, index=df.index).ewm(alpha=1/14).mean()/tr14)
             mdi = 100*(pd.Series(mdm, index=df.index).ewm(alpha=1/14).mean()/tr14)
             df['ADX'] = (100*abs(pdi-mdi)/(pdi+mdi)).ewm(alpha=1/14).mean()
-        
-        # Vol Osc
         vol_ma = df['Volume'].rolling(10).mean().replace(0, np.nan)
         df['Vol_Osc'] = ((df['Volume'].rolling(5).mean()-vol_ma)/vol_ma)*100
-        
-        # RSI Simple (CRSI proxy)
         delta = df['Close'].diff()
         gain = (delta.where(delta > 0, 0)).rolling(3).mean()
         loss = (-delta.where(delta < 0, 0)).rolling(3).mean()
         with np.errstate(divide='ignore', invalid='ignore'):
             rs = gain / loss
             df['CRSI'] = 100 - (100 / (1 + rs))
-        
         df = df.fillna(0)
         self.data = df
         return self.data
 
-    # --- ANALISIS SEMANAL ---
     def analizar_tendencia_semanal(self):
         try:
             if self.data_weekly is None or len(self.data_weekly) < 30: return "Neutral"
@@ -350,28 +326,20 @@ class AnalistaBolsa:
         try:
             last = self.data.iloc[-1]
             adx = last.get('ADX', 0); crsi = last.get('CRSI', 50); curr = last['Close']; atr = last.get('ATR', 0)
-            
-            # --- MULTI-TIMEFRAME FILTER ---
             trend_weekly = self.analizar_tendencia_semanal()
-            
             raw_score = 100 - crsi
             if adx > 25: raw_score += 10
-            if trend_weekly == "Alcista": raw_score += 10 # Bonus por tendencia semanal
-            if trend_weekly == "Bajista": raw_score -= 20 # Penalizacion
-            
+            if trend_weekly == "Alcista": raw_score += 10 
+            if trend_weekly == "Bajista": raw_score -= 20 
             score = max(0, min(100, int(raw_score)))
-            
-            # Target & Stop Loss Dinamico
             min_p = self.data['Low'].tail(60).min()
             max_p = self.data['High'].tail(60).max()
             target = max_p
             if curr >= max_p * 0.98: 
                 target = last['UpperBB'] 
                 if target < curr: target = curr * 1.05 
-            
             profit_pot = ((target - curr) / curr) * 100
-            stop_loss = curr - (atr * 2) # Stop Loss tecnico (2x ATR)
-            
+            stop_loss = curr - (atr * 2) 
             msg = "Neutro"; tag = ""
             if p_compra > 0: 
                  price = last['Close']
@@ -380,7 +348,6 @@ class AnalistaBolsa:
                  elif crsi < 20 and adx > 25 and trend_weekly == "Alcista": msg = "💎 ACUMULAR"; tag = "buy"
                  else: msg = "✋ MANTENER"; tag = "hold"
                  return {"valid": True, "ticker": self.ticker, "score": score, "msg": msg, "tag": tag, "crsi": crsi, "adx": adx, "price": curr, "target": target, "profit": profit_pot, "stop_loss": stop_loss, "weekly": trend_weekly}
-            
             if score >= 90: msg = "🚀 COMPRA"; tag = "buy"
             elif score >= 75: msg = "👀 BARATO"; tag = "near"
             elif score >= 60: msg = "📈 TENDENCIA"; tag = "trend"
@@ -414,7 +381,7 @@ def apply_dark_theme(root):
 class LoginWindow:
     def __init__(self, root, db, on_success):
         self.root = root; self.db = db; self.on_success = on_success
-        self.win = tk.Toplevel(root); self.win.title("Acceso v19.1"); self.win.geometry("350x300")
+        self.win = tk.Toplevel(root); self.win.title("Acceso v20.1"); self.win.geometry("350x300")
         apply_dark_theme(self.win)
         self.texts = LANG["ES"]
         ttk.Label(self.win, text=self.texts["login_title"], font=("Segoe UI", 16, "bold"), foreground=C_ACCENT).pack(pady=30)
@@ -448,7 +415,8 @@ class AppBolsa:
         apply_dark_theme(root)
         
         main = ttk.PanedWindow(root, orient=tk.HORIZONTAL); main.pack(fill=tk.BOTH, expand=True)
-        side = ttk.Frame(main, width=450, relief=tk.FLAT); main.add(side, weight=1)
+        # --- AUMENTO DE ANCHO PANEL LATERAL (v20.1) ---
+        side = ttk.Frame(main, width=550, relief=tk.FLAT); main.add(side, weight=1)
         self.lf1 = ttk.LabelFrame(side, padding=5); self.lf1.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
         
         self.dash_frame = ttk.Frame(self.lf1); self.dash_frame.pack(fill=tk.X, padx=5, pady=5)
@@ -473,14 +441,15 @@ class AppBolsa:
         f_xtra = ttk.Frame(f1); f_xtra.pack(fill=tk.X, pady=2)
         self.btn_exp = tk.Button(f_xtra, text=self.texts["exp"], bg="#333", fg="white", relief="flat", command=self.exportar_cartera); self.btn_exp.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
         self.btn_hist = tk.Button(f_xtra, text=self.texts["hist"], bg="#333", fg="white", relief="flat", command=self.ver_historial); self.btn_hist.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        # BOTON VIZ NUEVO
         self.btn_viz = tk.Button(f_xtra, text=self.texts["viz_btn"], bg=C_PURPLE, fg="white", relief="flat", command=self.ver_distribucion); self.btn_viz.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_stats = tk.Button(f_xtra, text=self.texts["stats_btn"], bg="#2e8b57", fg="white", relief="flat", command=self.ver_estadisticas); self.btn_stats.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
 
         self.lf2 = ttk.LabelFrame(side, padding=5); self.lf2.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
         cols2 = ("tk", "sc", "ms")
         self.tr2 = ttk.Treeview(self.lf2, columns=cols2, show="headings", height=12)
         for c in cols2: self.tr2.column(c, anchor="center", stretch=True)
-        self.tr2.column("ms", width=200)
+        # --- AUMENTO DE ANCHO COLUMNA MENSAJE (v20.1) ---
+        self.tr2.column("ms", width=300)
         self.tr2.pack(fill=tk.BOTH, expand=True, pady=5)
         self.tr2.bind("<Double-1>", lambda e: self.sel_load(self.tr2, False))
         self.btn_gem = tk.Button(self.lf2, text=self.texts["scan_mkt"], bg=C_ACCENT, fg="white", font=("Segoe UI", 10, "bold"), relief="flat", command=self.scan_mkt)
@@ -564,24 +533,51 @@ class AppBolsa:
         else: lbl_tot.config(foreground=C_RED)
         lbl_tot.pack(pady=10)
 
-    # --- NUEVA VISUALIZACION ---
+    def ver_estadisticas(self):
+        data = self.db.obtener_historial_completo(self.uid)
+        if not data: return
+        profits = [d[3] for d in data]
+        wins = [p for p in profits if p >= 0]; losses = [p for p in profits if p < 0]
+        total_ops = len(profits)
+        win_rate = (len(wins) / total_ops) * 100 if total_ops > 0 else 0
+        total_profit = sum(wins); total_loss = abs(sum(losses))
+        profit_factor = (total_profit / total_loss) if total_loss > 0 else 999.0
+        cumulative = np.cumsum(profits)
+        running_max = np.maximum.accumulate(cumulative)
+        drawdown = running_max - cumulative
+        max_dd = drawdown.max() if len(drawdown) > 0 else 0
+        sw = tk.Toplevel(self.root); sw.title(self.texts["stats_title"]); sw.geometry("700x500")
+        apply_dark_theme(sw)
+        f_metrics = ttk.Frame(sw); f_metrics.pack(fill=tk.X, padx=10, pady=10)
+        def make_metric(p, title, val, color):
+            f = ttk.Frame(p, borderwidth=1, relief="solid"); f.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=5)
+            ttk.Label(f, text=title, font=("Segoe UI", 9)).pack(pady=2)
+            ttk.Label(f, text=val, font=("Segoe UI", 14, "bold"), foreground=color).pack(pady=5)
+        make_metric(f_metrics, "WIN RATE", f"{win_rate:.1f}%", C_GREEN if win_rate > 50 else C_RED)
+        make_metric(f_metrics, "PROFIT FACTOR", f"{profit_factor:.2f}", C_GREEN if profit_factor > 1.5 else C_ACCENT)
+        make_metric(f_metrics, "MAX DRAWDOWN", f"-${max_dd:.2f}", C_RED)
+        make_metric(f_metrics, "TOTAL OPS", f"{total_ops}", C_FG)
+        fig = Figure(figsize=(6,4), dpi=100, facecolor=C_BG)
+        ax = fig.add_subplot(111)
+        ax.plot(cumulative, color=C_GREEN, linewidth=2, label="Equity")
+        ax.fill_between(range(len(cumulative)), cumulative, color=C_GREEN, alpha=0.1)
+        ax.set_title("Curva de Capital Realizada (Equity Curve)", color="white")
+        ax.grid(True, alpha=0.1); ax.tick_params(colors='white')
+        cv = FigureCanvasTkAgg(fig, master=sw)
+        cv.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
     def ver_distribucion(self):
         db_data = self.db.obtener_cartera(self.uid)
         if not db_data: return
-        
         tickers = [row[0] for row in db_data]
-        values = [row[1] * row[2] for row in db_data] # Precio Compra * Qty (Inversion)
-        
+        values = [row[1] * row[2] for row in db_data] 
         if sum(values) == 0: return
-
         vw = tk.Toplevel(self.root); vw.title(self.texts["viz_title"]); vw.geometry("600x500")
         apply_dark_theme(vw)
-        
         fig = Figure(figsize=(5,4), dpi=100, facecolor=C_BG)
         ax = fig.add_subplot(111)
         ax.pie(values, labels=tickers, autopct='%1.1f%%', startangle=90, textprops={'color':"w"})
         ax.set_title(self.texts["viz_title"], color="white")
-        
         cv = FigureCanvasTkAgg(fig, master=vw)
         cv.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
@@ -640,6 +636,7 @@ class AppBolsa:
         self.btn_gem.config(text=t["scan_mkt"]); self.btn_run.config(text=t["analyze"]); self.b_rst.config(text=t["reset_zoom"])
         self.lbl_buy.config(text=t["buy_price"]); self.lbl_qty.config(text=t["qty"]); self.btn_refresh.config(text=t["refresh_all"])
         self.lbl_invested.config(text=f"{t['dash_inv']} ---"); self.lbl_current.config(text=f"{t['dash_val']} ---"); self.lbl_pl.config(text=f"{t['dash_pl']} ---")
+        self.btn_viz.config(text=t["viz_btn"]); self.btn_stats.config(text=t["stats_btn"])
         self.load_init()
 
     def logout(self):
@@ -754,10 +751,6 @@ class AppBolsa:
             ax1.fill_between(d.index, d['UpperBB'], d['LowerBB'], color='gray', alpha=0.15, label='BB')
             if sop > 0: ax1.axhline(sop, color=C_GREEN, linestyle='--', linewidth=0.8, alpha=0.7)
             if resi > 0: ax1.axhline(resi, color=C_RED, linestyle='--', linewidth=0.8, alpha=0.7)
-            
-            # STOP LOSS DINAMICO EN GRAFICO
-            if ev['stop_loss'] > 0: ax1.axhline(ev['stop_loss'], color='red', linestyle=':', linewidth=1.5, label='Stop Loss')
-
             if spy is not None:
                 d_spy = spy.tail(150)
                 ax1b = ax1.twinx() 
