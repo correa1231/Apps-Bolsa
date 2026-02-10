@@ -11,8 +11,12 @@ import hashlib
 import threading
 import matplotlib.pyplot as plt
 import os
+
+# --- LIBRERIAS IA AVANZADA ---
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import precision_score
 
 # ==========================================
 # 0. CONFIGURACIÓN E IDIOMAS
@@ -22,7 +26,7 @@ ETORO_ROUND_TRIP = 2.0
 
 LANG = {
     "ES": {
-        "app_title": "Gestor Pro v23.0 (Institutional Precision)",
+        "app_title": "Gestor Pro v24.0 (AI Quantum)",
         "port_title": "📂 MI CARTERA & VIGILANCIA",
         "opp_title": "💎 OPORTUNIDADES & OBJETIVOS",
         "scan_own": "⚡ ACTUALIZAR",
@@ -64,7 +68,7 @@ LANG = {
         "conf_del": "⚠️ BORRAR CUENTA",
         "conf_del_confirm": "¿Seguro? Se borrarán tus datos.",
         "refresh_all": "🔄 TODO",
-        "fund_title": "📊 FUNDAMENTALES & WALL STREET:",
+        "fund_title": "📊 FUNDAMENTALES:",
         "fund_pe": "PER:",
         "fund_cap": "Mkt Cap:",
         "fund_div": "Div Yield:",
@@ -74,9 +78,9 @@ LANG = {
         "bench_title": "🆚 MERCADO (vs SPY):",
         "bench_beta": "Beta:",
         "bench_rel": "Rendimiento Relativo:",
-        "ai_title": "🤖 PREDICCIÓN IA (Random Forest):",
+        "ai_title": "🤖 PREDICCIÓN IA (Quantum):",
         "ai_prob": "Probabilidad Subida:",
-        "ai_acc": "Precisión Modelo (Test):",
+        "ai_acc": "Precisión Histórica (Test):",
         "tech_title": "📐 TECH & STOP LOSS (ATR):",
         "tech_sup": "Soporte:",
         "tech_res": "Resistencia:",
@@ -99,7 +103,7 @@ LANG = {
         "macro_neutral": "😐 NEUTRO",
         "login_title": "ACCESO", "user": "Usuario:", "pass": "Clave:", "btn_enter": "ENTRAR", "btn_reg": "REGISTRO", "err_login": "Error", "ok_reg": "OK", "err_reg": "Existe"
     },
-    "EN": { "app_title": "Pro Manager v23.0", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "💾", "sell": "💰 SELL", "del_btn": "🗑", "viz_btn": "📊 VIZ", "stats_btn": "📈 STATS", "risk_btn": "🔥 RISK", "snap_btn": "📷 SNAPSHOT", "hist": "📜 HIST", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis / Target", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_snap_ok": "✅ Report saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "msg_del_confirm": "Delete?", "hist_title": "Trade History", "hist_tot": "Total Net P/L:", "viz_title": "Portfolio Allocation", "stats_title": "Performance Audit", "risk_title": "Correlation Matrix", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "ws_rating": "Analysts:", "ws_target": "Wall St Target:", "graham_title": "💎 INTRINSIC VALUE (Graham):", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Prob:", "ai_acc": "Model Accuracy:", "tech_title": "📐 TECH & STOP LOSS:", "tech_sup": "Support:", "tech_res": "Resistance:", "tech_sl": "Suggested Stop:", "trend_wk": "Weekly Trend:", "target_title": "🎯 TARGET PRICE:", "news_title": "📰 NEWS:", "calc_title": "Risk Calc", "calc_cap": "Capital:", "calc_risk": "Risk %:", "calc_stop": "Stop Loss:", "calc_btn": "CALCULATE", "calc_res": "Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Value:", "dash_pl": "Net P/L (eToro):", "macro_fear": "😨 FEAR (High VIX)", "macro_greed": "🤑 GREED (Bull Trend)", "macro_neutral": "😐 NEUTRAL", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Error", "ok_reg": "OK", "err_reg": "Exists" },
+    "EN": { "app_title": "Pro Manager v24.0", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "💾 SAVE", "sell": "💰 SELL", "del_btn": "🗑 FORGET", "viz_btn": "📊 VIZ", "stats_btn": "📈 STATS", "risk_btn": "🔥 RISK", "snap_btn": "📷 SNAPSHOT", "hist": "📜 HISTORY", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis / Target", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_snap_ok": "✅ Report saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "msg_del_confirm": "Delete?", "hist_title": "Trade History", "hist_tot": "Total Net P/L:", "viz_title": "Portfolio Allocation", "stats_title": "Performance Audit", "risk_title": "Correlation Matrix", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "ws_rating": "Analysts:", "ws_target": "Wall St Target:", "graham_title": "💎 INTRINSIC VALUE (Graham):", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Prob:", "ai_acc": "Model Accuracy:", "tech_title": "📐 TECH & STOP LOSS:", "tech_sup": "Support:", "tech_res": "Resistance:", "tech_sl": "Suggested Stop:", "trend_wk": "Weekly Trend:", "target_title": "🎯 TARGET PRICE:", "news_title": "📰 NEWS:", "calc_title": "Risk Calc", "calc_cap": "Capital:", "calc_risk": "Risk %:", "calc_stop": "Stop Loss:", "calc_btn": "CALCULATE", "calc_res": "Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Value:", "dash_pl": "Net P/L (eToro):", "macro_fear": "😨 FEAR (High VIX)", "macro_greed": "🤑 GREED (Bull Trend)", "macro_neutral": "😐 NEUTRAL", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Error", "ok_reg": "OK", "err_reg": "Exists" },
 }
 if "FR" not in LANG: LANG["FR"] = LANG["EN"]
 if "PT" not in LANG: LANG["PT"] = LANG["EN"]
@@ -117,7 +121,7 @@ C_PANEL = "#252526"; C_GREEN = "#4ec9b0"; C_RED = "#f44747"; C_GOLD = "#ffd700";
 # 1. BASE DE DATOS
 # ==========================================
 class DatabaseManager:
-    def __init__(self, db_name="bolsa_datos_v23.db"):
+    def __init__(self, db_name="bolsa_datos_v24.db"):
         self.conn = sqlite3.connect(db_name, check_same_thread=False)
         self.crear_tablas()
 
@@ -177,7 +181,7 @@ class DatabaseManager:
         self.conn.commit()
 
 # ==========================================
-# 2. MOTOR ANALÍTICO
+# 2. MOTOR ANALÍTICO (IA MEJORADA)
 # ==========================================
 class AnalistaBolsa:
     def __init__(self):
@@ -186,35 +190,26 @@ class AnalistaBolsa:
     def descargar_datos(self, ticker):
         self.ticker = ticker.upper()
         try:
-            d = yf.download(self.ticker, period="2y", progress=False)
+            # DESCARGAR 5 AÑOS PARA MEJORAR ENTRENAMIENTO
+            d = yf.download(self.ticker, period="5y", progress=False)
             if d.empty: raise ValueError
             if isinstance(d.columns, pd.MultiIndex): d.columns = d.columns.droplevel(1)
             self.data = d.astype(float)
+            
             w = yf.download(self.ticker, period="2y", interval="1wk", progress=False)
             if isinstance(w.columns, pd.MultiIndex): w.columns = w.columns.droplevel(1)
             self.data_weekly = w.astype(float)
             return d
         except: raise ValueError("Error descarga")
 
-    # --- NUEVO: CALCULADORA FIBONACCI ---
+    # --- DATOS EXTERNOS ---
     def calcular_fibonacci(self):
         try:
-            # Usamos un periodo de swing trading (ej: 6 meses aprox 126 dias)
             df = self.data.tail(126)
-            max_p = df['High'].max()
-            min_p = df['Low'].min()
-            diff = max_p - min_p
-            
-            # Niveles principales
-            lev_236 = max_p - 0.236 * diff
-            lev_382 = max_p - 0.382 * diff
-            lev_500 = max_p - 0.5 * diff
-            lev_618 = max_p - 0.618 * diff
-            
-            return {"0": min_p, "1": max_p, "0.236": lev_236, "0.382": lev_382, "0.5": lev_500, "0.618": lev_618}
+            max_p = df['High'].max(); min_p = df['Low'].min(); diff = max_p - min_p
+            return {"0": min_p, "1": max_p, "0.382": max_p - 0.382*diff, "0.5": max_p - 0.5*diff, "0.618": max_p - 0.618*diff}
         except: return None
 
-    # --- NUEVO: CONSENSO ANALISTAS ---
     def obtener_consenso_analistas(self, ticker):
         try:
             t = yf.Ticker(ticker); i = t.info
@@ -227,8 +222,7 @@ class AnalistaBolsa:
         try:
             vix = yf.Ticker("^VIX").history(period="1d")['Close'].iloc[-1]
             spy = yf.Ticker("SPY").history(period="6mo")['Close']
-            sma50 = spy.rolling(50).mean().iloc[-1]
-            price_spy = spy.iloc[-1]
+            sma50 = spy.rolling(50).mean().iloc[-1]; price_spy = spy.iloc[-1]
             if vix > 25: return "FEAR", vix
             elif vix < 15 and price_spy > sma50: return "GREED", vix
             else: return "NEUTRAL", vix
@@ -237,11 +231,8 @@ class AnalistaBolsa:
     def calcular_valor_graham(self, ticker):
         try:
             t = yf.Ticker(ticker); i = t.info
-            eps = i.get('trailingEps')
-            bvps = i.get('bookValue')
-            if eps and bvps and eps > 0 and bvps > 0:
-                fair_value = np.sqrt(22.5 * eps * bvps)
-                return fair_value
+            eps = i.get('trailingEps'); bvps = i.get('bookValue')
+            if eps and bvps and eps > 0 and bvps > 0: return np.sqrt(22.5 * eps * bvps)
             return 0
         except: return 0
 
@@ -251,29 +242,36 @@ class AnalistaBolsa:
             per = i.get('trailingPE', i.get('forwardPE', 0))
             cap = i.get('marketCap', 0)
             div = i.get('dividendYield'); 
-            if div is None: div = i.get('trailingAnnualDividendYield')
-            if div is None: div = 0
+            if div is None: div = i.get('trailingAnnualDividendYield', 0)
             sec = i.get('sector', 'N/A'); ind = i.get('industry', 'N/A')
             if cap > 1e12: s_cap = f"{cap/1e12:.2f}T"
             elif cap > 1e9: s_cap = f"{cap/1e9:.2f}B"
             else: s_cap = str(cap)
             g_val = self.calcular_valor_graham(ticker)
-            return {"per": f"{per:.2f}" if per else "N/A", "cap": s_cap, "div": f"{div*100:.2f}%", "sec": sec, "ind": ind, "graham": g_val, "valid": True}
+            return {"per": f"{per:.2f}" if per else "N/A", "cap": s_cap, "div": f"{div*100:.2f}%" if div else "0%", "sec": sec, "ind": ind, "graham": g_val, "valid": True}
         except: return {"per": "-", "cap": "-", "div": "0%", "sec": "-", "ind": "-", "graham": 0, "valid": False}
 
     def calcular_indicadores(self):
         if self.data is None or self.data.empty: return self.data
         for col in ['ADX', 'Vol_Osc', 'CRSI', 'SMA_50', 'SMA_200', 'MACD', 'UpperBB', 'LowerBB', 'ATR']: self.data[col] = 0.0
         df = self.data.copy()
+        
+        # SMAs
         df['SMA_50'] = df['Close'].rolling(50).mean()
         df['SMA_200'] = df['Close'].rolling(200).mean()
+        
+        # BB
         df['SMA_20'] = df['Close'].rolling(20).mean()
         df['StdDev'] = df['Close'].rolling(20).std()
         df['UpperBB'] = df['SMA_20'] + (df['StdDev'] * 2)
         df['LowerBB'] = df['SMA_20'] - (df['StdDev'] * 2)
+        
+        # MACD
         exp12 = df['Close'].ewm(span=12, adjust=False).mean()
         exp26 = df['Close'].ewm(span=26, adjust=False).mean()
         df['MACD'] = exp12 - exp26
+        
+        # ATR & ADX
         df['Prev'] = df['Close'].shift(1)
         df['TR'] = np.maximum(df['High']-df['Low'], np.maximum(abs(df['High']-df['Prev']), abs(df['Low']-df['Prev'])))
         df['ATR'] = df['TR'].rolling(14).mean()
@@ -284,14 +282,19 @@ class AnalistaBolsa:
             pdi = 100*(pd.Series(pdm, index=df.index).ewm(alpha=1/14).mean()/tr14)
             mdi = 100*(pd.Series(mdm, index=df.index).ewm(alpha=1/14).mean()/tr14)
             df['ADX'] = (100*abs(pdi-mdi)/(pdi+mdi)).ewm(alpha=1/14).mean()
+        
+        # Vol Osc
         vol_ma = df['Volume'].rolling(10).mean().replace(0, np.nan)
         df['Vol_Osc'] = ((df['Volume'].rolling(5).mean()-vol_ma)/vol_ma)*100
+        
+        # RSI
         delta = df['Close'].diff()
         gain = (delta.where(delta > 0, 0)).rolling(3).mean()
         loss = (-delta.where(delta < 0, 0)).rolling(3).mean()
         with np.errstate(divide='ignore', invalid='ignore'):
             rs = gain / loss
             df['CRSI'] = 100 - (100 / (1 + rs))
+        
         df = df.fillna(0)
         self.data = df
         return self.data
@@ -305,36 +308,65 @@ class AnalistaBolsa:
             else: return "Bajista"
         except: return "Neutral"
 
-    # --- IA CON SCORE DE PRECISION (BACKTEST) ---
+    # --- IA CUÁNTICA (CON LAGS Y SCALER) ---
     def calcular_probabilidad_ia(self):
         try:
             df = self.data.copy()
-            if len(df) < 100: return 50.0, 0.0
-            df['Retorno'] = df['Close'].pct_change()
-            df = df.dropna()
-            df['Target'] = (df['Close'].shift(-1) > df['Close']).astype(int)
-            features = ['CRSI', 'SMA_50', 'SMA_200', 'MACD', 'UpperBB', 'LowerBB', 'Retorno', 'Vol_Osc']
-            X = df[features].iloc[:-1]; y = df['Target'].iloc[:-1]
+            if len(df) < 200: return 50.0, 0.0
             
-            # Split para testear precision
-            split = int(len(X) * 0.8)
-            X_train, X_test = X.iloc[:split], X.iloc[split:]
+            # 1. Feature Engineering Avanzado
+            df['Retorno'] = df['Close'].pct_change()
+            df['Lag_1'] = df['Retorno'].shift(1)
+            df['Lag_2'] = df['Retorno'].shift(2)
+            
+            # Normalizar distancias (Para que el precio 100 no pese mas que el 10)
+            df['Dist_SMA50'] = (df['Close'] - df['SMA_50']) / df['SMA_50']
+            df['Dist_SMA200'] = (df['Close'] - df['SMA_200']) / df['SMA_200']
+            
+            df = df.dropna()
+            
+            # Target: Sube mañana?
+            df['Target'] = (df['Close'].shift(-1) > df['Close']).astype(int)
+            
+            features = ['CRSI', 'MACD', 'Dist_SMA50', 'Dist_SMA200', 'Retorno', 'Lag_1', 'Lag_2', 'Vol_Osc']
+            
+            # Quitamos la ultima fila para entrenar (porque no tiene target 'mañana')
+            data_model = df.iloc[:-1].copy()
+            
+            X = data_model[features]
+            y = data_model['Target']
+            
+            # 2. Escalado de Datos (Estandarización)
+            scaler = StandardScaler()
+            X_scaled = scaler.fit_transform(X)
+            
+            # Split
+            split = int(len(X) * 0.85) # Usar 85% para entrenar (mas datos)
+            X_train, X_test = X_scaled[:split], X_scaled[split:]
             y_train, y_test = y.iloc[:split], y.iloc[split:]
             
-            model = RandomForestClassifier(n_estimators=100, min_samples_split=10, random_state=42)
+            # 3. Random Forest Optimizado (Menos profundidad para evitar overfitting)
+            model = RandomForestClassifier(n_estimators=200, max_depth=5, min_samples_split=20, random_state=42)
             model.fit(X_train, y_train)
             
             # Validacion
             preds = model.predict(X_test)
-            acc = accuracy_score(y_test, preds) * 100
+            acc = precision_score(y_test, preds, zero_division=0) * 100
             
-            # Reentrenar con todo para prediccion futura
-            model.fit(X, y)
-            ultimo_dia = df[features].iloc[[-1]] 
-            prob = model.predict_proba(ultimo_dia)[0][1] * 100
+            # 4. Predecir HOY
+            # Reentrenar con todo
+            model.fit(X_scaled, y)
+            
+            # Preparar ultimo dia
+            last_day = df[features].iloc[[-1]]
+            last_day_scaled = scaler.transform(last_day)
+            
+            prob = model.predict_proba(last_day_scaled)[0][1] * 100
             
             return prob, acc
-        except: return 50.0, 0.0
+        except Exception as e: 
+            # print(e)
+            return 50.0, 0.0
 
     def detectar_niveles(self):
         try:
@@ -459,7 +491,7 @@ def apply_dark_theme(root):
 class LoginWindow:
     def __init__(self, root, db, on_success):
         self.root = root; self.db = db; self.on_success = on_success
-        self.win = tk.Toplevel(root); self.win.title("Acceso v23.0"); self.win.geometry("350x300")
+        self.win = tk.Toplevel(root); self.win.title("Acceso v24.0"); self.win.geometry("350x300")
         apply_dark_theme(self.win)
         self.texts = LANG["ES"]
         ttk.Label(self.win, text=self.texts["login_title"], font=("Segoe UI", 16, "bold"), foreground=C_ACCENT).pack(pady=30)
@@ -807,6 +839,7 @@ class AppBolsa:
         self.root.after(0, lambda: self.btn_act.config(state="normal", text=self.texts["scan_own"]))
 
     def update_dashboard_ui(self, inv, val):
+        # CALCULO DASHBOARD CON FEES
         pl = val - inv - (ETORO_ROUND_TRIP * len(self.db.obtener_cartera(self.uid)))
         pl_pct = (pl / inv * 100) if inv > 0 else 0.0
         color = C_GREEN if pl >= 0 else C_RED
@@ -864,8 +897,8 @@ class AppBolsa:
             prob_ai, acc = self.eng.calcular_probabilidad_ia() # AHORA DEVUELVE 2 VALORES
             spy = self.eng.obtener_benchmark() 
             fund = self.eng.obtener_fundamentales(tkr)
-            ws_rec, ws_target = self.eng.obtener_consenso_analistas(tkr) # NUEVO: CONSENSO
-            fibo = self.eng.calcular_fibonacci() # NUEVO: FIBONACCI
+            ws_rec, ws_target = self.eng.obtener_consenso_analistas(tkr) 
+            fibo = self.eng.calcular_fibonacci() 
             noticias = self.eng.obtener_noticias_analizadas(tkr)
             sop, resi = self.eng.detectar_niveles()
             sim = self.eng.simular(); ev = self.eng.generar_diagnostico_interno(pp)
@@ -882,7 +915,6 @@ class AppBolsa:
             ax1.plot(d.index, d['SMA_200'], color='cyan', linewidth=1.5, label='SMA 200')
             ax1.fill_between(d.index, d['UpperBB'], d['LowerBB'], color='gray', alpha=0.15, label='BB')
             
-            # --- FIBONACCI EN EL GRAFICO ---
             if fibo:
                 ax1.axhline(fibo['0.382'], color=C_GOLD, linestyle=':', alpha=0.6, label="Fib 0.382")
                 ax1.axhline(fibo['0.5'], color=C_GOLD, linestyle='--', alpha=0.6, label="Fib 0.5")
@@ -928,11 +960,9 @@ class AppBolsa:
             self.txt.insert(tk.END, f"\n{self.texts['ai_title']}\n", "w")
             ai_tag = "ai_good" if prob_ai > 55 else "ai_bad" if prob_ai < 45 else "w"
             self.txt.insert(tk.END, f"{self.texts['ai_prob']} {prob_ai:.1f}%\n", ai_tag)
-            # MOSTRAR ACCURACY (NUEVO)
             acc_tag = "p" if acc > 60 else "n"
             self.txt.insert(tk.END, f"{self.texts['ai_acc']} {acc:.1f}%\n", acc_tag)
             
-            # MOSTRAR CONSENSO WALL STREET (NUEVO)
             self.txt.insert(tk.END, f"\n{self.texts['fund_title']}\n", "gold")
             ws_col = "p" if "BUY" in ws_rec or "STRONG" in ws_rec else "n" if "SELL" in ws_rec else "w"
             self.txt.insert(tk.END, f"{self.texts['ws_rating']} {ws_rec}\n", ws_col)
