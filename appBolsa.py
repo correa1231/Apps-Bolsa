@@ -15,9 +15,13 @@ from sklearn.ensemble import RandomForestClassifier
 # ==========================================
 # 0. CONFIGURACIÓN E IDIOMAS
 # ==========================================
+# COSTES ETORO (Hardcoded para precisión)
+ETORO_FEE_PER_ORDER = 1.0  # $1 por abrir
+ETORO_ROUND_TRIP = 2.0     # $1 abrir + $1 cerrar
+
 LANG = {
     "ES": {
-        "app_title": "Gestor Pro v18.0 (Targets)",
+        "app_title": "Gestor Pro v18.1 (eToro Edition)",
         "port_title": "📂 MI CARTERA & VIGILANCIA",
         "opp_title": "💎 OPORTUNIDADES & OBJETIVOS",
         "scan_own": "⚡ ACTUALIZAR",
@@ -40,11 +44,11 @@ LANG = {
         "msg_wait": "⏳...",
         "msg_scan": "⏳ ANALIZANDO...",
         "msg_exp_ok": "✅ Guardado.",
-        "msg_sell_title": "Cerrar Posición",
+        "msg_sell_title": "Cerrar Posición (eToro)",
         "msg_sell_ask": "Precio de Venta ($):",
         "msg_del_confirm": "¿Seguro? Se borrará de la lista sin guardar en historial.",
-        "hist_title": "Historial de Operaciones",
-        "hist_tot": "P/L Total Realizado:",
+        "hist_title": "Historial de Operaciones (Neto)",
+        "hist_tot": "P/L Neto Realizado (tras fees):",
         "conf_title": "Configuración",
         "conf_lang": "Idioma / Language:",
         "conf_logout": "🔒 SALIR",
@@ -74,10 +78,10 @@ LANG = {
         "calc_apply": "APLICAR",
         "dash_inv": "Invertido:",
         "dash_val": "Valor Actual:",
-        "dash_pl": "Total P/L:",
+        "dash_pl": "Neto P/L (eToro):",
         "login_title": "ACCESO", "user": "Usuario:", "pass": "Clave:", "btn_enter": "ENTRAR", "btn_reg": "REGISTRO", "err_login": "Error", "ok_reg": "OK", "err_reg": "Existe"
     },
-    "EN": { "app_title": "Pro Manager v18.0", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "💾 SAVE", "sell": "💰 SELL", "del_btn": "🗑 FORGET", "hist": "📜 HISTORY", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis / Target", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "msg_del_confirm": "Delete?", "hist_title": "Trade History", "hist_tot": "Total P/L:", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Prob:", "tech_title": "📐 TECH EXTRA:", "tech_sup": "Support:", "tech_res": "Resistance:", "target_title": "🎯 TARGET PRICE:", "news_title": "📰 NEWS:", "calc_title": "Risk Calc", "calc_cap": "Capital:", "calc_risk": "Risk %:", "calc_stop": "Stop Loss:", "calc_btn": "CALCULATE", "calc_res": "Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Value:", "dash_pl": "Total P/L:", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Error", "ok_reg": "OK", "err_reg": "Exists" },
+    "EN": { "app_title": "Pro Manager v18.1", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "💾 SAVE", "sell": "💰 SELL", "del_btn": "🗑 FORGET", "hist": "📜 HISTORY", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis / Target", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "msg_del_confirm": "Delete?", "hist_title": "Trade History", "hist_tot": "Total Net P/L:", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Prob:", "tech_title": "📐 TECH EXTRA:", "tech_sup": "Support:", "tech_res": "Resistance:", "target_title": "🎯 TARGET PRICE:", "news_title": "📰 NEWS:", "calc_title": "Risk Calc", "calc_cap": "Capital:", "calc_risk": "Risk %:", "calc_stop": "Stop Loss:", "calc_btn": "CALCULATE", "calc_res": "Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Value:", "dash_pl": "Net P/L (eToro):", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Error", "ok_reg": "OK", "err_reg": "Exists" },
 }
 if "FR" not in LANG: LANG["FR"] = LANG["EN"]
 if "PT" not in LANG: LANG["PT"] = LANG["EN"]
@@ -144,10 +148,15 @@ class DatabaseManager:
         data = self.conn.execute("SELECT ticker, precio_compra, cantidad FROM cartera WHERE id=?", (pid,)).fetchone()
         if not data: return
         tkr, buy_p, qty = data
-        profit = (sell_price - buy_p) * qty
+        
+        # --- CALCULO ETORO REAL ---
+        # Profit Bruto - (Fee Entrada + Fee Salida)
+        gross_profit = (sell_price - buy_p) * qty
+        net_profit = gross_profit - ETORO_ROUND_TRIP 
+        
         date_out = datetime.datetime.now().strftime("%Y-%m-%d")
         self.conn.execute("INSERT INTO historial (user_id, ticker, buy_price, sell_price, qty, profit, date_out) VALUES (?,?,?,?,?,?,?)", 
-                          (uid, tkr, buy_p, sell_price, qty, profit, date_out))
+                          (uid, tkr, buy_p, sell_price, qty, net_profit, date_out))
         self.conn.execute("DELETE FROM cartera WHERE id=?", (pid,))
         self.conn.commit()
 
@@ -328,18 +337,14 @@ class AnalistaBolsa:
             if adx > 25: raw_score += 10
             score = max(0, min(100, int(raw_score)))
             
-            # --- CALCULO TARGET ---
-            # Objetivo = Resistencia Maxima Reciente (60 dias)
-            # Si precio actual esta cerca del maximo, objetivo = Bollinger Superior
+            # Target
             min_p = self.data['Low'].tail(60).min()
             max_p = self.data['High'].tail(60).max()
-            
             target = max_p
-            if curr >= max_p * 0.98: # Si estamos a un 2% del maximo
-                target = last['UpperBB'] # Usar Bollinger como objetivo dinamico
-                if target < curr: target = curr * 1.05 # Si BB esta baja, usar 5% fijo
+            if curr >= max_p * 0.98: 
+                target = last['UpperBB'] 
+                if target < curr: target = curr * 1.05 
             
-            # Calculo profit potencial
             profit_pot = ((target - curr) / curr) * 100
             
             msg = "Neutro"; tag = ""
@@ -384,7 +389,7 @@ def apply_dark_theme(root):
 class LoginWindow:
     def __init__(self, root, db, on_success):
         self.root = root; self.db = db; self.on_success = on_success
-        self.win = tk.Toplevel(root); self.win.title("Acceso v18.0"); self.win.geometry("350x300")
+        self.win = tk.Toplevel(root); self.win.title("Acceso v18.1"); self.win.geometry("350x300")
         apply_dark_theme(self.win)
         self.texts = LANG["ES"]
         ttk.Label(self.win, text=self.texts["login_title"], font=("Segoe UI", 16, "bold"), foreground=C_ACCENT).pack(pady=30)
@@ -448,7 +453,6 @@ class AppBolsa:
         cols2 = ("tk", "sc", "ms")
         self.tr2 = ttk.Treeview(self.lf2, columns=cols2, show="headings", height=12)
         for c in cols2: self.tr2.column(c, anchor="center", stretch=True)
-        # Ajustar ancho de columna mensaje para que quepa el objetivo
         self.tr2.column("ms", width=200)
         self.tr2.pack(fill=tk.BOTH, expand=True, pady=5)
         self.tr2.bind("<Double-1>", lambda e: self.sel_load(self.tr2, False))
@@ -627,7 +631,8 @@ class AppBolsa:
         self.root.after(0, lambda: self.btn_act.config(state="normal", text=self.texts["scan_own"]))
 
     def update_dashboard_ui(self, inv, val):
-        pl = val - inv
+        # CALCULO DASHBOARD CON FEES
+        pl = val - inv - (ETORO_ROUND_TRIP * len(self.db.obtener_cartera(self.uid)))
         pl_pct = (pl / inv * 100) if inv > 0 else 0.0
         color = C_GREEN if pl >= 0 else C_RED
         self.lbl_invested.config(text=f"{self.texts['dash_inv']} ${inv:,.2f}")
@@ -652,11 +657,9 @@ class AppBolsa:
             except: pass
         cands.sort(key=lambda x: x["score"], reverse=True)
         for c in cands:
-            # MOSTRAR TARGET EN LA LISTA DE OPORTUNIDADES
             final_msg = c["msg"]
             if c["score"] > 60:
                 final_msg += f" | 🎯 ${c['target']:.2f} (+{c['profit']:.1f}%)"
-            
             self.root.after(0, self.tr2.insert, "", "end", values=(c["ticker"], c["score"], final_msg), tags=(c["tag"],))
         self.root.after(0, lambda: self.btn_gem.config(state="normal", text=self.texts["scan_mkt"]))
 
@@ -726,11 +729,13 @@ class AppBolsa:
             
             self.txt.delete(1.0, tk.END); self.txt.insert(tk.END, f"{tkr} - ${d['Close'].iloc[-1]:.2f}\n", "t")
             if pos:
-                pl = (d['Close'].iloc[-1]*qq)-(pp*qq); pc = (pl/(pp*qq))*100
-                tag = "p" if pl>=0 else "n"
-                self.txt.insert(tk.END, f"P&L: {pl:+.2f} ({pc:+.2f}%)\n", tag)
+                # --- CALCULO P/L VISUAL (ANALYSIS) CON FEES ---
+                gross_pl = (d['Close'].iloc[-1]*qq) - (pp*qq)
+                net_pl = gross_pl - ETORO_ROUND_TRIP
+                pc = (net_pl/(pp*qq))*100
+                tag = "p" if net_pl>=0 else "n"
+                self.txt.insert(tk.END, f"P&L: {net_pl:+.2f} ({pc:+.2f}%)\n", tag)
             
-            # --- MOSTRAR TARGET ---
             self.txt.insert(tk.END, f"\n{self.texts['target_title']}\n", "gold")
             self.txt.insert(tk.END, f"${ev['target']:.2f} (Potential: {ev['profit']:.1f}%)\n", "p")
 
