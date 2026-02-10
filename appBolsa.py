@@ -10,13 +10,14 @@ import sqlite3
 import hashlib
 import threading
 import matplotlib.pyplot as plt
+from sklearn.ensemble import RandomForestClassifier
 
 # ==========================================
 # 0. CONFIGURACIÓN E IDIOMAS
 # ==========================================
 LANG = {
     "ES": {
-        "app_title": "Gestor Pro v15.2 (Dark Fix)",
+        "app_title": "Gestor Pro v16.1 (Math Fix)",
         "port_title": "📂 MI CARTERA",
         "opp_title": "💎 OPORTUNIDADES",
         "scan_own": "⚡ ACTUALIZAR",
@@ -55,6 +56,8 @@ LANG = {
         "bench_title": "🆚 MERCADO (vs SPY):",
         "bench_beta": "Beta:",
         "bench_rel": "Rendimiento Relativo:",
+        "ai_title": "🤖 PREDICCIÓN IA (Random Forest):",
+        "ai_prob": "Probabilidad Subida:",
         "news_title": "📰 NOTICIAS & SENTIMIENTO:",
         "calc_title": "Calculadora Riesgo",
         "calc_cap": "Capital Total ($):",
@@ -68,7 +71,7 @@ LANG = {
         "dash_pl": "Total P/L:",
         "login_title": "ACCESO", "user": "Usuario:", "pass": "Clave:", "btn_enter": "ENTRAR", "btn_reg": "REGISTRO", "err_login": "Error", "ok_reg": "OK", "err_reg": "Existe"
     },
-    "EN": { "app_title": "Pro Manager v15.2", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "SAVE", "sell": "💰 SELL", "hist": "📜 HISTORY", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "hist_title": "Trade History", "hist_tot": "Total Realized P/L:", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "news_title": "📰 NEWS & SENTIMENT:", "calc_title": "Risk Calculator", "calc_cap": "Total Capital ($):", "calc_risk": "Max Risk (%):", "calc_stop": "Stop Loss ($):", "calc_btn": "CALCULATE", "calc_res": "Shares to Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Cur. Value:", "dash_pl": "Total P/L:", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Invalid", "ok_reg": "OK", "err_reg": "Exists" },
+    "EN": { "app_title": "Pro Manager v16.1", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "SAVE", "sell": "💰 SELL", "hist": "📜 HISTORY", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "hist_title": "Trade History", "hist_tot": "Total Realized P/L:", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Probability:", "news_title": "📰 NEWS & SENTIMENT:", "calc_title": "Risk Calculator", "calc_cap": "Total Capital ($):", "calc_risk": "Max Risk (%):", "calc_stop": "Stop Loss ($):", "calc_btn": "CALCULATE", "calc_res": "Shares to Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Cur. Value:", "dash_pl": "Total P/L:", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Invalid", "ok_reg": "OK", "err_reg": "Exists" },
 }
 if "FR" not in LANG: LANG["FR"] = LANG["EN"]
 if "PT" not in LANG: LANG["PT"] = LANG["EN"]
@@ -92,7 +95,7 @@ C_GOLD = "#ffd700"
 # 1. BASE DE DATOS
 # ==========================================
 class DatabaseManager:
-    def __init__(self, db_name="bolsa_datos_v15.db"):
+    def __init__(self, db_name="bolsa_datos_v16.db"):
         self.conn = sqlite3.connect(db_name, check_same_thread=False)
         self.crear_tablas()
 
@@ -153,7 +156,7 @@ class DatabaseManager:
         self.conn.commit()
 
 # ==========================================
-# 2. MOTOR ANALÍTICO
+# 2. MOTOR ANALÍTICO (CORREGIDO)
 # ==========================================
 class AnalistaBolsa:
     def __init__(self):
@@ -168,6 +171,53 @@ class AnalistaBolsa:
             self.data = d.astype(float)
             return d
         except: raise ValueError("Error descarga")
+
+    # --- CORRECCIÓN: DIVIDENDOS BLINDADOS ---
+    def obtener_fundamentales(self, ticker):
+        try:
+            t = yf.Ticker(ticker); i = t.info
+            per = i.get('trailingPE', i.get('forwardPE', 0))
+            cap = i.get('marketCap', 0)
+            
+            # Lógica robusta para dividendos
+            div = i.get('dividendYield')
+            if div is None: div = i.get('trailingAnnualDividendYield')
+            if div is None: div = 0
+            
+            sec = i.get('sector', 'N/A'); ind = i.get('industry', 'N/A')
+            
+            if cap > 1e12: s_cap = f"{cap/1e12:.2f}T"
+            elif cap > 1e9: s_cap = f"{cap/1e9:.2f}B"
+            elif cap > 1e6: s_cap = f"{cap/1e6:.2f}M"
+            else: s_cap = str(cap)
+            
+            return {"per": f"{per:.2f}" if per else "N/A", "cap": s_cap, "div": f"{div*100:.2f}%", "sec": sec, "ind": ind, "valid": True}
+        except: return {"per": "-", "cap": "-", "div": "0%", "sec": "-", "ind": "-", "valid": False}
+
+    def calcular_probabilidad_ia(self):
+        try:
+            df = self.data.copy()
+            if len(df) < 100: return 50.0 
+            df['Retorno'] = df['Close'].pct_change()
+            df['SMA_50'] = df['Close'].rolling(50).mean()
+            df['SMA_200'] = df['Close'].rolling(200).mean()
+            delta = df['Close'].diff()
+            gain = (delta.where(delta > 0, 0)).rolling(14).mean()
+            loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
+            with np.errstate(divide='ignore', invalid='ignore'):
+                rs = gain / loss
+                df['RSI'] = 100 - (100 / (1 + rs))
+            df = df.fillna(50).dropna()
+            df['Target'] = (df['Close'].shift(-1) > df['Close']).astype(int)
+            features = ['RSI', 'SMA_50', 'SMA_200', 'Retorno', 'Volume']
+            X = df[features].iloc[:-1]; y = df['Target'].iloc[:-1]
+            if len(X) < 10: return 50.0
+            model = RandomForestClassifier(n_estimators=100, min_samples_split=10, random_state=42)
+            model.fit(X, y)
+            ultimo_dia = df[features].iloc[[-1]] 
+            probabilidad_subida = model.predict_proba(ultimo_dia)[0][1] 
+            return probabilidad_subida * 100
+        except: return 50.0
 
     def obtener_benchmark(self):
         if self.spy_data is not None: return self.spy_data
@@ -191,26 +241,6 @@ class AnalistaBolsa:
             rel_perf = (stock_ret - spy_ret) * 100
             return {"beta": beta, "rel_perf": rel_perf}
         except: return {"beta": 0, "rel_perf": 0}
-
-    def obtener_fundamentales(self, ticker):
-        try:
-            t = yf.Ticker(ticker); i = t.info
-            per = i.get('trailingPE', i.get('forwardPE', 0))
-            cap = i.get('marketCap', 0)
-            div = i.get('dividendYield', 0)
-            
-            # FIX: Asegurar que extraemos Sector e Industria
-            sec = i.get('sector', 'N/A')
-            ind = i.get('industry', 'N/A')
-            
-            if cap > 1e12: s_cap = f"{cap/1e12:.2f}T"
-            elif cap > 1e9: s_cap = f"{cap/1e9:.2f}B"
-            elif cap > 1e6: s_cap = f"{cap/1e6:.2f}M"
-            else: s_cap = str(cap)
-            
-            # FIX: Devolver 'sec' e 'ind' para que no falle el gráfico
-            return {"per": f"{per:.2f}" if per else "N/A", "cap": s_cap, "div": f"{div*100:.2f}%" if div else "0%", "sec": sec, "ind": ind, "valid": True}
-        except: return {"per": "-", "cap": "-", "div": "-", "sec": "-", "ind": "-", "valid": False}
 
     def obtener_noticias_analizadas(self, ticker):
         try:
@@ -281,30 +311,41 @@ class AnalistaBolsa:
         for t in range(1,dias): p[t] = p[t-1]*drt[t]
         return p
 
+    # --- CORRECCIÓN: CALCULO DE SCORE CONTINUO ---
     def generar_diagnostico_interno(self, p_compra=0):
         try:
             last = self.data.iloc[-1]
             adx = last.get('ADX', 0); crsi = last.get('CRSI', 50); curr = last['Close']
-            score = 0; msg = "Neutro"; tag = ""
+            
+            # Formula de Score Continua (0-100)
+            # Base: Inverso del CRSI (Menos es mejor) + Bonus por tendencia
+            raw_score = 100 - crsi
+            if adx > 25: raw_score += 10
+            
+            # Limitar entre 0 y 100
+            score = max(0, min(100, int(raw_score)))
+            
+            msg = "Neutro"; tag = ""
             if p_compra > 0: 
                  price = last['Close']
                  if crsi > 80: msg = "⚠️ VENDER"; tag = "sell"
                  elif price < p_compra*0.9: msg = "🛑 STOP LOSS"; tag = "sell"
                  elif crsi < 20 and adx > 25: msg = "💎 ACUMULAR"; tag = "buy"
                  else: msg = "✋ MANTENER"; tag = "hold"
-                 return {"valid": True, "ticker": self.ticker, "score": 0, "msg": msg, "tag": tag, "crsi": crsi, "adx": adx, "price": curr}
+                 return {"valid": True, "ticker": self.ticker, "score": score, "msg": msg, "tag": tag, "crsi": crsi, "adx": adx, "price": curr}
 
-            if crsi < 20 and adx > 25: score = 100; msg = "🚀 COMPRA"; tag = "buy"
-            elif crsi < 15: score = 90; msg = "🚀 REBOTE"; tag = "buy"
-            elif crsi < 30 and adx > 20: score = 80; msg = "👀 PREPARAR"; tag = "near"
-            elif crsi < 30: score = 75; msg = "👀 BARATO"; tag = "near"
-            elif adx > 30 and crsi < 60: score = 60; msg = "📈 TENDENCIA"; tag = "trend"
-            elif crsi < 40: score = 40; msg = "💤 BAJANDO"; tag = "weak"
+            # Mensajes basados en rangos
+            if score >= 90: msg = "🚀 COMPRA"; tag = "buy"
+            elif score >= 75: msg = "👀 BARATO"; tag = "near"
+            elif score >= 60: msg = "📈 TENDENCIA"; tag = "trend"
+            elif score <= 20: msg = "⚠️ CARO"; tag = "sell"
+            elif score <= 40: msg = "💤 DÉBIL"; tag = "weak"
+            
             return {"valid": True, "ticker": self.ticker, "score": score, "msg": msg, "tag": tag, "crsi": crsi, "adx": adx, "price": curr}
-        except: return {"valid": False, "msg": "Error"}
+        except: return {"valid": False, "msg": "Error", "score": 0, "tag": ""}
 
 # ==========================================
-# 3. GUI THEME MANAGER (DARK PRO)
+# 3. GUI THEME MANAGER
 # ==========================================
 def apply_dark_theme(root):
     style = ttk.Style(root)
@@ -328,7 +369,7 @@ def apply_dark_theme(root):
 class LoginWindow:
     def __init__(self, root, db, on_success):
         self.root = root; self.db = db; self.on_success = on_success
-        self.win = tk.Toplevel(root); self.win.title("Acceso v15.2"); self.win.geometry("350x300")
+        self.win = tk.Toplevel(root); self.win.title("Acceso v16.1"); self.win.geometry("350x300")
         apply_dark_theme(self.win)
         self.texts = LANG["ES"]
         ttk.Label(self.win, text=self.texts["login_title"], font=("Segoe UI", 16, "bold"), foreground=C_ACCENT).pack(pady=30)
@@ -342,8 +383,7 @@ class LoginWindow:
         self.win.protocol("WM_DELETE_WINDOW", root.destroy)
 
     def log(self):
-        user_val = self.e_u.get()
-        pass_val = self.e_p.get()
+        user_val = self.e_u.get(); pass_val = self.e_p.get()
         uid = self.db.verificar_usuario(user_val, pass_val)
         if uid:
             self.win.destroy()
@@ -418,6 +458,7 @@ class AppBolsa:
         self.txt.tag_config("p", foreground=C_GREEN); self.txt.tag_config("n", foreground=C_RED)
         self.txt.tag_config("gold", foreground=C_GOLD); self.txt.tag_config("w", foreground="white")
         self.txt.tag_config("news_bull", foreground=C_GREEN); self.txt.tag_config("news_bear", foreground=C_RED)
+        self.txt.tag_config("ai_good", foreground="#00ff00", font=("bold",12)); self.txt.tag_config("ai_bad", foreground="#ff4444", font=("bold",12))
         
         frg = ttk.Frame(pan)
         plt.style.use('dark_background')
@@ -433,8 +474,7 @@ class AppBolsa:
     def vender_posicion(self):
         s = self.tr1.selection()
         if not s: return
-        iid = int(s[0])
-        item = None
+        iid = int(s[0]); item = None
         for d in self.db.obtener_cartera(self.uid):
             if d[4] == iid: item = d; break
         if not item: return
@@ -612,7 +652,8 @@ class AppBolsa:
         
         try:
             self.eng.descargar_datos(tkr); df = self.eng.calcular_indicadores()
-            spy = self.eng.obtener_benchmark() # NUEVO
+            prob_ai = self.eng.calcular_probabilidad_ia() # NUEVO: IA
+            spy = self.eng.obtener_benchmark() 
             fund = self.eng.obtener_fundamentales(tkr)
             noticias = self.eng.obtener_noticias_analizadas(tkr)
             sim = self.eng.simular(); ev = self.eng.generar_diagnostico_interno(pp)
@@ -624,9 +665,9 @@ class AppBolsa:
             self.fig.subplots_adjust(left=0.1, right=0.95, top=0.92, bottom=0.15, hspace=0.15)
             
             d = df.tail(150)
-            ax1.plot(d.index, d['Close'], color='white', linewidth=1.2, label='Precio') # BLANCO PARA CONTRASTE
+            ax1.plot(d.index, d['Close'], color='white', linewidth=1.2, label='Precio') # BLANCO
             ax1.plot(d.index, d['SMA_50'], color='orange', linestyle='--', linewidth=1, label='SMA 50')
-            ax1.plot(d.index, d['SMA_200'], color='cyan', linewidth=1.5, label='SMA 200') # CYAN PARA OSCURO
+            ax1.plot(d.index, d['SMA_200'], color='cyan', linewidth=1.5, label='SMA 200') # CYAN
             
             if spy is not None:
                 d_spy = spy.tail(150)
@@ -659,6 +700,11 @@ class AppBolsa:
                 tag = "p" if pl>=0 else "n"
                 self.txt.insert(tk.END, f"P&L: {pl:+.2f} ({pc:+.2f}%)\n", tag)
             
+            # --- MOSTRAR IA ---
+            self.txt.insert(tk.END, f"\n{self.texts['ai_title']}\n", "w")
+            ai_tag = "ai_good" if prob_ai > 55 else "ai_bad" if prob_ai < 45 else "w"
+            self.txt.insert(tk.END, f"{self.texts['ai_prob']} {prob_ai:.1f}%\n", ai_tag)
+
             self.txt.insert(tk.END, f"\n{self.texts['bench_title']}\n", "gold")
             b_col = "news_bull" if bench_stats['rel_perf'] > 0 else "news_bear"
             self.txt.insert(tk.END, f"{self.texts['bench_beta']} {bench_stats['beta']:.2f} | {self.texts['bench_rel']} ", "w")
