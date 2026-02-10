@@ -13,9 +13,8 @@ import matplotlib.pyplot as plt
 import os
 
 # --- LIBRERIAS IA AVANZADA ---
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_score
 
 # ==========================================
@@ -26,84 +25,23 @@ ETORO_ROUND_TRIP = 2.0
 
 LANG = {
     "ES": {
-        "app_title": "Gestor Pro v24.0 (AI Quantum)",
+        "app_title": "Gestor Pro v26.0 (Quant Architect)",
         "port_title": "📂 MI CARTERA & VIGILANCIA",
         "opp_title": "💎 OPORTUNIDADES & OBJETIVOS",
         "scan_own": "⚡ ACTUALIZAR",
-        "save": "💾",
-        "sell": "💰 VENDER",
-        "del_btn": "🗑",
-        "viz_btn": "📊 VIZ",
-        "stats_btn": "📈 STATS",
-        "risk_btn": "🔥 RIESGO",
-        "snap_btn": "📷 SNAPSHOT",
-        "hist": "📜 HIST",
-        "exp": "📄 EXP",
-        "scan_mkt": "🔍 ESCANEAR",
-        "analyze": "▶ ANALIZAR",
-        "reset_zoom": "RESET",
-        "buy_price": "Compra:",
-        "qty": "Cant:",
-        "col_ticker": "Ticker",
-        "col_entry": "Entrada",
-        "col_state": "Estado",
-        "col_score": "Pts",
-        "col_diag": "Diagnóstico / Objetivo",
-        "vigil": "👁 VIGILANDO",
-        "msg_wait": "⏳...",
-        "msg_scan": "⏳ ANALIZANDO...",
-        "msg_exp_ok": "✅ Guardado.",
-        "msg_snap_ok": "✅ Reporte guardado en carpeta 'Reports'.",
-        "msg_sell_title": "Cerrar Posición (eToro)",
-        "msg_sell_ask": "Precio de Venta ($):",
-        "msg_del_confirm": "¿Seguro? Se borrará de la lista sin guardar en historial.",
-        "hist_title": "Historial de Operaciones (Neto)",
-        "hist_tot": "P/L Neto Realizado (tras fees):",
-        "viz_title": "Distribución de Cartera",
-        "stats_title": "Auditoría de Rendimiento",
-        "risk_title": "Matriz de Correlación (Riesgo)",
-        "conf_title": "Configuración",
-        "conf_lang": "Idioma / Language:",
-        "conf_logout": "🔒 SALIR",
-        "conf_del": "⚠️ BORRAR CUENTA",
-        "conf_del_confirm": "¿Seguro? Se borrarán tus datos.",
-        "refresh_all": "🔄 TODO",
-        "fund_title": "📊 FUNDAMENTALES:",
-        "fund_pe": "PER:",
-        "fund_cap": "Mkt Cap:",
-        "fund_div": "Div Yield:",
-        "ws_rating": "Analistas:",
-        "ws_target": "Precio Obj. Wall St:",
-        "graham_title": "💎 VALOR INTRÍNSECO (Graham):",
-        "bench_title": "🆚 MERCADO (vs SPY):",
-        "bench_beta": "Beta:",
-        "bench_rel": "Rendimiento Relativo:",
-        "ai_title": "🤖 PREDICCIÓN IA (Quantum):",
-        "ai_prob": "Probabilidad Subida:",
-        "ai_acc": "Precisión Histórica (Test):",
-        "tech_title": "📐 TECH & STOP LOSS (ATR):",
-        "tech_sup": "Soporte:",
-        "tech_res": "Resistencia:",
-        "tech_sl": "Stop Loss Sugerido:",
-        "trend_wk": "Tendencia Semanal:",
-        "target_title": "🎯 OBJETIVO TÉCNICO (Take Profit):",
-        "news_title": "📰 NOTICIAS & SENTIMIENTO:",
-        "calc_title": "Calculadora Riesgo",
-        "calc_cap": "Capital Total ($):",
-        "calc_risk": "Riesgo Máx (%):",
-        "calc_stop": "Stop Loss ($):",
-        "calc_btn": "CALCULAR",
-        "calc_res": "Acciones a Comprar:",
-        "calc_apply": "APLICAR",
-        "dash_inv": "Invertido:",
-        "dash_val": "Valor Actual:",
-        "dash_pl": "Neto P/L (eToro):",
-        "macro_fear": "😨 MIEDO (VIX Alto)",
-        "macro_greed": "🤑 CODICIA (Tendencia Alcista)",
-        "macro_neutral": "😐 NEUTRO",
+        "save": "💾", "sell": "💰 VENDER", "del_btn": "🗑", "viz_btn": "📊 VIZ", "stats_btn": "📈 STATS", "risk_btn": "🔥 RIESGO", "snap_btn": "📷 SNAPSHOT", "hist": "📜 HIST", "exp": "📄 EXP", "scan_mkt": "🔍 ESCANEAR", "analyze": "▶ ANALIZAR", "reset_zoom": "RESET", "buy_price": "Compra:", "qty": "Cant:",
+        "col_ticker": "Ticker", "col_entry": "Entrada", "col_state": "Estado", "col_score": "Pts", "col_diag": "Diagnóstico / Objetivo",
+        "vigil": "👁 VIGILANDO", "msg_wait": "⏳...", "msg_scan": "⏳ ANALIZANDO...", "msg_exp_ok": "✅ Guardado.", "msg_snap_ok": "✅ Reporte guardado.", "msg_sell_title": "Cerrar Posición", "msg_sell_ask": "Precio Venta ($):", "msg_del_confirm": "¿Borrar de la lista?",
+        "hist_title": "Historial (Neto)", "hist_tot": "P/L Neto:", "viz_title": "Distribución", "stats_title": "Auditoría", "risk_title": "Matriz Riesgo", "conf_title": "Config", "conf_lang": "Idioma:", "conf_logout": "🔒 SALIR", "conf_del": "⚠️ BORRAR", "conf_del_confirm": "¿Seguro?", "refresh_all": "🔄 TODO",
+        "fund_title": "📊 FUNDAMENTALES:", "fund_pe": "PER:", "fund_cap": "Mkt Cap:", "fund_div": "Div:", "ws_rating": "Analistas:", "ws_target": "Objetivo Wall St:",
+        "graham_title": "💎 VALOR GRAHAM:", "bench_title": "🆚 MERCADO:", "bench_beta": "Beta:", "bench_rel": "Relativo:",
+        "ai_title": "🤖 IA (Gradient Boosting):", "ai_prob": "Prob. Éxito:", "ai_acc": "Precisión Test:", "ai_factors": "Factores Clave:",
+        "tech_title": "📐 TECH & STOP LOSS:", "tech_sup": "Soporte:", "tech_res": "Resistencia:", "tech_sl": "Stop Loss:", "trend_wk": "Tendencia Semanal:",
+        "target_title": "🎯 OBJETIVO (Take Profit):", "news_title": "📰 NOTICIAS:", "calc_title": "Calc Riesgo", "calc_cap": "Capital:", "calc_risk": "Riesgo %:", "calc_stop": "Stop:", "calc_btn": "CALCULAR", "calc_res": "Comprar:", "calc_apply": "APLICAR",
+        "dash_inv": "Invertido:", "dash_val": "Valor:", "dash_pl": "Neto P/L:", "macro_fear": "😨 MIEDO", "macro_greed": "🤑 CODICIA", "macro_neutral": "😐 NEUTRO",
         "login_title": "ACCESO", "user": "Usuario:", "pass": "Clave:", "btn_enter": "ENTRAR", "btn_reg": "REGISTRO", "err_login": "Error", "ok_reg": "OK", "err_reg": "Existe"
     },
-    "EN": { "app_title": "Pro Manager v24.0", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "💾 SAVE", "sell": "💰 SELL", "del_btn": "🗑 FORGET", "viz_btn": "📊 VIZ", "stats_btn": "📈 STATS", "risk_btn": "🔥 RISK", "snap_btn": "📷 SNAPSHOT", "hist": "📜 HISTORY", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis / Target", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_snap_ok": "✅ Report saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "msg_del_confirm": "Delete?", "hist_title": "Trade History", "hist_tot": "Total Net P/L:", "viz_title": "Portfolio Allocation", "stats_title": "Performance Audit", "risk_title": "Correlation Matrix", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "ws_rating": "Analysts:", "ws_target": "Wall St Target:", "graham_title": "💎 INTRINSIC VALUE (Graham):", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Prob:", "ai_acc": "Model Accuracy:", "tech_title": "📐 TECH & STOP LOSS:", "tech_sup": "Support:", "tech_res": "Resistance:", "tech_sl": "Suggested Stop:", "trend_wk": "Weekly Trend:", "target_title": "🎯 TARGET PRICE:", "news_title": "📰 NEWS:", "calc_title": "Risk Calc", "calc_cap": "Capital:", "calc_risk": "Risk %:", "calc_stop": "Stop Loss:", "calc_btn": "CALCULATE", "calc_res": "Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Value:", "dash_pl": "Net P/L (eToro):", "macro_fear": "😨 FEAR (High VIX)", "macro_greed": "🤑 GREED (Bull Trend)", "macro_neutral": "😐 NEUTRAL", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Error", "ok_reg": "OK", "err_reg": "Exists" },
+    "EN": { "app_title": "Pro Manager v26.0", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "💾", "sell": "💰 SELL", "del_btn": "🗑", "viz_btn": "📊 VIZ", "stats_btn": "📈 STATS", "risk_btn": "🔥 RISK", "snap_btn": "📷 SNAPSHOT", "hist": "📜 HIST", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis / Target", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_snap_ok": "✅ Report saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "msg_del_confirm": "Delete?", "hist_title": "Trade History", "hist_tot": "Total Net P/L:", "viz_title": "Portfolio Allocation", "stats_title": "Performance Audit", "risk_title": "Correlation Matrix", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "ws_rating": "Analysts:", "ws_target": "WS Target:", "graham_title": "💎 GRAHAM VALUE:", "bench_title": "🆚 MARKET:", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Prob:", "ai_acc": "Test Accuracy:", "ai_factors": "Key Factors:", "tech_title": "📐 TECH & STOP LOSS:", "tech_sup": "Support:", "tech_res": "Resistance:", "tech_sl": "Suggested Stop:", "trend_wk": "Weekly Trend:", "target_title": "🎯 TARGET PRICE:", "news_title": "📰 NEWS:", "calc_title": "Risk Calc", "calc_cap": "Capital:", "calc_risk": "Risk %:", "calc_stop": "Stop Loss:", "calc_btn": "CALCULATE", "calc_res": "Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Value:", "dash_pl": "Net P/L:", "macro_fear": "😨 FEAR", "macro_greed": "🤑 GREED", "macro_neutral": "😐 NEUTRAL", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Error", "ok_reg": "OK", "err_reg": "Exists" },
 }
 if "FR" not in LANG: LANG["FR"] = LANG["EN"]
 if "PT" not in LANG: LANG["PT"] = LANG["EN"]
@@ -118,10 +56,10 @@ C_BG = "#1e1e1e"; C_FG = "#ffffff"; C_ACCENT = "#007acc"
 C_PANEL = "#252526"; C_GREEN = "#4ec9b0"; C_RED = "#f44747"; C_GOLD = "#ffd700"; C_PURPLE = "#8a2be2"; C_ORANGE = "#e67e22"
 
 # ==========================================
-# 1. BASE DE DATOS
+# 1. BASE DE DATOS (APUNTANDO A v24)
 # ==========================================
 class DatabaseManager:
-    def __init__(self, db_name="bolsa_datos_v24.db"):
+    def __init__(self, db_name="bolsa_datos_v24.db"): # MANTENEMOS ARCHIVO v24
         self.conn = sqlite3.connect(db_name, check_same_thread=False)
         self.crear_tablas()
 
@@ -181,21 +119,20 @@ class DatabaseManager:
         self.conn.commit()
 
 # ==========================================
-# 2. MOTOR ANALÍTICO (IA MEJORADA)
+# 2. MOTOR ANALÍTICO (GRADIENT BOOSTING)
 # ==========================================
 class AnalistaBolsa:
     def __init__(self):
         self.data = None; self.ticker = ""; self.spy_data = None; self.data_weekly = None
+        self.model = None; self.scaler = None; self.features_cols = []
 
     def descargar_datos(self, ticker):
         self.ticker = ticker.upper()
         try:
-            # DESCARGAR 5 AÑOS PARA MEJORAR ENTRENAMIENTO
             d = yf.download(self.ticker, period="5y", progress=False)
             if d.empty: raise ValueError
             if isinstance(d.columns, pd.MultiIndex): d.columns = d.columns.droplevel(1)
             self.data = d.astype(float)
-            
             w = yf.download(self.ticker, period="2y", interval="1wk", progress=False)
             if isinstance(w.columns, pd.MultiIndex): w.columns = w.columns.droplevel(1)
             self.data_weekly = w.astype(float)
@@ -248,23 +185,30 @@ class AnalistaBolsa:
             elif cap > 1e9: s_cap = f"{cap/1e9:.2f}B"
             else: s_cap = str(cap)
             g_val = self.calcular_valor_graham(ticker)
-            return {"per": f"{per:.2f}" if per else "N/A", "cap": s_cap, "div": f"{div*100:.2f}%" if div else "0%", "sec": sec, "ind": ind, "graham": g_val, "valid": True}
+            return {"per": f"{per:.2f}" if per else "N/A", "cap": s_cap, "div": f"{div*100:.2f}%", "sec": sec, "ind": ind, "graham": g_val, "valid": True}
         except: return {"per": "-", "cap": "-", "div": "0%", "sec": "-", "ind": "-", "graham": 0, "valid": False}
 
     def calcular_indicadores(self):
         if self.data is None or self.data.empty: return self.data
-        for col in ['ADX', 'Vol_Osc', 'CRSI', 'SMA_50', 'SMA_200', 'MACD', 'UpperBB', 'LowerBB', 'ATR']: self.data[col] = 0.0
+        for col in ['ADX', 'Vol_Osc', 'CRSI', 'SMA_50', 'SMA_200', 'MACD', 'UpperBB', 'LowerBB', 'ATR', 'VWAP']: self.data[col] = 0.0
         df = self.data.copy()
         
         # SMAs
         df['SMA_50'] = df['Close'].rolling(50).mean()
         df['SMA_200'] = df['Close'].rolling(200).mean()
         
-        # BB
+        # VWAP (Institucional)
+        v = df['Volume'].values
+        tp = (df['High'] + df['Low'] + df['Close']) / 3
+        df['VWAP'] = (tp * v).cumsum() / v.cumsum()
+        
+        # BB & %B
         df['SMA_20'] = df['Close'].rolling(20).mean()
         df['StdDev'] = df['Close'].rolling(20).std()
         df['UpperBB'] = df['SMA_20'] + (df['StdDev'] * 2)
         df['LowerBB'] = df['SMA_20'] - (df['StdDev'] * 2)
+        # Posicion relativa en bandas
+        df['BB_Pct'] = (df['Close'] - df['LowerBB']) / (df['UpperBB'] - df['LowerBB'])
         
         # MACD
         exp12 = df['Close'].ewm(span=12, adjust=False).mean()
@@ -308,65 +252,61 @@ class AnalistaBolsa:
             else: return "Bajista"
         except: return "Neutral"
 
-    # --- IA CUÁNTICA (CON LAGS Y SCALER) ---
+    # --- IA GRADIENT BOOSTING (MEJORADA) ---
     def calcular_probabilidad_ia(self):
         try:
             df = self.data.copy()
-            if len(df) < 200: return 50.0, 0.0
+            if len(df) < 200: return 50.0, 0.0, []
             
-            # 1. Feature Engineering Avanzado
+            # Ingenieria de Features
             df['Retorno'] = df['Close'].pct_change()
             df['Lag_1'] = df['Retorno'].shift(1)
-            df['Lag_2'] = df['Retorno'].shift(2)
-            
-            # Normalizar distancias (Para que el precio 100 no pese mas que el 10)
             df['Dist_SMA50'] = (df['Close'] - df['SMA_50']) / df['SMA_50']
-            df['Dist_SMA200'] = (df['Close'] - df['SMA_200']) / df['SMA_200']
+            df['Dist_VWAP'] = (df['Close'] - df['VWAP']) / df['VWAP'] # Nueva Feature
             
             df = df.dropna()
             
-            # Target: Sube mañana?
-            df['Target'] = (df['Close'].shift(-1) > df['Close']).astype(int)
+            # Target: Sube > 1.5% en 3 dias
+            future_close = df['Close'].shift(-3)
+            df['Target'] = (future_close > df['Close'] * 1.015).astype(int)
             
-            features = ['CRSI', 'MACD', 'Dist_SMA50', 'Dist_SMA200', 'Retorno', 'Lag_1', 'Lag_2', 'Vol_Osc']
+            self.features_cols = ['CRSI', 'MACD', 'BB_Pct', 'Dist_SMA50', 'Dist_VWAP', 'Retorno', 'Lag_1', 'Vol_Osc']
             
-            # Quitamos la ultima fila para entrenar (porque no tiene target 'mañana')
-            data_model = df.iloc[:-1].copy()
-            
-            X = data_model[features]
+            # Datos para entrenar (quitando ultimos 3 dias)
+            data_model = df.iloc[:-3].copy()
+            X = data_model[self.features_cols]
             y = data_model['Target']
             
-            # 2. Escalado de Datos (Estandarización)
-            scaler = StandardScaler()
-            X_scaled = scaler.fit_transform(X)
+            # Scaler
+            self.scaler = StandardScaler()
+            X_scaled = self.scaler.fit_transform(X)
             
             # Split
-            split = int(len(X) * 0.85) # Usar 85% para entrenar (mas datos)
+            split = int(len(X) * 0.85)
             X_train, X_test = X_scaled[:split], X_scaled[split:]
             y_train, y_test = y.iloc[:split], y.iloc[split:]
             
-            # 3. Random Forest Optimizado (Menos profundidad para evitar overfitting)
-            model = RandomForestClassifier(n_estimators=200, max_depth=5, min_samples_split=20, random_state=42)
-            model.fit(X_train, y_train)
+            # GRADIENT BOOSTING (Mas preciso que Random Forest)
+            self.model = GradientBoostingClassifier(n_estimators=200, learning_rate=0.1, max_depth=4, random_state=42)
+            self.model.fit(X_train, y_train)
             
-            # Validacion
-            preds = model.predict(X_test)
+            preds = self.model.predict(X_test)
             acc = precision_score(y_test, preds, zero_division=0) * 100
             
-            # 4. Predecir HOY
-            # Reentrenar con todo
-            model.fit(X_scaled, y)
+            # Predecir HOY
+            self.model.fit(X_scaled, y)
+            last_day = df[self.features_cols].iloc[[-1]]
+            last_day_scaled = self.scaler.transform(last_day)
+            prob = self.model.predict_proba(last_day_scaled)[0][1] * 100
             
-            # Preparar ultimo dia
-            last_day = df[features].iloc[[-1]]
-            last_day_scaled = scaler.transform(last_day)
+            # Importancia de Factores
+            importances = self.model.feature_importances_
+            top_factors = sorted(zip(self.features_cols, importances), key=lambda x: x[1], reverse=True)[:2]
             
-            prob = model.predict_proba(last_day_scaled)[0][1] * 100
-            
-            return prob, acc
+            return prob, acc, top_factors
         except Exception as e: 
             # print(e)
-            return 50.0, 0.0
+            return 50.0, 0.0, []
 
     def detectar_niveles(self):
         try:
@@ -491,7 +431,7 @@ def apply_dark_theme(root):
 class LoginWindow:
     def __init__(self, root, db, on_success):
         self.root = root; self.db = db; self.on_success = on_success
-        self.win = tk.Toplevel(root); self.win.title("Acceso v24.0"); self.win.geometry("350x300")
+        self.win = tk.Toplevel(root); self.win.title("Acceso v26.0"); self.win.geometry("350x300")
         apply_dark_theme(self.win)
         self.texts = LANG["ES"]
         ttk.Label(self.win, text=self.texts["login_title"], font=("Segoe UI", 16, "bold"), foreground=C_ACCENT).pack(pady=30)
@@ -839,7 +779,6 @@ class AppBolsa:
         self.root.after(0, lambda: self.btn_act.config(state="normal", text=self.texts["scan_own"]))
 
     def update_dashboard_ui(self, inv, val):
-        # CALCULO DASHBOARD CON FEES
         pl = val - inv - (ETORO_ROUND_TRIP * len(self.db.obtener_cartera(self.uid)))
         pl_pct = (pl / inv * 100) if inv > 0 else 0.0
         color = C_GREEN if pl >= 0 else C_RED
@@ -894,7 +833,7 @@ class AppBolsa:
         
         try:
             self.eng.descargar_datos(tkr); df = self.eng.calcular_indicadores()
-            prob_ai, acc = self.eng.calcular_probabilidad_ia() # AHORA DEVUELVE 2 VALORES
+            prob_ai, acc, factors = self.eng.calcular_probabilidad_ia() # AHORA DEVUELVE 3 VALORES
             spy = self.eng.obtener_benchmark() 
             fund = self.eng.obtener_fundamentales(tkr)
             ws_rec, ws_target = self.eng.obtener_consenso_analistas(tkr) 
@@ -962,6 +901,13 @@ class AppBolsa:
             self.txt.insert(tk.END, f"{self.texts['ai_prob']} {prob_ai:.1f}%\n", ai_tag)
             acc_tag = "p" if acc > 60 else "n"
             self.txt.insert(tk.END, f"{self.texts['ai_acc']} {acc:.1f}%\n", acc_tag)
+            
+            # FACTORES CLAVE (NUEVO)
+            if factors:
+                self.txt.insert(tk.END, f"{self.texts['ai_factors']} ", "w")
+                for f, imp in factors:
+                    self.txt.insert(tk.END, f"{f}({imp*100:.0f}%) ", "gold")
+                self.txt.insert(tk.END, "\n")
             
             self.txt.insert(tk.END, f"\n{self.texts['fund_title']}\n", "gold")
             ws_col = "p" if "BUY" in ws_rec or "STRONG" in ws_rec else "n" if "SELL" in ws_rec else "w"
