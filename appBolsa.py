@@ -12,7 +12,7 @@ import threading
 import matplotlib.pyplot as plt
 
 # ==========================================
-# 0. CONFIGURACIÓN
+# 0. CONFIGURACIÓN E IDIOMAS
 # ==========================================
 LANG = {
     "ES": {
@@ -40,6 +40,7 @@ LANG = {
         "conf_logout": "🔒 CERRAR SESIÓN",
         "conf_del": "⚠️ BORRAR CUENTA",
         "conf_del_confirm": "¿Seguro? Se borrarán tus datos.",
+        "refresh_all": "🔄 TODO",
         "login_title": "ACCESO USUARIO",
         "user": "Usuario:",
         "pass": "Contraseña:",
@@ -49,9 +50,9 @@ LANG = {
         "ok_reg": "Usuario creado",
         "err_reg": "Usuario ya existe"
     },
-    "EN": { "app_title": "AI Investment Manager", "port_title": "📂 MY PORTFOLIO", "opp_title": "💎 TOP OPPORTUNITIES", "scan_own": "⚡ REFRESH PORTFOLIO", "save": "Save", "del": "Delete", "scan_mkt": "🔍 FIND GEMS", "analyze": "▶ ANALYZE", "reset_zoom": "RESET ZOOM", "buy_price": "Buy Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis", "vigil": "👁 WATCHING", "msg_wait": "⏳...", "msg_scan": "⏳ SCANNING...", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE ACCOUNT", "conf_del_confirm": "Are you sure?", "login_title": "USER LOGIN", "user": "Username:", "pass": "Password:", "btn_enter": "LOGIN", "btn_reg": "REGISTER", "err_login": "Invalid credentials", "ok_reg": "User created", "err_reg": "User exists" },
-    "FR": { "app_title": "Gestionnaire IA", "port_title": "📂 MON PORTEFEUILLE", "opp_title": "💎 OPPORTUNITÉS", "scan_own": "⚡ ACTUALISER", "save": "Sauver", "del": "Effacer", "scan_mkt": "🔍 CHERCHER GEMS", "analyze": "▶ ANALYSER", "reset_zoom": "RÉINIT. ZOOM", "buy_price": "Prix Achat:", "qty": "Qté:", "col_ticker": "Ticker", "col_entry": "Entrée", "col_state": "État", "col_score": "Pts", "col_diag": "Diagnostic", "vigil": "👁 SURVEILLANCE", "msg_wait": "⏳...", "msg_scan": "⏳ ANALYSE...", "conf_title": "Paramètres", "conf_lang": "Langue:", "conf_logout": "🔒 DÉCONNEXION", "conf_del": "⚠️ SUPPRIMER COMPTE", "conf_del_confirm": "Êtes-vous sûr ?", "login_title": "CONNEXION", "user": "Utilisateur:", "pass": "Mot de passe:", "btn_enter": "ENTRER", "btn_reg": "S'INSCRIRE", "err_login": "Erreur login", "ok_reg": "Créé", "err_reg": "Existe déjà" },
-    "PT": { "app_title": "Gestor IA", "port_title": "📂 MINHA CARTEIRA", "opp_title": "💎 OPORTUNIDADES", "scan_own": "⚡ ATUALIZAR", "save": "Salvar", "del": "Excluir", "scan_mkt": "🔍 BUSCAR GEMS", "analyze": "▶ ANALISAR", "reset_zoom": "RESET ZOOM", "buy_price": "Preço:", "qty": "Qtd:", "col_ticker": "Ticker", "col_entry": "Entrada", "col_state": "Estado", "col_score": "Pts", "col_diag": "Diagnóstico", "vigil": "👁 VIGIANDO", "msg_wait": "⏳...", "msg_scan": "⏳ ANALISANDO...", "conf_title": "Configurações", "conf_lang": "Idioma:", "conf_logout": "🔒 SAIR", "conf_del": "⚠️ EXCLUIR CONTA", "conf_del_confirm": "Tem certeza?", "login_title": "LOGIN", "user": "Usuário:", "pass": "Senha:", "btn_enter": "ENTRAR", "btn_reg": "REGISTRAR", "err_login": "Dados inválidos", "ok_reg": "Criado", "err_reg": "Já existe" }
+    "EN": { "app_title": "AI Investment Manager", "port_title": "📂 MY PORTFOLIO", "opp_title": "💎 TOP OPPORTUNITIES", "scan_own": "⚡ REFRESH PORTFOLIO", "save": "Save", "del": "Delete", "scan_mkt": "🔍 FIND GEMS", "analyze": "▶ ANALYZE", "reset_zoom": "RESET ZOOM", "buy_price": "Buy Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis", "vigil": "👁 WATCHING", "msg_wait": "⏳...", "msg_scan": "⏳ SCANNING...", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE ACCOUNT", "conf_del_confirm": "Are you sure?", "refresh_all": "🔄 ALL", "login_title": "USER LOGIN", "user": "Username:", "pass": "Password:", "btn_enter": "LOGIN", "btn_reg": "REGISTER", "err_login": "Invalid credentials", "ok_reg": "User created", "err_reg": "User exists" },
+    "FR": { "app_title": "Gestionnaire IA", "port_title": "📂 MON PORTEFEUILLE", "opp_title": "💎 OPPORTUNITÉS", "scan_own": "⚡ ACTUALISER", "save": "Sauver", "del": "Effacer", "scan_mkt": "🔍 CHERCHER GEMS", "analyze": "▶ ANALYSER", "reset_zoom": "RÉINIT. ZOOM", "buy_price": "Prix Achat:", "qty": "Qté:", "col_ticker": "Ticker", "col_entry": "Entrée", "col_state": "État", "col_score": "Pts", "col_diag": "Diagnostic", "vigil": "👁 SURVEILLANCE", "msg_wait": "⏳...", "msg_scan": "⏳ ANALYSE...", "conf_title": "Paramètres", "conf_lang": "Langue:", "conf_logout": "🔒 DÉCONNEXION", "conf_del": "⚠️ SUPPRIMER COMPTE", "conf_del_confirm": "Êtes-vous sûr ?", "refresh_all": "🔄 TOUT", "login_title": "CONNEXION", "user": "Utilisateur:", "pass": "Mot de passe:", "btn_enter": "ENTRER", "btn_reg": "S'INSCRIRE", "err_login": "Erreur login", "ok_reg": "Créé", "err_reg": "Existe déjà" },
+    "PT": { "app_title": "Gestor IA", "port_title": "📂 MINHA CARTEIRA", "opp_title": "💎 OPORTUNIDADES", "scan_own": "⚡ ATUALIZAR", "save": "Salvar", "del": "Excluir", "scan_mkt": "🔍 BUSCAR GEMS", "analyze": "▶ ANALISAR", "reset_zoom": "RESET ZOOM", "buy_price": "Preço:", "qty": "Qtd:", "col_ticker": "Ticker", "col_entry": "Entrada", "col_state": "Estado", "col_score": "Pts", "col_diag": "Diagnóstico", "vigil": "👁 VIGIANDO", "msg_wait": "⏳...", "msg_scan": "⏳ ANALISANDO...", "conf_title": "Configurações", "conf_lang": "Idioma:", "conf_logout": "🔒 SAIR", "conf_del": "⚠️ EXCLUIR CONTA", "conf_del_confirm": "Tem certeza?", "refresh_all": "🔄 TUDO", "login_title": "LOGIN", "user": "Usuário:", "pass": "Senha:", "btn_enter": "ENTRAR", "btn_reg": "REGISTRAR", "err_login": "Dados inválidos", "ok_reg": "Criado", "err_reg": "Já existe" }
 }
 
 CANDIDATOS_VIP = [
@@ -214,7 +215,7 @@ class AnalistaBolsa:
 class LoginWindow:
     def __init__(self, root, db, on_success):
         self.root = root; self.db = db; self.on_success = on_success
-        self.win = tk.Toplevel(root); self.win.title("Acceso v10.8"); self.win.geometry("350x300")
+        self.win = tk.Toplevel(root); self.win.title("Acceso v10.9"); self.win.geometry("350x300")
         self.texts = LANG["ES"]
         ttk.Label(self.win, text=self.texts["login_title"], font=("Arial", 14, "bold")).pack(pady=20)
         ttk.Label(self.win, text=self.texts["user"]).pack(); self.e_u = ttk.Entry(self.win); self.e_u.pack(pady=5)
@@ -291,8 +292,13 @@ class AppBolsa:
         self.e_qt = ttk.Entry(ctrl, width=8); self.e_qt.pack(side=tk.LEFT)
         self.btn_clean = tk.Button(ctrl, text="🗑", command=self.limpiar_campos, bg="#ffcccc"); self.btn_clean.pack(side=tk.LEFT, padx=5)
         
+        # === BOTONES DERECHA ===
         self.btn_conf = ttk.Button(ctrl, text="⚙️ CONFIG", command=self.abrir_config)
         self.btn_conf.pack(side=tk.RIGHT, padx=5)
+        
+        # NUEVO BOTON REFRESH ALL
+        self.btn_refresh = tk.Button(ctrl, bg="purple", fg="white", font=("bold", 9), command=self.refresh_all)
+        self.btn_refresh.pack(side=tk.RIGHT, padx=5)
 
         pan = ttk.PanedWindow(cont, orient=tk.HORIZONTAL); pan.pack(fill=tk.BOTH, expand=True, padx=10)
         self.txt = tk.Text(pan, width=40, bg="#111", fg="#0f0", font=("Consolas", 10)); pan.add(self.txt, weight=1)
@@ -308,6 +314,12 @@ class AppBolsa:
         
         self.update_ui_language()
         self.load_init()
+
+    # --- NUEVA FUNCION: REFRESH ALL ---
+    def refresh_all(self):
+        self.run()       # Analizar ticker actual
+        self.scan_own()  # Actualizar cartera
+        self.scan_mkt()  # Escanear oportunidades
 
     # --- CONFIG ---
     def abrir_config(self):
@@ -336,6 +348,7 @@ class AppBolsa:
         self.btn_gem.config(text=t["scan_mkt"])
         self.btn_run.config(text=t["analyze"]); self.b_rst.config(text=t["reset_zoom"])
         self.lbl_buy.config(text=t["buy_price"]); self.lbl_qty.config(text=t["qty"])
+        self.btn_refresh.config(text=t["refresh_all"]) # Actualizar texto boton nuevo
         self.load_init()
 
     def logout(self):
