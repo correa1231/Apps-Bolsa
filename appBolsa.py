@@ -20,16 +20,17 @@ ETORO_ROUND_TRIP = 2.0
 
 LANG = {
     "ES": {
-        "app_title": "Gestor Pro v20.1 (Widescreen)",
+        "app_title": "Gestor Pro v21.1 (UI Fix)",
         "port_title": "📂 MI CARTERA & VIGILANCIA",
         "opp_title": "💎 OPORTUNIDADES & OBJETIVOS",
         "scan_own": "⚡ ACTUALIZAR",
-        "save": "💾 GUARDAR",
+        "save": "💾",
         "sell": "💰 VENDER",
-        "del_btn": "🗑 OLVIDAR",
-        "viz_btn": "📊 VISUALIZAR",
-        "stats_btn": "📈 ESTADÍSTICAS",
-        "hist": "📜 HISTORIAL",
+        "del_btn": "🗑",
+        "viz_btn": "📊 VIZ",
+        "stats_btn": "📈 STATS",
+        "risk_btn": "🔥 RIESGO",
+        "hist": "📜 HIST",
         "exp": "📄 EXP",
         "scan_mkt": "🔍 ESCANEAR",
         "analyze": "▶ ANALIZAR",
@@ -52,6 +53,7 @@ LANG = {
         "hist_tot": "P/L Neto Realizado (tras fees):",
         "viz_title": "Distribución de Cartera",
         "stats_title": "Auditoría de Rendimiento",
+        "risk_title": "Matriz de Correlación (Riesgo)",
         "conf_title": "Configuración",
         "conf_lang": "Idioma / Language:",
         "conf_logout": "🔒 SALIR",
@@ -62,6 +64,7 @@ LANG = {
         "fund_pe": "PER:",
         "fund_cap": "Mkt Cap:",
         "fund_div": "Div Yield:",
+        "graham_title": "💎 VALOR INTRÍNSECO (Graham):",
         "bench_title": "🆚 MERCADO (vs SPY):",
         "bench_beta": "Beta:",
         "bench_rel": "Rendimiento Relativo:",
@@ -78,15 +81,15 @@ LANG = {
         "calc_cap": "Capital Total ($):",
         "calc_risk": "Riesgo Máx (%):",
         "calc_stop": "Stop Loss ($):",
-        "calc_btn": "CALCULAR",
-        "calc_res": "Acciones a Comprar:",
+        "calc_btn": "CALCULATE",
+        "calc_res": "Acciones:",
         "calc_apply": "APLICAR",
         "dash_inv": "Invertido:",
         "dash_val": "Valor Actual:",
         "dash_pl": "Neto P/L (eToro):",
         "login_title": "ACCESO", "user": "Usuario:", "pass": "Clave:", "btn_enter": "ENTRAR", "btn_reg": "REGISTRO", "err_login": "Error", "ok_reg": "OK", "err_reg": "Existe"
     },
-    "EN": { "app_title": "Pro Manager v20.1", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "💾 SAVE", "sell": "💰 SELL", "del_btn": "🗑 FORGET", "viz_btn": "📊 VISUALIZE", "stats_btn": "📈 STATS", "hist": "📜 HISTORY", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis / Target", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "msg_del_confirm": "Delete?", "hist_title": "Trade History", "hist_tot": "Total Net P/L:", "viz_title": "Portfolio Allocation", "stats_title": "Performance Audit", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Prob:", "tech_title": "📐 TECH & STOP LOSS:", "tech_sup": "Support:", "tech_res": "Resistance:", "tech_sl": "Suggested Stop:", "trend_wk": "Weekly Trend:", "target_title": "🎯 TARGET PRICE:", "news_title": "📰 NEWS:", "calc_title": "Risk Calc", "calc_cap": "Capital:", "calc_risk": "Risk %:", "calc_stop": "Stop Loss:", "calc_btn": "CALCULATE", "calc_res": "Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Value:", "dash_pl": "Net P/L (eToro):", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Error", "ok_reg": "OK", "err_reg": "Exists" },
+    "EN": { "app_title": "Pro Manager v21.1", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "💾", "sell": "💰 SELL", "del_btn": "🗑", "viz_btn": "📊 VIZ", "stats_btn": "📈 STATS", "risk_btn": "🔥 RISK", "hist": "📜 HIST", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis / Target", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "msg_del_confirm": "Delete?", "hist_title": "Trade History", "hist_tot": "Total Net P/L:", "viz_title": "Portfolio Allocation", "stats_title": "Performance Audit", "risk_title": "Correlation Matrix", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "graham_title": "💎 INTRINSIC VALUE (Graham):", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "ai_title": "🤖 AI PREDICTION:", "ai_prob": "Win Prob:", "tech_title": "📐 TECH & STOP LOSS:", "tech_sup": "Support:", "tech_res": "Resistance:", "tech_sl": "Suggested Stop:", "trend_wk": "Weekly Trend:", "target_title": "🎯 TARGET PRICE:", "news_title": "📰 NEWS:", "calc_title": "Risk Calc", "calc_cap": "Capital:", "calc_risk": "Risk %:", "calc_stop": "Stop Loss:", "calc_btn": "CALCULATE", "calc_res": "Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Value:", "dash_pl": "Net P/L (eToro):", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Error", "ok_reg": "OK", "err_reg": "Exists" },
 }
 if "FR" not in LANG: LANG["FR"] = LANG["EN"]
 if "PT" not in LANG: LANG["PT"] = LANG["EN"]
@@ -98,13 +101,13 @@ CANDIDATOS_VIP = [
 ]
 
 C_BG = "#1e1e1e"; C_FG = "#ffffff"; C_ACCENT = "#007acc"
-C_PANEL = "#252526"; C_GREEN = "#4ec9b0"; C_RED = "#f44747"; C_GOLD = "#ffd700"; C_PURPLE = "#8a2be2"
+C_PANEL = "#252526"; C_GREEN = "#4ec9b0"; C_RED = "#f44747"; C_GOLD = "#ffd700"; C_PURPLE = "#8a2be2"; C_ORANGE = "#e67e22"
 
 # ==========================================
 # 1. BASE DE DATOS
 # ==========================================
 class DatabaseManager:
-    def __init__(self, db_name="bolsa_datos_v20.db"):
+    def __init__(self, db_name="bolsa_datos_v21.db"):
         self.conn = sqlite3.connect(db_name, check_same_thread=False)
         self.crear_tablas()
 
@@ -183,6 +186,17 @@ class AnalistaBolsa:
             return d
         except: raise ValueError("Error descarga")
 
+    def calcular_valor_graham(self, ticker):
+        try:
+            t = yf.Ticker(ticker); i = t.info
+            eps = i.get('trailingEps')
+            bvps = i.get('bookValue')
+            if eps and bvps and eps > 0 and bvps > 0:
+                fair_value = np.sqrt(22.5 * eps * bvps)
+                return fair_value
+            return 0
+        except: return 0
+
     def obtener_fundamentales(self, ticker):
         try:
             t = yf.Ticker(ticker); i = t.info
@@ -195,8 +209,9 @@ class AnalistaBolsa:
             if cap > 1e12: s_cap = f"{cap/1e12:.2f}T"
             elif cap > 1e9: s_cap = f"{cap/1e9:.2f}B"
             else: s_cap = str(cap)
-            return {"per": f"{per:.2f}" if per else "N/A", "cap": s_cap, "div": f"{div*100:.2f}%", "sec": sec, "ind": ind, "valid": True}
-        except: return {"per": "-", "cap": "-", "div": "0%", "sec": "-", "ind": "-", "valid": False}
+            g_val = self.calcular_valor_graham(ticker)
+            return {"per": f"{per:.2f}" if per else "N/A", "cap": s_cap, "div": f"{div*100:.2f}%", "sec": sec, "ind": ind, "graham": g_val, "valid": True}
+        except: return {"per": "-", "cap": "-", "div": "0%", "sec": "-", "ind": "-", "graham": 0, "valid": False}
 
     def calcular_indicadores(self):
         if self.data is None or self.data.empty: return self.data
@@ -381,7 +396,7 @@ def apply_dark_theme(root):
 class LoginWindow:
     def __init__(self, root, db, on_success):
         self.root = root; self.db = db; self.on_success = on_success
-        self.win = tk.Toplevel(root); self.win.title("Acceso v20.1"); self.win.geometry("350x300")
+        self.win = tk.Toplevel(root); self.win.title("Acceso v21.1"); self.win.geometry("350x300")
         apply_dark_theme(self.win)
         self.texts = LANG["ES"]
         ttk.Label(self.win, text=self.texts["login_title"], font=("Segoe UI", 16, "bold"), foreground=C_ACCENT).pack(pady=30)
@@ -415,40 +430,59 @@ class AppBolsa:
         apply_dark_theme(root)
         
         main = ttk.PanedWindow(root, orient=tk.HORIZONTAL); main.pack(fill=tk.BOTH, expand=True)
-        # --- AUMENTO DE ANCHO PANEL LATERAL (v20.1) ---
+        # --- ANCHO PANEL 550PX PARA QUE QUEPAN BOTONES ---
         side = ttk.Frame(main, width=550, relief=tk.FLAT); main.add(side, weight=1)
         self.lf1 = ttk.LabelFrame(side, padding=5); self.lf1.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
         
-        self.dash_frame = ttk.Frame(self.lf1); self.dash_frame.pack(fill=tk.X, padx=5, pady=5)
+        # 1. DASHBOARD SUPERIOR
+        self.dash_frame = ttk.Frame(self.lf1); self.dash_frame.pack(fill=tk.X, padx=5, pady=5, side=tk.TOP)
         self.lbl_invested = ttk.Label(self.dash_frame, text="---", font=("Segoe UI", 10)); self.lbl_invested.pack(anchor="w")
         self.lbl_current = ttk.Label(self.dash_frame, text="---", font=("Segoe UI", 10)); self.lbl_current.pack(anchor="w")
         self.lbl_pl = ttk.Label(self.dash_frame, text="---", font=("Segoe UI", 10)); self.lbl_pl.pack(anchor="w")
 
+        # 2. BOTONES AL FONDO (PARA QUE NO DESAPAREZCAN)
+        f_controls = ttk.Frame(self.lf1); f_controls.pack(side=tk.BOTTOM, fill=tk.X, pady=5)
+        
+        # Fila 1: Actualizar
+        self.btn_act = tk.Button(f_controls, text=self.texts["scan_own"], bg=C_ACCENT, fg="white", relief="flat", command=self.scan_own)
+        self.btn_act.pack(fill=tk.X, pady=2)
+        
+        # Fila 2: Gestion (Save, Sell, Del)
+        f_row2 = ttk.Frame(f_controls); f_row2.pack(fill=tk.X, pady=1)
+        self.btn_save = tk.Button(f_row2, text=self.texts["save"], bg="#333", fg="white", relief="flat", command=self.save)
+        self.btn_save.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_sell = tk.Button(f_row2, text=self.texts["sell"], bg="#800000", fg="white", relief="flat", command=self.vender_posicion)
+        self.btn_sell.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_del = tk.Button(f_row2, text=self.texts["del_btn"], bg="#333", fg="#999", relief="flat", command=self.dele)
+        self.btn_del.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        
+        # Fila 3: Analisis (Hist, Stats, Risk)
+        f_row3 = ttk.Frame(f_controls); f_row3.pack(fill=tk.X, pady=1)
+        self.btn_hist = tk.Button(f_row3, text=self.texts["hist"], bg="#333", fg="white", relief="flat", command=self.ver_historial)
+        self.btn_hist.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_stats = tk.Button(f_row3, text=self.texts["stats_btn"], bg="#2e8b57", fg="white", relief="flat", command=self.ver_estadisticas)
+        self.btn_stats.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_risk = tk.Button(f_row3, text=self.texts["risk_btn"], bg=C_ORANGE, fg="white", relief="flat", command=self.ver_correlaciones)
+        self.btn_risk.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        
+        # Fila 4: Extras (Viz, Exp)
+        f_row4 = ttk.Frame(f_controls); f_row4.pack(fill=tk.X, pady=1)
+        self.btn_viz = tk.Button(f_row4, text=self.texts["viz_btn"], bg=C_PURPLE, fg="white", relief="flat", command=self.ver_distribucion)
+        self.btn_viz.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        self.btn_exp = tk.Button(f_row4, text=self.texts["exp"], bg="#333", fg="white", relief="flat", command=self.exportar_cartera)
+        self.btn_exp.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+
+        # 3. LISTA DE CARTERA (OCUPA EL RESTO DEL ESPACIO)
         cols = ("tk", "pr", "sg")
         self.tr1 = ttk.Treeview(self.lf1, columns=cols, show="headings", height=10)
         for c in cols: self.tr1.column(c, anchor="center", stretch=True)
-        self.tr1.pack(fill=tk.BOTH, expand=True, pady=5)
+        self.tr1.pack(fill=tk.BOTH, expand=True, pady=5, side=tk.TOP)
         self.tr1.bind("<Double-1>", lambda e: self.sel_load(self.tr1, True))
-        
-        f1 = ttk.Frame(self.lf1); f1.pack(fill=tk.X)
-        self.btn_act = tk.Button(f1, text=self.texts["scan_own"], bg=C_ACCENT, fg="white", relief="flat", command=self.scan_own); self.btn_act.pack(fill=tk.X, pady=2)
-        f_btns = ttk.Frame(f1); f_btns.pack(fill=tk.X)
-        
-        self.btn_save = tk.Button(f_btns, text=self.texts["save"], bg="#333", fg="white", relief="flat", command=self.save); self.btn_save.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.btn_sell = tk.Button(f_btns, text=self.texts["sell"], bg="#800000", fg="white", relief="flat", command=self.vender_posicion); self.btn_sell.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.btn_del = tk.Button(f_btns, text=self.texts["del_btn"], bg="#333", fg="#999", relief="flat", command=self.dele); self.btn_del.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        
-        f_xtra = ttk.Frame(f1); f_xtra.pack(fill=tk.X, pady=2)
-        self.btn_exp = tk.Button(f_xtra, text=self.texts["exp"], bg="#333", fg="white", relief="flat", command=self.exportar_cartera); self.btn_exp.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.btn_hist = tk.Button(f_xtra, text=self.texts["hist"], bg="#333", fg="white", relief="flat", command=self.ver_historial); self.btn_hist.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.btn_viz = tk.Button(f_xtra, text=self.texts["viz_btn"], bg=C_PURPLE, fg="white", relief="flat", command=self.ver_distribucion); self.btn_viz.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.btn_stats = tk.Button(f_xtra, text=self.texts["stats_btn"], bg="#2e8b57", fg="white", relief="flat", command=self.ver_estadisticas); self.btn_stats.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
 
         self.lf2 = ttk.LabelFrame(side, padding=5); self.lf2.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
         cols2 = ("tk", "sc", "ms")
         self.tr2 = ttk.Treeview(self.lf2, columns=cols2, show="headings", height=12)
         for c in cols2: self.tr2.column(c, anchor="center", stretch=True)
-        # --- AUMENTO DE ANCHO COLUMNA MENSAJE (v20.1) ---
         self.tr2.column("ms", width=300)
         self.tr2.pack(fill=tk.BOTH, expand=True, pady=5)
         self.tr2.bind("<Double-1>", lambda e: self.sel_load(self.tr2, False))
@@ -532,6 +566,34 @@ class AppBolsa:
         if total_pl >= 0: lbl_tot.config(foreground=C_GREEN)
         else: lbl_tot.config(foreground=C_RED)
         lbl_tot.pack(pady=10)
+
+    def ver_correlaciones(self):
+        db_data = self.db.obtener_cartera(self.uid)
+        if not db_data or len(db_data) < 2: 
+            messagebox.showinfo("Info", "Necesitas al menos 2 acciones en cartera.")
+            return
+        
+        tickers = [row[0] for row in db_data]
+        try:
+            data = yf.download(tickers, period="6mo")['Close']
+            corr_matrix = data.corr()
+            
+            cw = tk.Toplevel(self.root); cw.title(self.texts["risk_title"]); cw.geometry("600x600")
+            apply_dark_theme(cw)
+            
+            fig = Figure(figsize=(6,6), dpi=100, facecolor=C_BG)
+            ax = fig.add_subplot(111)
+            cax = ax.matshow(corr_matrix, cmap='RdYlGn_r') 
+            fig.colorbar(cax)
+            
+            ax.set_xticks(range(len(tickers))); ax.set_yticks(range(len(tickers)))
+            ax.set_xticklabels(tickers, rotation=90, color="white"); ax.set_yticklabels(tickers, color="white")
+            ax.set_title(self.texts["risk_title"], color="white", pad=20)
+            
+            cv = FigureCanvasTkAgg(fig, master=cw)
+            cv.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
 
     def ver_estadisticas(self):
         data = self.db.obtener_historial_completo(self.uid)
@@ -636,7 +698,7 @@ class AppBolsa:
         self.btn_gem.config(text=t["scan_mkt"]); self.btn_run.config(text=t["analyze"]); self.b_rst.config(text=t["reset_zoom"])
         self.lbl_buy.config(text=t["buy_price"]); self.lbl_qty.config(text=t["qty"]); self.btn_refresh.config(text=t["refresh_all"])
         self.lbl_invested.config(text=f"{t['dash_inv']} ---"); self.lbl_current.config(text=f"{t['dash_val']} ---"); self.lbl_pl.config(text=f"{t['dash_pl']} ---")
-        self.btn_viz.config(text=t["viz_btn"]); self.btn_stats.config(text=t["stats_btn"])
+        self.btn_viz.config(text=t["viz_btn"]); self.btn_stats.config(text=t["stats_btn"]); self.btn_risk.config(text=t["risk_btn"])
         self.load_init()
 
     def logout(self):
@@ -751,6 +813,9 @@ class AppBolsa:
             ax1.fill_between(d.index, d['UpperBB'], d['LowerBB'], color='gray', alpha=0.15, label='BB')
             if sop > 0: ax1.axhline(sop, color=C_GREEN, linestyle='--', linewidth=0.8, alpha=0.7)
             if resi > 0: ax1.axhline(resi, color=C_RED, linestyle='--', linewidth=0.8, alpha=0.7)
+            
+            if ev['stop_loss'] > 0: ax1.axhline(ev['stop_loss'], color='red', linestyle=':', linewidth=1.5, label='Stop Loss')
+
             if spy is not None:
                 d_spy = spy.tail(150)
                 ax1b = ax1.twinx() 
@@ -774,7 +839,6 @@ class AppBolsa:
             
             self.txt.delete(1.0, tk.END); self.txt.insert(tk.END, f"{tkr} - ${d['Close'].iloc[-1]:.2f}\n", "t")
             if pos:
-                # --- CALCULO P/L VISUAL (ANALYSIS) CON FEES ---
                 gross_pl = (d['Close'].iloc[-1]*qq) - (pp*qq)
                 net_pl = gross_pl - ETORO_ROUND_TRIP
                 pc = (net_pl/(pp*qq))*100
@@ -787,16 +851,15 @@ class AppBolsa:
             self.txt.insert(tk.END, f"\n{self.texts['ai_title']}\n", "w")
             ai_tag = "ai_good" if prob_ai > 55 else "ai_bad" if prob_ai < 45 else "w"
             self.txt.insert(tk.END, f"{self.texts['ai_prob']} {prob_ai:.1f}%\n", ai_tag)
-            
+            self.txt.insert(tk.END, f"\n{self.texts['graham_title']}\n", "gold")
+            g_tag = "p" if fund['graham'] > ev['price'] else "n"
+            self.txt.insert(tk.END, f"Intrinsic: ${fund['graham']:.2f}\n", g_tag)
             self.txt.insert(tk.END, f"\n{self.texts['tech_title']}\n", "gold")
             self.txt.insert(tk.END, f"{self.texts['tech_sup']} ${sop:.2f}\n", "p")
             self.txt.insert(tk.END, f"{self.texts['tech_res']} ${resi:.2f}\n", "n")
             self.txt.insert(tk.END, f"{self.texts['tech_sl']} ${ev['stop_loss']:.2f}\n", "n")
-            
-            # TENDENCIA SEMANAL
             w_col = "p" if ev['weekly'] == "Alcista" else "n" if ev['weekly'] == "Bajista" else "w"
             self.txt.insert(tk.END, f"{self.texts['trend_wk']} {ev['weekly']}\n", w_col)
-
             self.txt.insert(tk.END, f"\n{self.texts['bench_title']}\n", "gold")
             b_col = "news_bull" if bench_stats['rel_perf'] > 0 else "news_bear"
             self.txt.insert(tk.END, f"{self.texts['bench_beta']} {bench_stats['beta']:.2f} | {self.texts['bench_rel']} ", "w")
