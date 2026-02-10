@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog
+from tkinter import ttk, messagebox, filedialog, simpledialog
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 import yfinance as yf
@@ -16,13 +16,14 @@ import matplotlib.pyplot as plt
 # ==========================================
 LANG = {
     "ES": {
-        "app_title": "Gestor Pro v13.0 (Benchmark)",
+        "app_title": "Gestor Pro v14.0 (History)",
         "port_title": "📂 MI CARTERA",
         "opp_title": "💎 OPORTUNIDADES",
         "scan_own": "⚡ ACTUALIZAR",
         "save": "Guardar",
-        "del": "Borrar",
-        "exp": "📄 EXPORTAR",
+        "sell": "💰 VENDER",
+        "hist": "📜 HISTORIAL",
+        "exp": "📄 EXP",
         "scan_mkt": "🔍 ESCANEAR",
         "analyze": "▶ ANALIZAR",
         "reset_zoom": "RESET ZOOM",
@@ -37,6 +38,10 @@ LANG = {
         "msg_wait": "⏳...",
         "msg_scan": "⏳ ANALIZANDO...",
         "msg_exp_ok": "✅ Guardado.",
+        "msg_sell_title": "Cerrar Posición",
+        "msg_sell_ask": "Precio de Venta ($):",
+        "hist_title": "Historial de Operaciones",
+        "hist_tot": "P/L Total Realizado:",
         "conf_title": "Configuración",
         "conf_lang": "Idioma / Language:",
         "conf_logout": "🔒 SALIR",
@@ -63,9 +68,9 @@ LANG = {
         "dash_pl": "Total P/L:",
         "login_title": "ACCESO", "user": "Usuario:", "pass": "Clave:", "btn_enter": "ENTRAR", "btn_reg": "REGISTRO", "err_login": "Error", "ok_reg": "OK", "err_reg": "Existe"
     },
-    "EN": { "app_title": "Pro Manager v13.0", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "Save", "del": "Delete", "exp": "📄 EXPORT", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "news_title": "📰 NEWS & SENTIMENT:", "calc_title": "Risk Calculator", "calc_cap": "Total Capital ($):", "calc_risk": "Max Risk (%):", "calc_stop": "Stop Loss ($):", "calc_btn": "CALCULATE", "calc_res": "Shares to Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Cur. Value:", "dash_pl": "Total P/L:", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Invalid", "ok_reg": "OK", "err_reg": "Exists" },
-    "FR": { "app_title": "Gestion Pro v13.0", "port_title": "📂 PORTEFEUILLE", "opp_title": "💎 OPPORTUNITÉS", "scan_own": "⚡ ACTUALISER", "save": "Sauver", "del": "Effacer", "exp": "📄 EXPORTER", "scan_mkt": "🔍 SCANNER", "analyze": "▶ ANALYSER", "reset_zoom": "ZOOM", "buy_price": "Prix:", "qty": "Qté:", "col_ticker": "Ticker", "col_entry": "Entrée", "col_state": "État", "col_score": "Pts", "col_diag": "Diagnostic", "vigil": "👁 VOIR", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Sauvé.", "conf_title": "Paramètres", "conf_lang": "Langue:", "conf_logout": "🔒 SORTIR", "conf_del": "⚠️ SUPPRIMER", "conf_del_confirm": "Sûr?", "refresh_all": "🔄 TOUT", "fund_title": "📊 FONDAMENTAUX:", "fund_pe": "PER:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARCHÉ (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Perf. Rel:", "news_title": "📰 NOUVELLES:", "calc_title": "Calculateur Risque", "calc_cap": "Capital Total:", "calc_risk": "Risque (%):", "calc_stop": "Stop Loss:", "calc_btn": "CALCULER", "calc_res": "Acheter:", "calc_apply": "APPLIQUER", "dash_inv": "Investi:", "dash_val": "Val. Act:", "dash_pl": "Total P/L:", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "ENTRER", "btn_reg": "CREER", "err_login": "Erreur", "ok_reg": "OK", "err_reg": "Existe" },
-    "PT": { "app_title": "Gestor Pro v13.0", "port_title": "📂 CARTEIRA", "opp_title": "💎 OPORTUNIDADES", "scan_own": "⚡ ATUALIZAR", "save": "Salvar", "del": "Apagar", "exp": "📄 EXPORTAR", "scan_mkt": "🔍 BUSCAR", "analyze": "▶ ANALISAR", "reset_zoom": "ZOOM", "buy_price": "Preço:", "qty": "Qtd:", "col_ticker": "Ticker", "col_entry": "Entrada", "col_state": "Estado", "col_score": "Pts", "col_diag": "Diagnóstico", "vigil": "👁 VIGIAR", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Salvo.", "conf_title": "Config", "conf_lang": "Idioma:", "conf_logout": "🔒 SAIR", "conf_del": "⚠️ APAGAR", "conf_del_confirm": "Certeza?", "refresh_all": "🔄 TUDO", "fund_title": "📊 FUNDAMENTAIS:", "fund_pe": "P/L:", "fund_cap": "Val. Merc:", "fund_div": "Div:", "bench_title": "🆚 MERCADO (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Perf. Rel:", "news_title": "📰 NOTÍCIAS:", "calc_title": "Calculadora Risco", "calc_cap": "Capital Total:", "calc_risk": "Risco (%):", "calc_stop": "Stop Loss:", "calc_btn": "CALCULAR", "calc_res": "Comprar:", "calc_apply": "APLICAR", "dash_inv": "Investido:", "dash_val": "Val. Atual:", "dash_pl": "Total P/L:", "login_title": "LOGIN", "user": "User:", "pass": "Senha:", "btn_enter": "ENTRAR", "btn_reg": "CRIAR", "err_login": "Erro", "ok_reg": "OK", "err_reg": "Existe" }
+    "EN": { "app_title": "Pro Manager v14.0", "port_title": "📂 PORTFOLIO", "opp_title": "💎 OPPORTUNITIES", "scan_own": "⚡ REFRESH", "save": "Save", "sell": "💰 SELL", "hist": "📜 HISTORY", "exp": "📄 EXP", "scan_mkt": "🔍 SCAN", "analyze": "▶ ANALYZE", "reset_zoom": "RESET", "buy_price": "Price:", "qty": "Qty:", "col_ticker": "Ticker", "col_entry": "Entry", "col_state": "Status", "col_score": "Pts", "col_diag": "Diagnosis", "vigil": "👁 WATCH", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Saved.", "msg_sell_title": "Close Position", "msg_sell_ask": "Sell Price ($):", "hist_title": "Trade History", "hist_tot": "Total Realized P/L:", "conf_title": "Settings", "conf_lang": "Language:", "conf_logout": "🔒 LOGOUT", "conf_del": "⚠️ DELETE", "conf_del_confirm": "Sure?", "refresh_all": "🔄 ALL", "fund_title": "📊 FUNDAMENTALS:", "fund_pe": "P/E:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARKET (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Rel. Perf:", "news_title": "📰 NEWS & SENTIMENT:", "calc_title": "Risk Calculator", "calc_cap": "Total Capital ($):", "calc_risk": "Max Risk (%):", "calc_stop": "Stop Loss ($):", "calc_btn": "CALCULATE", "calc_res": "Shares to Buy:", "calc_apply": "APPLY", "dash_inv": "Invested:", "dash_val": "Cur. Value:", "dash_pl": "Total P/L:", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "GO", "btn_reg": "REG", "err_login": "Invalid", "ok_reg": "OK", "err_reg": "Exists" },
+    "FR": { "app_title": "Gestion Pro v14.0", "port_title": "📂 PORTEFEUILLE", "opp_title": "💎 OPPORTUNITÉS", "scan_own": "⚡ ACTUALISER", "save": "Sauver", "sell": "💰 VENDRE", "hist": "📜 HISTOIRE", "exp": "📄 EXP", "scan_mkt": "🔍 SCANNER", "analyze": "▶ ANALYSER", "reset_zoom": "ZOOM", "buy_price": "Prix:", "qty": "Qté:", "col_ticker": "Ticker", "col_entry": "Entrée", "col_state": "État", "col_score": "Pts", "col_diag": "Diagnostic", "vigil": "👁 VOIR", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Sauvé.", "msg_sell_title": "Fermer Position", "msg_sell_ask": "Prix Vente ($):", "hist_title": "Historique", "hist_tot": "P/L Total Réalisé:", "conf_title": "Paramètres", "conf_lang": "Langue:", "conf_logout": "🔒 SORTIR", "conf_del": "⚠️ SUPPRIMER", "conf_del_confirm": "Sûr?", "refresh_all": "🔄 TOUT", "fund_title": "📊 FONDAMENTAUX:", "fund_pe": "PER:", "fund_cap": "Cap:", "fund_div": "Div:", "bench_title": "🆚 MARCHÉ (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Perf. Rel:", "news_title": "📰 NOUVELLES:", "calc_title": "Calculateur Risque", "calc_cap": "Capital Total:", "calc_risk": "Risque (%):", "calc_stop": "Stop Loss:", "calc_btn": "CALCULER", "calc_res": "Acheter:", "calc_apply": "APPLIQUER", "dash_inv": "Investi:", "dash_val": "Val. Act:", "dash_pl": "Total P/L:", "login_title": "LOGIN", "user": "User:", "pass": "Pass:", "btn_enter": "ENTRER", "btn_reg": "CREER", "err_login": "Erreur", "ok_reg": "OK", "err_reg": "Existe" },
+    "PT": { "app_title": "Gestor Pro v14.0", "port_title": "📂 CARTEIRA", "opp_title": "💎 OPORTUNIDADES", "scan_own": "⚡ ATUALIZAR", "save": "Salvar", "sell": "💰 VENDER", "hist": "📜 HISTÓRICO", "exp": "📄 EXP", "scan_mkt": "🔍 BUSCAR", "analyze": "▶ ANALISAR", "reset_zoom": "ZOOM", "buy_price": "Preço:", "qty": "Qtd:", "col_ticker": "Ticker", "col_entry": "Entrada", "col_state": "Estado", "col_score": "Pts", "col_diag": "Diagnóstico", "vigil": "👁 VIGIAR", "msg_wait": "⏳...", "msg_scan": "⏳...", "msg_exp_ok": "✅ Salvo.", "msg_sell_title": "Fechar Posição", "msg_sell_ask": "Preço Venda ($):", "hist_title": "Histórico", "hist_tot": "Lucro Realizado:", "conf_title": "Config", "conf_lang": "Idioma:", "conf_logout": "🔒 SAIR", "conf_del": "⚠️ APAGAR", "conf_del_confirm": "Certeza?", "refresh_all": "🔄 TUDO", "fund_title": "📊 FUNDAMENTAIS:", "fund_pe": "P/L:", "fund_cap": "Val. Merc:", "fund_div": "Div:", "bench_title": "🆚 MERCADO (vs SPY):", "bench_beta": "Beta:", "bench_rel": "Perf. Rel:", "news_title": "📰 NOTÍCIAS:", "calc_title": "Calculadora Risco", "calc_cap": "Capital Total:", "calc_risk": "Risco (%):", "calc_stop": "Stop Loss:", "calc_btn": "CALCULAR", "calc_res": "Comprar:", "calc_apply": "APLICAR", "dash_inv": "Investido:", "dash_val": "Val. Atual:", "dash_pl": "Total P/L:", "login_title": "LOGIN", "user": "User:", "pass": "Senha:", "btn_enter": "ENTRAR", "btn_reg": "CRIAR", "err_login": "Erro", "ok_reg": "OK", "err_reg": "Existe" }
 }
 
 CANDIDATOS_VIP = [
@@ -78,7 +83,7 @@ CANDIDATOS_VIP = [
 # 1. BASE DE DATOS
 # ==========================================
 class DatabaseManager:
-    def __init__(self, db_name="bolsa_datos_v13.db"):
+    def __init__(self, db_name="bolsa_datos_v14.db"):
         self.conn = sqlite3.connect(db_name, check_same_thread=False)
         self.crear_tablas()
 
@@ -89,6 +94,10 @@ class DatabaseManager:
         cursor.execute('''CREATE TABLE IF NOT EXISTS cartera (
             id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, ticker TEXT NOT NULL, 
             precio_compra REAL, cantidad REAL, fecha_guardado TEXT, FOREIGN KEY(user_id) REFERENCES usuarios(id))''')
+        # NUEVA TABLA HISTORIAL
+        cursor.execute('''CREATE TABLE IF NOT EXISTS historial (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, ticker TEXT, 
+            buy_price REAL, sell_price REAL, qty REAL, profit REAL, date_out TEXT)''')
         self.conn.commit()
 
     def registrar_usuario(self, u, p):
@@ -115,8 +124,31 @@ class DatabaseManager:
         self.conn.execute("DELETE FROM cartera WHERE id=?", (pid,))
         self.conn.commit()
 
+    # NUEVO: MOVER A HISTORIAL
+    def cerrar_posicion(self, uid, pid, sell_price):
+        # 1. Obtener datos originales
+        data = self.conn.execute("SELECT ticker, precio_compra, cantidad FROM cartera WHERE id=?", (pid,)).fetchone()
+        if not data: return
+        tkr, buy_p, qty = data
+        
+        # 2. Calcular profit
+        profit = (sell_price - buy_p) * qty
+        date_out = datetime.datetime.now().strftime("%Y-%m-%d")
+        
+        # 3. Insertar en historial
+        self.conn.execute("INSERT INTO historial (user_id, ticker, buy_price, sell_price, qty, profit, date_out) VALUES (?,?,?,?,?,?,?)", 
+                          (uid, tkr, buy_p, sell_price, qty, profit, date_out))
+        
+        # 4. Borrar de cartera activa
+        self.conn.execute("DELETE FROM cartera WHERE id=?", (pid,))
+        self.conn.commit()
+
+    def obtener_historial_completo(self, uid):
+        return self.conn.execute("SELECT ticker, buy_price, sell_price, profit, date_out FROM historial WHERE user_id=?", (uid,)).fetchall()
+
     def borrar_usuario_completo(self, uid):
         self.conn.execute("DELETE FROM cartera WHERE user_id=?", (uid,))
+        self.conn.execute("DELETE FROM historial WHERE user_id=?", (uid,))
         self.conn.execute("DELETE FROM usuarios WHERE id=?", (uid,))
         self.conn.commit()
 
@@ -126,7 +158,7 @@ class DatabaseManager:
 class AnalistaBolsa:
     def __init__(self):
         self.data = None; self.ticker = ""
-        self.spy_data = None # Cache para SPY
+        self.spy_data = None
 
     def descargar_datos(self, ticker):
         self.ticker = ticker.upper()
@@ -138,7 +170,6 @@ class AnalistaBolsa:
             return d
         except: raise ValueError("Error descarga")
 
-    # --- NUEVO: BENCHMARK (SPY) ---
     def obtener_benchmark(self):
         if self.spy_data is not None: return self.spy_data
         try:
@@ -150,24 +181,15 @@ class AnalistaBolsa:
 
     def calcular_beta_relativa(self, stock_df, spy_df):
         try:
-            # Alinear fechas (Inner Join)
             df = pd.DataFrame({'STOCK': stock_df['Close'], 'SPY': spy_df['Close']}).dropna()
             if len(df) < 50: return {"beta": 0, "rel_perf": 0}
-            
-            # Rentabilidad Diaria
             rets = df.pct_change().dropna()
-            
-            # Beta: Covarianza / Varianza del Mercado
-            cov = rets['STOCK'].cov(rets['SPY'])
-            var = rets['SPY'].var()
+            cov = rets['STOCK'].cov(rets['SPY']); var = rets['SPY'].var()
             beta = cov / var if var != 0 else 1.0
-            
-            # Rendimiento Relativo (Ultimos 6 meses aprox 126 dias)
             lookback = min(126, len(df))
             stock_ret = (df['STOCK'].iloc[-1] / df['STOCK'].iloc[-lookback]) - 1
             spy_ret = (df['SPY'].iloc[-1] / df['SPY'].iloc[-lookback]) - 1
-            rel_perf = (stock_ret - spy_ret) * 100 # Diferencia en %
-            
+            rel_perf = (stock_ret - spy_ret) * 100
             return {"beta": beta, "rel_perf": rel_perf}
         except: return {"beta": 0, "rel_perf": 0}
 
@@ -177,8 +199,7 @@ class AnalistaBolsa:
             per = i.get('trailingPE', i.get('forwardPE', 0))
             cap = i.get('marketCap', 0)
             div = i.get('dividendYield', 0)
-            sec = i.get('sector', 'N/A')
-            ind = i.get('industry', 'N/A')
+            sec = i.get('sector', 'N/A'); ind = i.get('industry', 'N/A')
             
             if cap > 1e12: s_cap = f"{cap/1e12:.2f}T"
             elif cap > 1e9: s_cap = f"{cap/1e9:.2f}B"
@@ -191,14 +212,15 @@ class AnalistaBolsa:
     def obtener_noticias_analizadas(self, ticker):
         try:
             t = yf.Ticker(ticker); news = t.news; analisis_noticias = []
-            bull = ['surge', 'jump', 'rise', 'gain', 'profit', 'beat', 'growth', 'record', 'buy', 'bull', 'upgrade', 'high', 'positive']
-            bear = ['drop', 'fall', 'plunge', 'loss', 'miss', 'cut', 'bear', 'downgrade', 'low', 'negative', 'crash', 'risk']
+            bull = ['surge', 'jump', 'rise', 'gain', 'profit', 'beat', 'growth', 'record', 'buy', 'bull', 'upgrade', 'high', 'positive', 'soar', 'rally']
+            bear = ['drop', 'fall', 'plunge', 'loss', 'miss', 'cut', 'bear', 'downgrade', 'low', 'negative', 'crash', 'risk', 'slump']
             for n in news[:4]:
                 tit = n.get('title'); 
                 if not tit and 'content' in n: tit = n['content'].get('title')
                 if not tit: continue
                 src = n.get('publisher', 'Yahoo')
                 if isinstance(src, dict): src = src.get('title', 'Yahoo')
+                elif isinstance(src, str): src = src
                 score = 0; tit_l = tit.lower()
                 for w in bull: 
                     if w in tit_l: score += 1
@@ -295,7 +317,7 @@ class AnalistaBolsa:
 class LoginWindow:
     def __init__(self, root, db, on_success):
         self.root = root; self.db = db; self.on_success = on_success
-        self.win = tk.Toplevel(root); self.win.title("Acceso v13.0"); self.win.geometry("350x300")
+        self.win = tk.Toplevel(root); self.win.title("Acceso v14.0"); self.win.geometry("350x300")
         self.texts = LANG["ES"]
         ttk.Label(self.win, text=self.texts["login_title"], font=("Arial", 14, "bold")).pack(pady=20)
         ttk.Label(self.win, text=self.texts["user"]).pack(); self.e_u = ttk.Entry(self.win); self.e_u.pack(pady=5)
@@ -344,8 +366,14 @@ class AppBolsa:
         f1 = ttk.Frame(self.lf1); f1.pack(fill=tk.X)
         self.btn_act = tk.Button(f1, bg="orange", command=self.scan_own); self.btn_act.pack(fill=tk.X, pady=2)
         self.btn_save = ttk.Button(f1, command=self.save); self.btn_save.pack(side=tk.LEFT, fill=tk.X, expand=True)
-        self.btn_del = ttk.Button(f1, command=self.dele); self.btn_del.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        
+        # BOTON VENDER NUEVO
+        self.btn_sell = tk.Button(f1, bg="#ffcccb", command=self.vender_posicion); self.btn_sell.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        
         self.btn_exp = tk.Button(f1, bg="#90ee90", command=self.exportar_cartera); self.btn_exp.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        
+        # BOTON HISTORIAL NUEVO
+        self.btn_hist = tk.Button(f1, bg="#add8e6", command=self.ver_historial); self.btn_hist.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
         self.lf2 = ttk.LabelFrame(side, padding=5); self.lf2.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
         cols2 = ("tk", "sc", "ms")
@@ -403,6 +431,59 @@ class AppBolsa:
         self.update_ui_language()
         self.load_init()
 
+    # --- NUEVAS FUNCIONES DE CIERRE ---
+    def vender_posicion(self):
+        s = self.tr1.selection()
+        if not s: return
+        iid = int(s[0])
+        
+        # Buscar datos actuales en DB
+        item = None
+        for d in self.db.obtener_cartera(self.uid):
+            if d[4] == iid: item = d; break
+        
+        if not item: return # Error
+        
+        # Pedir precio de venta
+        precio_actual = 0
+        try:
+            # Intentar obtener precio actual rápido
+            data = yf.Ticker(item[0]).history(period='1d')
+            if not data.empty: precio_actual = data['Close'].iloc[-1]
+        except: pass
+        
+        ask_price = simpledialog.askfloat(self.texts["msg_sell_title"], f"{self.texts['msg_sell_ask']} {item[0]}", initialvalue=precio_actual)
+        
+        if ask_price is not None:
+            self.db.cerrar_posicion(self.uid, iid, ask_price)
+            self.load_init()
+            self.scan_own() # Recalcular totales dashboard
+
+    def ver_historial(self):
+        hw = tk.Toplevel(self.root); hw.title(self.texts["hist_title"]); hw.geometry("500x400")
+        
+        cols = ("Ticker", "Buy", "Sell", "P/L", "Date")
+        trh = ttk.Treeview(hw, columns=cols, show="headings")
+        for c in cols: trh.heading(c, text=c); trh.column(c, width=80, anchor="center")
+        trh.pack(fill=tk.BOTH, expand=True)
+        
+        total_pl = 0.0
+        data = self.db.obtener_historial_completo(self.uid)
+        
+        for d in data:
+            pl = d[3]
+            total_pl += pl
+            tag = "win" if pl >= 0 else "loss"
+            trh.insert("", "end", values=(d[0], f"{d[1]:.2f}", f"{d[2]:.2f}", f"{pl:+.2f}", d[4]), tags=(tag,))
+            
+        trh.tag_configure("win", foreground="green")
+        trh.tag_configure("loss", foreground="red")
+        
+        lbl_tot = ttk.Label(hw, text=f"{self.texts['hist_tot']} ${total_pl:+.2f}", font=("bold", 12))
+        if total_pl >= 0: lbl_tot.config(foreground="green")
+        else: lbl_tot.config(foreground="red")
+        lbl_tot.pack(pady=10)
+
     # --- CALCULADORA RIESGO ---
     def abrir_calculadora(self):
         cw = tk.Toplevel(self.root); cw.title(self.texts["calc_title"]); cw.geometry("250x350")
@@ -452,7 +533,7 @@ class AppBolsa:
     def update_ui_language(self):
         t = self.texts; self.root.title(f"{t['app_title']} - {self.uid}")
         self.lf1.config(text=t["port_title"]); self.tr1.heading("tk", text=t["col_ticker"]); self.tr1.heading("pr", text=t["col_entry"]); self.tr1.heading("sg", text=t["col_state"])
-        self.btn_act.config(text=t["scan_own"]); self.btn_save.config(text=t["save"]); self.btn_del.config(text=t["del"]); self.btn_exp.config(text=t["exp"])
+        self.btn_act.config(text=t["scan_own"]); self.btn_save.config(text=t["save"]); self.btn_sell.config(text=t["sell"]); self.btn_exp.config(text=t["exp"]); self.btn_hist.config(text=t["hist"])
         self.lf2.config(text=t["opp_title"]); self.tr2.heading("tk", text=t["col_ticker"]); self.tr2.heading("sc", text=t["col_score"]); self.tr2.heading("ms", text=t["col_diag"])
         self.btn_gem.config(text=t["scan_mkt"]); self.btn_run.config(text=t["analyze"]); self.b_rst.config(text=t["reset_zoom"])
         self.lbl_buy.config(text=t["buy_price"]); self.lbl_qty.config(text=t["qty"]); self.btn_refresh.config(text=t["refresh_all"])
@@ -551,8 +632,6 @@ class AppBolsa:
             fund = self.eng.obtener_fundamentales(tkr)
             noticias = self.eng.obtener_noticias_analizadas(tkr)
             sim = self.eng.simular(); ev = self.eng.generar_diagnostico_interno(pp)
-            
-            # --- CALCULOS COMPARATIVA ---
             bench_stats = self.eng.calcular_beta_relativa(df, spy) if spy is not None else {"beta": 0, "rel_perf": 0}
             
             self.fig.clear()
@@ -561,19 +640,15 @@ class AppBolsa:
             self.fig.subplots_adjust(left=0.1, right=0.95, top=0.92, bottom=0.15, hspace=0.15)
             
             d = df.tail(150)
-            
-            # --- PLOT COMPARATIVO VISUAL (NUEVO) ---
             ax1.plot(d.index, d['Close'], color='#333', linewidth=1.2, label='Precio')
             ax1.plot(d.index, d['SMA_50'], color='orange', linestyle='--', linewidth=1, label='SMA 50')
             ax1.plot(d.index, d['SMA_200'], color='purple', linewidth=1.5, label='SMA 200')
             
-            # Overlay SPY Trend (Truco visual: Eje gemelo invisible para comparar tendencia)
             if spy is not None:
                 d_spy = spy.tail(150)
-                ax1b = ax1.twinx() # Eje secundario
+                ax1b = ax1.twinx() 
                 ax1b.plot(d_spy.index, d_spy['Close'], color='gray', alpha=0.3, linewidth=3, label='SPY (Ref)')
-                ax1b.set_yticks([]) # Ocultar numeros eje derecho para no confundir
-                # ax1b.legend(loc='upper left', fontsize=6) # Opcional
+                ax1b.set_yticks([]) 
             
             if pos: ax1.axhline(pp, color='blue', linewidth=1.5, label='Entry')
             ax1.set_title(f"{tkr} (D) - {fund['sec']} / {fund['ind']}", fontsize=10); ax1.legend(fontsize=8); ax1.grid(True, alpha=0.2)
@@ -594,7 +669,6 @@ class AppBolsa:
                 pl = (d['Close'].iloc[-1]*qq)-(pp*qq); pc = (pl/(pp*qq))*100
                 self.txt.insert(tk.END, f"P&L: {pl:+.2f} ({pc:+.2f}%)\n", "p" if pl>=0 else "n")
             
-            # --- DATOS COMPARATIVOS ---
             self.txt.insert(tk.END, f"\n{self.texts['bench_title']}\n", "gold")
             b_col = "news_bull" if bench_stats['rel_perf'] > 0 else "news_bear"
             self.txt.insert(tk.END, f"{self.texts['bench_beta']} {bench_stats['beta']:.2f} | {self.texts['bench_rel']} ", "w")
