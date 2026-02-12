@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog, simpledialog
+import customtkinter as ctk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 import yfinance as yf
@@ -12,6 +13,8 @@ import threading
 import matplotlib.pyplot as plt
 import os
 import hashlib
+import joblib
+import time
 # --- LIBRERIAS IA AVANZADA ---
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.preprocessing import StandardScaler
@@ -22,6 +25,14 @@ from sklearn.metrics import precision_score
 # ==========================================
 ETORO_FEE_PER_ORDER = 1.0  
 ETORO_ROUND_TRIP = 2.0     
+# Configuración de apariencia
+ctk.set_appearance_mode("dark")  # Modos: "System" (standard), "Dark", "Light"
+ctk.set_default_color_theme("blue") # Temas: "blue" (standard), "green", "dark-blue"
+
+# Paleta de colores mejorada
+C_BG_MODERN = "#1a1a1a"
+C_PANEL_MODERN = "#2b2b2b"
+C_ACCENT_MODERN = "#1f6aa5"
 
 LANG = {
     "ES": {
@@ -145,15 +156,27 @@ class AnalistaBolsa:
     def descargar_datos(self, ticker):
         self.ticker = ticker.upper()
         try:
-            d = yf.download(self.ticker, period="5y", progress=False)
-            if d.empty: raise ValueError
-            if isinstance(d.columns, pd.MultiIndex): d.columns = d.columns.droplevel(1)
+            # CAMBIO: period="max" descarga TODO el historial disponible
+            d = yf.download(self.ticker, period="max", progress=False)
+            
+            if d.empty: raise ValueError("Datos vacíos")
+            
+            # Limpieza de MultiIndex (necesario para versiones nuevas de yfinance)
+            if isinstance(d.columns, pd.MultiIndex): 
+                d.columns = d.columns.droplevel(1)
+            
             self.data = d.astype(float)
-            w = yf.download(self.ticker, period="2y", interval="1wk", progress=False)
-            if isinstance(w.columns, pd.MultiIndex): w.columns = w.columns.droplevel(1)
+            
+            # Datos semanales (también ponemos max para ver tendencias de largo plazo)
+            w = yf.download(self.ticker, period="max", interval="1wk", progress=False)
+            if isinstance(w.columns, pd.MultiIndex): 
+                w.columns = w.columns.droplevel(1)
             self.data_weekly = w.astype(float)
+            
             return d
-        except: raise ValueError("Error descarga")
+        except Exception as e: 
+            print(f"Error descarga: {e}")
+            raise ValueError("Error descarga")
 
     # --- DATOS EXTERNOS ---
 
@@ -322,45 +345,67 @@ class AnalistaBolsa:
     # --- IA GRADIENT BOOSTING (MEJORADA) ---
     def calcular_probabilidad_ia(self):
         try:
+            # Directorio para guardar modelos
+            if not os.path.exists("models"): os.makedirs("models")
+            model_path = f"models/{self.ticker}_model.pkl"
+            
             df = self.data.copy()
-            # Necesitamos suficientes datos para las medias móviles y el futuro
             if len(df) < 150: return 50.0, 0.0, []
-            
-            # 1. CREAR EL TARGET PRIMERO
-            # ¿Sube el precio un 1.5% en los próximos 3 días?
-            future_close = df['Close'].shift(-3)
-            df['Target'] = (future_close > df['Close'] * 1.015).astype(int)
-            
-            # 2. INGENIERÍA DE FEATURES
+
+            # --- 1. INGENIERÍA DE FEATURES (SIEMPRE SE EJECUTA) ---
+            # Movemos esto AL PRINCIPIO para que el df siempre tenga estas columnas
             df['Retorno'] = df['Close'].pct_change()
             df['Lag_1'] = df['Retorno'].shift(1)
             df['Dist_SMA50'] = (df['Close'] - df['SMA_50']) / df['SMA_50']
             df['Dist_VWAP'] = (df['Close'] - df['VWAP']) / df['VWAP']
             
-            # Columnas que usaremos para predecir
-            self.features_cols = [
-                'CRSI', 'MACD', 'BB_Pct', 'ADX', 
-                'Dist_SMA50', 'Dist_VWAP', 'Retorno', 'Lag_1', 'Vol_Osc'
-            ]
+            # Definimos las columnas que usa el modelo
+            self.features_cols = ['CRSI', 'MACD', 'BB_Pct', 'ADX', 'Dist_SMA50', 'Dist_VWAP', 'Retorno', 'Lag_1', 'Vol_Osc']
             
-            # 3. LIMPIEZA TOTAL (Ahora 'Target' SÍ existe)
-            # Eliminamos infinitos y filas vacías
-            df = df.replace([np.inf, -np.inf], np.nan)
-            df = df.dropna(subset=self.features_cols + ['Target'])
-            
-            if len(df) < 50: return 50.0, 0.0, []
+            # Limpieza básica para evitar errores de predicción
+            df = df.replace([np.inf, -np.inf], np.nan).fillna(0)
 
-            # 4. PREPARACIÓN DE DATOS
-            # Quitamos los últimos 3 días para entrenar (porque no sabemos su futuro real)
-            data_model = df.iloc[:-3].copy()
+            # --- 2. INTENTAR CARGAR MODELO EXISTENTE ---
+            if os.path.exists(model_path):
+                try:
+                    # Comprobamos si el archivo es reciente (< 24h)
+                    file_age = time.time() - os.path.getmtime(model_path)
+                    if file_age < 86400:
+                        saved_data = joblib.load(model_path)
+                        
+                        # Verificación de seguridad: ¿El modelo guardado usa las mismas columnas?
+                        if saved_data.get('features') == self.features_cols:
+                            self.model = saved_data['model']
+                            self.scaler = saved_data['scaler']
+                            
+                            # Predicción directa
+                            last_day = df[self.features_cols].tail(1)
+                            last_day_scaled = self.scaler.transform(last_day)
+                            prob = self.model.predict_proba(last_day_scaled)[0][1] * 100
+                            
+                            importances = self.model.feature_importances_
+                            top_factors = sorted(zip(self.features_cols, importances), key=lambda x: x[1], reverse=True)[:2]
+                            
+                            return prob, 0.0, top_factors # 0.0 Acc porque no re-evaluamos
+                except Exception:
+                    pass # Si falla la carga, simplemente re-entrenamos abajo
+
+            # --- 3. SI NO EXISTE O ES VIEJO: ENTRENAR DESDE CERO ---
+            # Preparar Target
+            future_close = df['Close'].shift(-3)
+            df['Target'] = (future_close > df['Close'] * 1.015).astype(int)
+            
+            # Limpieza estricta para entrenamiento
+            df_train = df.dropna(subset=self.features_cols + ['Target'])
+            
+            if len(df_train) < 50: return 50.0, 0.0, []
+
+            data_model = df_train.iloc[:-3].copy()
             X = data_model[self.features_cols]
             y = data_model['Target']
             
-            # Verificamos que tengamos ambas clases (0 y 1) para poder entrenar
-            if len(y.unique()) < 2:
-                return 50.0, 0.0, []
+            if len(y.unique()) < 2: return 50.0, 0.0, []
 
-            # 5. ENTRENAMIENTO
             self.scaler = StandardScaler()
             X_scaled = self.scaler.fit_transform(X)
             
@@ -368,21 +413,23 @@ class AnalistaBolsa:
             X_train, X_test = X_scaled[:split], X_scaled[split:]
             y_train, y_test = y.iloc[:split], y.iloc[split:]
             
-            # Usamos parámetros un poco más ligeros para que no tarde tanto
             self.model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)
             self.model.fit(X_train, y_train)
             
-            # Evaluación
-            preds = self.model.predict(X_test)
-            acc = precision_score(y_test, preds, zero_division=0) * 100
+            acc = precision_score(y_test, self.model.predict(X_test), zero_division=0) * 100
             
-            # 6. PREDICCIÓN HOY
-            # Usamos la última fila de datos (la de hoy)
+            # Guardar modelo, scaler y la lista de columnas usada
+            joblib.dump({
+                'model': self.model,
+                'scaler': self.scaler,
+                'features': self.features_cols
+            }, model_path)
+            
+            # Predicción hoy
             last_day = df[self.features_cols].iloc[[-1]]
             last_day_scaled = self.scaler.transform(last_day)
             prob = self.model.predict_proba(last_day_scaled)[0][1] * 100
             
-            # Importancia de factores
             importances = self.model.feature_importances_
             top_factors = sorted(zip(self.features_cols, importances), key=lambda x: x[1], reverse=True)[:2]
             
@@ -514,132 +561,704 @@ def apply_dark_theme(root):
 # ==========================================
 class LoginWindow:
     def __init__(self, root, db, on_success):
-        self.root = root; self.db = db; self.on_success = on_success
-        self.win = tk.Toplevel(root); self.win.title("Acceso v26.0"); self.win.geometry("350x300")
-        apply_dark_theme(self.win)
-        self.texts = LANG["ES"]
-        ttk.Label(self.win, text=self.texts["login_title"], font=("Segoe UI", 16, "bold"), foreground=C_ACCENT).pack(pady=30)
-        f = ttk.Frame(self.win); f.pack(pady=10)
-        ttk.Label(f, text=self.texts["user"]).grid(row=0, column=0, padx=5, pady=5, sticky="e")
-        self.e_u = ttk.Entry(f); self.e_u.grid(row=0, column=1, padx=5, pady=5)
-        ttk.Label(f, text=self.texts["pass"]).grid(row=1, column=0, padx=5, pady=5, sticky="e")
-        self.e_p = ttk.Entry(f, show="*"); self.e_p.grid(row=1, column=1, padx=5, pady=5)
-        tk.Button(self.win, text=self.texts["btn_enter"], command=self.log, bg=C_ACCENT, fg="white", font=("Segoe UI", 10, "bold"), relief="flat").pack(pady=15, fill=tk.X, padx=40)
-        tk.Button(self.win, text=self.texts["btn_reg"], command=self.reg, bg="#333", fg="white", relief="flat").pack(pady=5, fill=tk.X, padx=40)
-        self.win.protocol("WM_DELETE_WINDOW", root.destroy)
+        self.root = root
+        self.db = db
+        self.on_success = on_success
+        
+        # CAMBIO: Usamos un Frame que cubre toda la ventana principal
+        self.frame = ctk.CTkFrame(root, fg_color="#1a1a1a")
+        self.frame.pack(fill="both", expand=True)
+        
+        # Decoración
+        ctk.CTkLabel(self.frame, text="QUANT ARCHITECT", font=("Segoe UI", 24, "bold"), text_color="#1f6aa5").pack(pady=(60, 5))
+        ctk.CTkLabel(self.frame, text="Professional Trading Terminal", font=("Segoe UI", 12), text_color="gray").pack(pady=(0, 40))
+
+        # Inputs
+        input_frame = ctk.CTkFrame(self.frame, fg_color="transparent")
+        input_frame.pack(fill="x", padx=100) # Más margen lateral para centrar
+
+        self.e_u = ctk.CTkEntry(input_frame, placeholder_text="Usuario", height=45, corner_radius=10)
+        self.e_u.pack(fill="x", pady=10)
+
+        self.e_p = ctk.CTkEntry(input_frame, placeholder_text="Contraseña", show="*", height=45, corner_radius=10)
+        self.e_p.pack(fill="x", pady=10)
+
+        # Botones
+        self.btn_log = ctk.CTkButton(self.frame, text="ENTRAR", command=self.log, font=("Segoe UI", 14, "bold"), height=45, corner_radius=10)
+        self.btn_log.pack(pady=(30, 10), padx=100, fill="x")
+
+        self.btn_reg = ctk.CTkButton(self.frame, text="CREAR CUENTA", command=self.reg, fg_color="transparent", border_width=2, height=45, corner_radius=10)
+        self.btn_reg.pack(pady=5, padx=100, fill="x")
 
     def log(self):
-        user_val = self.e_u.get(); pass_val = self.e_p.get()
+        user_val = self.e_u.get()
+        pass_val = self.e_p.get()
         uid = self.db.verificar_usuario(user_val, pass_val)
         if uid:
-            self.win.destroy()
+            # Truco para evitar el error en Python 3.14:
+            # Ocultamos el frame primero, y luego lo destruimos
+            self.frame.pack_forget()
+            self.frame.destroy() 
             self.on_success(uid, user_val)
         else:
-            messagebox.showerror("Error", self.texts["err_login"])
+            messagebox.showerror("Error", "Credenciales incorrectas")
 
     def reg(self):
-        if self.db.registrar_usuario(self.e_u.get(), self.e_p.get()): messagebox.showinfo("OK", self.texts["ok_reg"])
-        else: messagebox.showerror("Error", self.texts["err_reg"])
+        if self.db.registrar_usuario(self.e_u.get(), self.e_p.get()):
+            messagebox.showinfo("OK", "Usuario registrado. Puedes entrar.")
+        else:
+            messagebox.showerror("Error", "El usuario ya existe")
 
 class AppBolsa:
     def __init__(self, root, uid, uname, db):
-        self.root = root; self.uid = uid; self.db = db; self.eng = AnalistaBolsa()
-        self.current_lang = "ES"; self.texts = LANG[self.current_lang]
+        self.root = root
+        self.uid = uid
+        self.db = db
+        self.eng = AnalistaBolsa()
+        self.current_lang = "ES"
+        self.texts = LANG[self.current_lang]
+        
+        # Configuración Ventana
+        self.root.title(f"{self.texts['app_title']} - {uname}")
         self.root.geometry("1600x950")
-        apply_dark_theme(root)
-        
-        main = ttk.PanedWindow(root, orient=tk.HORIZONTAL); main.pack(fill=tk.BOTH, expand=True)
-        side = ttk.Frame(main, width=550, relief=tk.FLAT); main.add(side, weight=1)
-        self.lf1 = ttk.LabelFrame(side, padding=5); self.lf1.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
-        
-        self.mood_frame = ttk.Frame(self.lf1); self.mood_frame.pack(fill=tk.X, padx=5, pady=2, side=tk.TOP)
-        self.lbl_mood = ttk.Label(self.mood_frame, text="MERCADO: ⏳ Cargando...", font=("Segoe UI", 10, "bold"), foreground="gray")
-        self.lbl_mood.pack(anchor="center")
-        
-        self.dash_frame = ttk.Frame(self.lf1); self.dash_frame.pack(fill=tk.X, padx=5, pady=5, side=tk.TOP)
-        self.lbl_invested = ttk.Label(self.dash_frame, text="---", font=("Segoe UI", 10)); self.lbl_invested.pack(anchor="w")
-        self.lbl_current = ttk.Label(self.dash_frame, text="---", font=("Segoe UI", 10)); self.lbl_current.pack(anchor="w")
-        self.lbl_pl = ttk.Label(self.dash_frame, text="---", font=("Segoe UI", 10)); self.lbl_pl.pack(anchor="w")
+        self.root.configure(fg_color=C_BG_MODERN)
 
-        f_controls = ttk.Frame(self.lf1); f_controls.pack(side=tk.BOTTOM, fill=tk.X, pady=5)
-        self.btn_act = tk.Button(f_controls, text=self.texts["scan_own"], bg=C_ACCENT, fg="white", relief="flat", command=self.scan_own); self.btn_act.pack(fill=tk.X, pady=2)
-        
-        f_row2 = ttk.Frame(f_controls); f_row2.pack(fill=tk.X, pady=1)
-        self.btn_save = tk.Button(f_row2, text=self.texts["save"], bg="#333", fg="white", relief="flat", command=self.save); self.btn_save.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.btn_sell = tk.Button(f_row2, text=self.texts["sell"], bg="#800000", fg="white", relief="flat", command=self.vender_posicion); self.btn_sell.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.btn_del = tk.Button(f_row2, text=self.texts["del_btn"], bg="#333", fg="#999", relief="flat", command=self.dele); self.btn_del.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        
-        f_row3 = ttk.Frame(f_controls); f_row3.pack(fill=tk.X, pady=1)
-        self.btn_hist = tk.Button(f_row3, text=self.texts["hist"], bg="#333", fg="white", relief="flat", command=self.ver_historial); self.btn_hist.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.btn_stats = tk.Button(f_row3, text=self.texts["stats_btn"], bg="#2e8b57", fg="white", relief="flat", command=self.ver_estadisticas); self.btn_stats.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.btn_risk = tk.Button(f_row3, text=self.texts["risk_btn"], bg=C_ORANGE, fg="white", relief="flat", command=self.ver_correlaciones); self.btn_risk.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        
-        f_row4 = ttk.Frame(f_controls); f_row4.pack(fill=tk.X, pady=1)
-        self.btn_viz = tk.Button(f_row4, text=self.texts["viz_btn"], bg=C_PURPLE, fg="white", relief="flat", command=self.ver_distribucion); self.btn_viz.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.btn_exp = tk.Button(f_row4, text=self.texts["exp"], bg="#333", fg="white", relief="flat", command=self.exportar_cartera); self.btn_exp.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        # Contenedor Principal
+        self.main_container = ctk.CTkFrame(self.root, fg_color="transparent")
+        self.main_container.pack(fill="both", expand=True, padx=10, pady=10)
 
-        cols = ("tk", "pr", "sg")
-        self.tr1 = ttk.Treeview(self.lf1, columns=cols, show="headings", height=10)
-        for c in cols: self.tr1.column(c, anchor="center", stretch=True)
-        self.tr1.pack(fill=tk.BOTH, expand=True, pady=5, side=tk.TOP)
-        self.tr1.bind("<Double-1>", lambda e: self.sel_load(self.tr1, True))
+        # Panel Izquierdo (Ancho fijo para herramientas)
+        self.side_panel = ctk.CTkFrame(self.main_container, width=380, corner_radius=15, fg_color=C_PANEL_MODERN)
+        self.side_panel.pack(side="left", fill="both", padx=(0, 10))
+        self.side_panel.pack_propagate(False)
 
-        self.lf2 = ttk.LabelFrame(side, padding=5); self.lf2.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
-        cols2 = ("tk", "sc", "ms")
-        self.tr2 = ttk.Treeview(self.lf2, columns=cols2, show="headings", height=12)
-        for c in cols2: self.tr2.column(c, anchor="center", stretch=True)
-        self.tr2.column("ms", width=300)
-        self.tr2.pack(fill=tk.BOTH, expand=True, pady=5)
-        self.tr2.bind("<Double-1>", lambda e: self.sel_load(self.tr2, False))
-        self.btn_gem = tk.Button(self.lf2, text=self.texts["scan_mkt"], bg=C_ACCENT, fg="white", font=("Segoe UI", 10, "bold"), relief="flat", command=self.scan_mkt)
-        self.btn_gem.pack(fill=tk.X, pady=5)
+        # Panel Derecho (Gráficos y Controles)
+        self.content_panel = ctk.CTkFrame(self.main_container, corner_radius=15, fg_color=C_PANEL_MODERN)
+        self.content_panel.pack(side="right", fill="both", expand=True)
 
-        cont = ttk.Frame(main); main.add(cont, weight=4)
-        ctrl = ttk.LabelFrame(cont, text=" Control ", padding=5); ctrl.pack(fill=tk.X, padx=10, pady=5)
-        ttk.Label(ctrl, text="TICKER:").pack(side=tk.LEFT)
-        self.e_tk = ttk.Entry(ctrl, width=10); self.e_tk.pack(side=tk.LEFT, padx=5)
-        self.e_tk.bind('<Return>', lambda e: self.run())
-        self.btn_run = tk.Button(ctrl, text=self.texts["analyze"], command=self.run, bg="#eee", fg="black", relief="flat"); self.btn_run.pack(side=tk.LEFT)
-        self.b_rst = tk.Button(ctrl, text=self.texts["reset_zoom"], command=self.zoom_rst, state="disabled", bg="#333", fg="white", relief="flat"); self.b_rst.pack(side=tk.LEFT, padx=5)
-        self.lbl_buy = ttk.Label(ctrl, text=self.texts["buy_price"]); self.lbl_buy.pack(side=tk.LEFT)
-        self.e_pr = ttk.Entry(ctrl, width=8); self.e_pr.pack(side=tk.LEFT)
-        self.lbl_qty = ttk.Label(ctrl, text=self.texts["qty"]); self.lbl_qty.pack(side=tk.LEFT)
-        self.e_qt = ttk.Entry(ctrl, width=8); self.e_qt.pack(side=tk.LEFT)
-        tk.Button(ctrl, text="🗑", command=self.limpiar_campos, bg="#333", fg="white", relief="flat").pack(side=tk.LEFT, padx=2)
-        tk.Button(ctrl, text="🧮", command=self.abrir_calculadora, bg="#333", fg="white", relief="flat").pack(side=tk.LEFT, padx=2)
+        # Montar todas las piezas
+        self.crear_widgets_laterales()
+        self.crear_widgets_principales()
         
-        self.btn_snap = tk.Button(ctrl, text=self.texts["snap_btn"], bg="teal", fg="white", relief="flat", command=self.generar_reporte); self.btn_snap.pack(side=tk.LEFT, padx=5)
-
-        self.btn_conf = tk.Button(ctrl, text="⚙️", bg="#333", fg="white", relief="flat", command=self.abrir_config); self.btn_conf.pack(side=tk.RIGHT, padx=5)
-        self.btn_refresh = tk.Button(ctrl, text=self.texts["refresh_all"], bg="#8a2be2", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", command=self.refresh_all); self.btn_refresh.pack(side=tk.RIGHT, padx=5)
-
-        pan = ttk.PanedWindow(cont, orient=tk.HORIZONTAL); pan.pack(fill=tk.BOTH, expand=True, padx=10)
-        self.txt = tk.Text(pan, width=40, bg=C_PANEL, fg=C_FG, font=("Consolas", 10), borderwidth=0); pan.add(self.txt, weight=1)
-        self.txt.tag_config("t", foreground=C_ACCENT, font=("Consolas", 11, "bold"))
-        self.txt.tag_config("p", foreground=C_GREEN); self.txt.tag_config("n", foreground=C_RED)
-        self.txt.tag_config("gold", foreground=C_GOLD); self.txt.tag_config("w", foreground="white")
-        self.txt.tag_config("news_bull", foreground=C_GREEN); self.txt.tag_config("news_bear", foreground=C_RED)
-        self.txt.tag_config("ai_good", foreground="#00ff00", font=("bold",12)); self.txt.tag_config("ai_bad", foreground="#ff4444", font=("bold",12))
-        
-        frg = ttk.Frame(pan)
-        plt.style.use('dark_background')
-        self.fig = Figure(figsize=(5,5), dpi=100, facecolor=C_BG)
-        self.cv = FigureCanvasTkAgg(self.fig, master=frg)
-        self.tb = NavigationToolbar2Tk(self.cv, frg); self.tb.update()
-        self.cv.get_tk_widget().pack(fill=tk.BOTH, expand=True)
-        pan.add(frg, weight=3)
-        
+        # Carga Inicial
         self.update_ui_language()
         self.load_init()
         threading.Thread(target=self.actualizar_mood, daemon=True).start()
 
+    def setup_side_panel(self):
+        # Título de Cartera
+        self.lbl_port_title = ctk.CTkLabel(self.side_panel, text=self.texts["port_title"], 
+                                          font=("Segoe UI", 16, "bold"), text_color=C_ACCENT_MODERN)
+        self.lbl_port_title.pack(pady=15)
+
+        # Dashboard de P&L (Una "tarjeta" dentro del panel)
+        self.dash_frame = ctk.CTkFrame(self.side_panel, fg_color=C_PANEL_MODERN, corner_radius=10)
+        self.dash_frame.pack(fill="x", padx=15, pady=5)
+        
+        self.lbl_invested = ctk.CTkLabel(self.dash_frame, text="Invertido: ---", font=("Segoe UI", 12))
+        self.lbl_invested.pack(anchor="w", padx=10, pady=2)
+        
+        self.lbl_pl = ctk.CTkLabel(self.dash_frame, text="Neto P/L: ---", font=("Segoe UI", 13, "bold"))
+        self.lbl_pl.pack(anchor="w", padx=10, pady=(0, 5))
+
+        # El Treeview (Mantenemos ttk porque CTK no tiene, pero le damos estilo)
+        style = ttk.Style()
+        style.configure("Treeview", rowheight=30, font=("Segoe UI", 10))
+        
+        self.tr1 = ttk.Treeview(self.side_panel, columns=("tk", "pr", "sg"), show="headings")
+        self.tr1.pack(fill="both", expand=True, padx=15, pady=15)
+        
+        # Botones de Acción
+        self.btn_act = ctk.CTkButton(self.side_panel, text=self.texts["scan_own"], 
+                                     command=self.scan_own, font=("Segoe UI", 12, "bold"))
+        self.btn_act.pack(fill="x", padx=15, pady=5)
+
+    def crear_widgets_laterales(self):
+        """Panel Izquierdo: Mood, Dashboard, Cartera, Herramientas y Oportunidades"""
+        
+        # --- 0. SENTIMIENTO DE MERCADO (¡AQUÍ ESTÁBA EL ERROR!) ---
+        # Esta es la etiqueta que faltaba
+        self.lbl_mood = ctk.CTkLabel(self.side_panel, text="MERCADO: ⏳ Cargando...", 
+                                     font=("Segoe UI", 12, "bold"), text_color="gray")
+        self.lbl_mood.pack(pady=(15, 5))
+
+        # --- 1. DASHBOARD SUPERIOR ---
+        self.lbl_port_title = ctk.CTkLabel(self.side_panel, text="📂 MI CARTERA", 
+                                          font=("Segoe UI", 16, "bold"), text_color="#1f6aa5")
+        self.lbl_port_title.pack(pady=(5, 5))
+
+        # Tarjeta de P/L
+        self.dash_frame = ctk.CTkFrame(self.side_panel, fg_color="#1e1e1e", corner_radius=8)
+        self.dash_frame.pack(fill="x", padx=10, pady=5)
+        
+        self.lbl_invested = ctk.CTkLabel(self.dash_frame, text="Inv: ---", font=("Segoe UI", 11))
+        self.lbl_invested.pack(anchor="w", padx=10, pady=2)
+        self.lbl_current = ctk.CTkLabel(self.dash_frame, text="Val: ---", font=("Segoe UI", 11))
+        self.lbl_current.pack(anchor="w", padx=10, pady=2)
+        self.lbl_pl = ctk.CTkLabel(self.dash_frame, text="P/L: ---", font=("Segoe UI", 12, "bold"))
+        self.lbl_pl.pack(anchor="w", padx=10, pady=(0, 5))
+
+        # Botón Actualizar Cartera (Grande)
+        self.btn_act = ctk.CTkButton(self.side_panel, text="⚡ ACTUALIZAR", command=self.scan_own, height=30)
+        self.btn_act.pack(fill="x", padx=10, pady=5)
+
+        # --- 2. TABLA CARTERA ---
+        self.tr1 = ttk.Treeview(self.side_panel, columns=("tk", "pr", "sg"), show="headings", height=8)
+        self.tr1.pack(fill="both", expand=True, padx=10, pady=5)
+        self.tr1.bind("<Double-1>", lambda e: self.sel_load(self.tr1, True))
+
+        # --- 3. BOTONERA DE ACCIONES (Grid 2x4) ---
+        tools_frame = ctk.CTkFrame(self.side_panel, fg_color="transparent")
+        tools_frame.pack(fill="x", padx=10, pady=5)
+
+        # Fila 1: Operaciones Básicas
+        self.btn_save = ctk.CTkButton(tools_frame, text="💾", width=40, command=self.save, fg_color="#333", hover_color="#444")
+        self.btn_save.grid(row=0, column=0, padx=2, pady=2)
+        
+        self.btn_sell = ctk.CTkButton(tools_frame, text="💰", width=40, command=self.vender_posicion, fg_color="#800000", hover_color="#a00000")
+        self.btn_sell.grid(row=0, column=1, padx=2, pady=2)
+        
+        self.btn_del = ctk.CTkButton(tools_frame, text="🗑", width=40, command=self.dele, fg_color="#333", hover_color="#555")
+        self.btn_del.grid(row=0, column=2, padx=2, pady=2)
+        
+        self.btn_hist = ctk.CTkButton(tools_frame, text="📜", width=40, command=self.ver_historial, fg_color="#333", hover_color="#444")
+        self.btn_hist.grid(row=0, column=3, padx=2, pady=2)
+
+        # Fila 2: Análisis Avanzado
+        self.btn_stats = ctk.CTkButton(tools_frame, text="📈", width=40, command=self.ver_estadisticas, fg_color="#2e8b57", hover_color="#1e5a38")
+        self.btn_stats.grid(row=1, column=0, padx=2, pady=2)
+
+        self.btn_risk = ctk.CTkButton(tools_frame, text="🔥", width=40, command=self.ver_correlaciones, fg_color="#e67e22", hover_color="#d35400")
+        self.btn_risk.grid(row=1, column=1, padx=2, pady=2)
+
+        self.btn_viz = ctk.CTkButton(tools_frame, text="📊", width=40, command=self.ver_distribucion, fg_color="#8a2be2", hover_color="#5e17eb")
+        self.btn_viz.grid(row=1, column=2, padx=2, pady=2)
+
+        self.btn_exp = ctk.CTkButton(tools_frame, text="📄", width=40, command=self.exportar_cartera, fg_color="#333", hover_color="#444")
+        self.btn_exp.grid(row=1, column=3, padx=2, pady=2)
+        
+        # Centrar columnas del grid
+        for i in range(4): tools_frame.columnconfigure(i, weight=1)
+
+        # --- 4. SECCIÓN OPORTUNIDADES ---
+        ctk.CTkLabel(self.side_panel, text="💎 OPORTUNIDADES", 
+                    font=("Segoe UI", 14, "bold"), text_color="#ffd700").pack(pady=(15, 5))
+
+        self.tr2 = ttk.Treeview(self.side_panel, columns=("tk", "sc", "ms"), show="headings", height=8)
+        self.tr2.pack(fill="both", expand=True, padx=10, pady=5)
+        self.tr2.bind("<Double-1>", lambda e: self.sel_load(self.tr2, False))
+
+        self.btn_gem = ctk.CTkButton(self.side_panel, text="🔍 ESCANEAR MERCADO", command=self.scan_mkt, fg_color="#2e8b57")
+        self.btn_gem.pack(fill="x", padx=10, pady=(5, 15))
+
+    def crear_widgets_principales(self):
+        """Panel Derecho: Barra de Control Superior y Zona de Trabajo"""
+        
+        # --- 1. BARRA DE CONTROL SUPERIOR ---
+        self.ctrl_bar = ctk.CTkFrame(self.content_panel, height=50, fg_color="#2b2b2b", corner_radius=10)
+        self.ctrl_bar.pack(fill="x", padx=15, pady=10)
+
+        # Grupo Izquierda: Input Ticker y Analizar
+        self.e_tk = ctk.CTkEntry(self.ctrl_bar, placeholder_text="TICKER", width=100)
+        self.e_tk.pack(side="left", padx=(10, 5), pady=8)
+        self.e_tk.bind('<Return>', lambda e: self.run())
+
+        self.btn_run = ctk.CTkButton(self.ctrl_bar, text="▶ ANALIZAR", width=90, command=self.run)
+        self.btn_run.pack(side="left", padx=5)
+
+        # Grupo Centro: Precio, Cantidad y Herramientas
+        ctk.CTkLabel(self.ctrl_bar, text="Precio:").pack(side="left", padx=(15, 2))
+        self.e_pr = ctk.CTkEntry(self.ctrl_bar, width=70)
+        self.e_pr.pack(side="left", padx=2)
+
+        ctk.CTkLabel(self.ctrl_bar, text="Cant:").pack(side="left", padx=(10, 2))
+        self.e_qt = ctk.CTkEntry(self.ctrl_bar, width=50)
+        self.e_qt.pack(side="left", padx=2)
+
+        # Botones pequeños de utilidad (Limpiar y Calculadora)
+        ctk.CTkButton(self.ctrl_bar, text="🗑", width=30, command=self.limpiar_campos, fg_color="#444").pack(side="left", padx=(10, 2))
+        ctk.CTkButton(self.ctrl_bar, text="🧮", width=30, command=self.abrir_calculadora, fg_color="#444").pack(side="left", padx=2)
+
+        # Grupo Derecha: SOLO Refresh (Se eliminó Configuración)
+        self.btn_refresh = ctk.CTkButton(self.ctrl_bar, text="🔄 TODO", width=60, command=self.refresh_all, fg_color="#8a2be2")
+        self.btn_refresh.pack(side="right", padx=10)
+
+        # --- 2. ZONA DE TRABAJO (TEXTO + GRÁFICO) ---
+        self.work_area = ctk.CTkFrame(self.content_panel, fg_color="transparent")
+        self.work_area.pack(fill="both", expand=True, padx=15, pady=(0, 15))
+
+        # Panel de Texto (Izquierda)
+        text_frame = ctk.CTkFrame(self.work_area, fg_color="transparent")
+        text_frame.pack(side="left", fill="y", padx=(0, 10))
+        
+        # Toolbar del texto (Reset Zoom y Snapshot)
+        tools_text = ctk.CTkFrame(text_frame, fg_color="transparent", height=30)
+        tools_text.pack(fill="x", pady=(0, 5))
+        
+        self.b_rst = ctk.CTkButton(tools_text, text="RESET ZOOM", width=80, state="disabled", command=self.zoom_rst, fg_color="#444")
+        self.b_rst.pack(side="left")
+        
+        self.btn_snap = ctk.CTkButton(tools_text, text="📷 SNAP", width=60, command=self.generar_reporte, fg_color="teal")
+        self.btn_snap.pack(side="right")
+
+        # El Widget de Texto
+        self.txt = tk.Text(text_frame, width=45, bg="#1e1e1e", fg="white", 
+                          font=("Consolas", 10), borderwidth=0, padx=10, pady=10)
+        self.txt.pack(fill="both", expand=True)
+        # Tags de colores
+        self.txt.tag_config("t", foreground="#1f6aa5", font=("Consolas", 11, "bold"))
+        self.txt.tag_config("p", foreground="#4ec9b0")
+        self.txt.tag_config("n", foreground="#f44747")
+        self.txt.tag_config("gold", foreground="#ffd700")
+        self.txt.tag_config("w", foreground="white")
+        self.txt.tag_config("news_bull", foreground="#4ec9b0")
+        self.txt.tag_config("news_bear", foreground="#f44747")
+        self.txt.tag_config("ai_good", foreground="#00ff00", font=("Consolas", 11, "bold"))
+        self.txt.tag_config("ai_bad", foreground="#ff4444", font=("Consolas", 11, "bold"))
+
+        # Panel Gráfico (Derecha)
+        self.graph_frame = ctk.CTkFrame(self.work_area, fg_color="#1e1e1e", corner_radius=10)
+        self.graph_frame.pack(side="right", fill="both", expand=True)
+
+        plt.style.use('dark_background')
+        self.fig = Figure(figsize=(8, 6), dpi=100, facecolor="#1e1e1e")
+        self.cv = FigureCanvasTkAgg(self.fig, master=self.graph_frame)
+        self.cv.get_tk_widget().pack(fill="both", expand=True, padx=2, pady=2)
+        
+        self.tb = NavigationToolbar2Tk(self.cv, self.graph_frame)
+        self.tb.configure(background="#1e1e1e")
+        self.tb._message_label.config(background="#1e1e1e", foreground="white")
+        self.tb.update()
+        
+    # ==========================================
+    # FUNCIONES DE GESTIÓN DE DATOS Y UI
+    # (Pega esto dentro de la clase AppBolsa)
+    # ==========================================
+
+    def load_init(self):
+        """Carga la cartera desde la base de datos al Treeview"""
+        for i in self.tr1.get_children(): self.tr1.delete(i)
+        for d in self.db.obtener_cartera(self.uid):
+            # d = (ticker, precio_compra, cantidad, fecha, id)
+            pr = f"${d[1]}" if d[1] > 0 else "VIGILANDO"
+            # Insertamos usando el ID de la base de datos como iid del treeview
+            self.tr1.insert("", "end", iid=d[4], values=(d[0], pr, "..."))
+
+    def sel_load(self, tree, is_own):
+        """Carga los datos al hacer doble clic en una tabla"""
+        s = tree.selection()
+        if not s: return
+        vals = tree.item(s[0])['values']
+        tkr = vals[0]
+        pc = 0; qt = 0
+        
+        if is_own:
+            # Si es mi cartera, busco el precio y cantidad real
+            tid = int(s[0])
+            for d in self.db.obtener_cartera(self.uid):
+                if d[4] == tid: 
+                    pc = d[1]; qt = d[2]; break
+        
+        self.e_tk.delete(0, tk.END); self.e_tk.insert(0, tkr)
+        self.e_pr.delete(0, tk.END); self.e_pr.insert(0, str(pc))
+        self.e_qt.delete(0, tk.END); self.e_qt.insert(0, str(qt))
+        self.run()
+
+    def save(self):
+        """Guarda o actualiza una posición"""
+        t = self.e_tk.get()
+        p = self.e_pr.get()
+        q = self.e_qt.get()
+        if not t: return
+        if not p: p = "0"
+        if not q: q = "0"
+        
+        # Guardamos en DB
+        self.db.guardar_posicion(self.uid, t, float(p), float(q))
+        # Recargamos la tabla
+        self.load_init()
+        # Limpiamos campos
+        self.limpiar_campos()
+
+    def dele(self):
+        """Borra la posición seleccionada"""
+        s = self.tr1.selection()
+        if s: 
+            if messagebox.askyesno("Confirmar", "¿Borrar de la lista?"):
+                self.db.borrar_posicion(s[0])
+                self.load_init()
+
+    def vender_posicion(self):
+        """Gestiona la venta y pase al historial"""
+        s = self.tr1.selection()
+        if not s: return
+        iid = int(s[0]); item = None
+        for d in self.db.obtener_cartera(self.uid):
+            if d[4] == iid: item = d; break
+        if not item: return
+        
+        precio_actual = 0
+        try:
+            # Intentamos adivinar el precio actual
+            data = yf.Ticker(item[0]).history(period='1d')
+            if not data.empty: precio_actual = data['Close'].iloc[-1]
+        except: pass
+        
+        ask_price = simpledialog.askfloat("Cerrar Posición", f"Precio Venta ($) para {item[0]}:", initialvalue=precio_actual)
+        if ask_price is not None:
+            self.db.cerrar_posicion(self.uid, iid, ask_price)
+            self.load_init()
+            self.scan_own() # Actualizamos dashboard
+
+    def update_row_ui(self, iid, tkr, pr_text, msg, tag):
+        """Actualiza una fila específica tras el escaneo (hilo seguro)"""
+        if self.tr1.exists(iid): 
+            self.tr1.item(iid, values=(tkr, pr_text, msg), tags=(tag,))
+
+    def limpiar_campos(self):
+        self.e_pr.delete(0, tk.END)
+        self.e_qt.delete(0, tk.END)
+        self.e_tk.delete(0, tk.END)
+
+    def zoom_rst(self):
+        self.tb.home()
+
+    def refresh_all(self): 
+        self.run()
+        self.scan_own()
+        self.scan_mkt()
+
+    def generar_reporte(self):
+        tkr = self.e_tk.get()
+        if not tkr: return
+        if not os.path.exists("Reports"): os.makedirs("Reports")
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M")
+        fname = f"Reports/{tkr}_{timestamp}"
+        try: 
+            self.fig.savefig(f"{fname}.png", facecolor='#1e1e1e') # Fondo oscuro
+            content = self.txt.get("1.0", tk.END)
+            with open(f"{fname}.txt", "w", encoding="utf-8") as f: f.write(content)
+            messagebox.showinfo("Snapshot", "✅ Reporte guardado en carpeta 'Reports'")
+        except Exception as e: 
+            messagebox.showerror("Error", str(e))
+
+    # ==========================================
+    # VENTANAS SECUNDARIAS (MODERNIZADAS A CTK)
+    # ==========================================
+
+    def abrir_calculadora(self):
+        cw = ctk.CTkToplevel(self.root)
+        cw.title("Calculadora de Riesgo")
+        cw.geometry("300x400")
+        cw.attributes("-topmost", True) # Siempre encima
+        
+        ctk.CTkLabel(cw, text="Capital ($):").pack(pady=2)
+        e_cap = ctk.CTkEntry(cw); e_cap.pack(); e_cap.insert(0, "10000")
+        
+        ctk.CTkLabel(cw, text="Riesgo (%):").pack(pady=2)
+        e_risk = ctk.CTkEntry(cw); e_risk.pack(); e_risk.insert(0, "1")
+        
+        ctk.CTkLabel(cw, text="Entrada ($):").pack(pady=2)
+        e_ent = ctk.CTkEntry(cw); e_ent.pack()
+        if self.e_pr.get(): e_ent.insert(0, self.e_pr.get())
+        
+        ctk.CTkLabel(cw, text="Stop Loss ($):").pack(pady=2)
+        e_stop = ctk.CTkEntry(cw); e_stop.pack()
+        
+        lbl_res = ctk.CTkLabel(cw, text="---", font=("bold", 14), text_color="#1f6aa5")
+        lbl_res.pack(pady=15)
+        
+        def calcular():
+            try:
+                c = float(e_cap.get()); r = float(e_risk.get()); en = float(e_ent.get()); st = float(e_stop.get())
+                if en <= st: lbl_res.configure(text="¡Stop >= Entrada!", text_color="red"); return
+                risk_amt = c * (r/100)
+                diff = en - st
+                qty = int(risk_amt / diff)
+                lbl_res.configure(text=f"{qty} Acciones", text_color="#4ec9b0")
+                return qty
+            except: lbl_res.configure(text="Error", text_color="red")
+
+        def aplicar():
+            qty = calcular()
+            if qty and qty > 0:
+                self.e_qt.delete(0, tk.END); self.e_qt.insert(0, str(qty))
+                self.e_pr.delete(0, tk.END); self.e_pr.insert(0, e_ent.get())
+                cw.destroy()
+
+        ctk.CTkButton(cw, text="CALCULAR", command=calcular).pack(fill="x", padx=20, pady=5)
+        ctk.CTkButton(cw, text="APLICAR A APP", command=aplicar, fg_color="#2e8b57").pack(fill="x", padx=20, pady=5)
+
+    def ver_historial(self):
+        hw = ctk.CTkToplevel(self.root)
+        hw.title("Historial de Operaciones")
+        hw.geometry("600x400")
+        
+        cols = ("Ticker", "Buy", "Sell", "P/L", "Date")
+        trh = ttk.Treeview(hw, columns=cols, show="headings")
+        for c in cols: trh.heading(c, text=c); trh.column(c, width=80, anchor="center")
+        trh.pack(fill="both", expand=True, padx=10, pady=10)
+        
+        total_pl = 0.0
+        data = self.db.obtener_historial_completo(self.uid)
+        for d in data:
+            pl = d[3]; total_pl += pl
+            tag = "win" if pl >= 0 else "loss"
+            trh.insert("", "end", values=(d[0], f"{d[1]:.2f}", f"{d[2]:.2f}", f"{pl:+.2f}", d[4]), tags=(tag,))
+        
+        trh.tag_configure("win", foreground="#4ec9b0")
+        trh.tag_configure("loss", foreground="#f44747")
+        
+        col_lbl = "#4ec9b0" if total_pl >= 0 else "#f44747"
+        ctk.CTkLabel(hw, text=f"Total P/L Realizado: ${total_pl:+.2f}", 
+                     font=("Segoe UI", 16, "bold"), text_color=col_lbl).pack(pady=10)
+
+    def abrir_config(self):
+        cw = ctk.CTkToplevel(self.root)
+        cw.title("Configuración")
+        cw.geometry("300x250")
+        
+        ctk.CTkLabel(cw, text="Idioma del Sistema:", font=("bold", 12)).pack(pady=10)
+        cb = ctk.CTkComboBox(cw, values=["ES", "EN", "FR", "PT"], state="readonly")
+        cb.set(self.current_lang)
+        cb.pack(pady=5)
+        
+        def save_conf():
+            self.current_lang = cb.get()
+            self.texts = LANG[self.current_lang]
+            self.update_ui_language()
+            cw.destroy()
+            
+        def realizar_logout():
+            cw.destroy()
+            self.logout()
+            
+        ctk.CTkButton(cw, text="GUARDAR", command=save_conf).pack(pady=10)
+        ctk.CTkButton(cw, text="CERRAR SESIÓN", command=realizar_logout, fg_color="#333").pack(pady=5)
+        ctk.CTkButton(cw, text="BORRAR CUENTA", command=self.borrar_cuenta, fg_color="#800000").pack(pady=5)
+
+    def logout(self):
+        self.root.withdraw()
+        for widget in self.root.winfo_children(): widget.destroy()
+        LoginWindow(self.root, self.db, lambda u, n: (self.root.deiconify(), AppBolsa(self.root, u, n, self.db)))
+
+    def borrar_cuenta(self):
+        if messagebox.askyesno("PELIGRO", "¿Estás seguro de borrar tu cuenta y todos los datos?"):
+            self.db.borrar_usuario_completo(self.uid)
+            self.root.destroy()
+
+    # --- Funciones Visuales Menores (Estadísticas, Distribución, Correlaciones) ---
+    # Para no alargar demasiado, si necesitas ver_estadisticas, ver_distribucion, etc.
+    # dímelo y te paso sus versiones modernizadas. Por ahora, pon esto para que no falle:
+    
+    def ver_estadisticas(self):
+        data = self.db.obtener_historial_completo(self.uid)
+        if not data: 
+            messagebox.showinfo("Vacío", "No hay operaciones cerradas en el historial.")
+            return
+
+        # Cálculos Financieros
+        profits = [d[3] for d in data]
+        wins = [p for p in profits if p >= 0]
+        losses = [p for p in profits if p < 0]
+        
+        total_ops = len(profits)
+        win_rate = (len(wins) / total_ops) * 100 if total_ops > 0 else 0
+        total_profit = sum(wins)
+        total_loss = abs(sum(losses))
+        profit_factor = (total_profit / total_loss) if total_loss > 0 else 999.0
+        
+        cumulative = np.cumsum(profits)
+        running_max = np.maximum.accumulate(cumulative)
+        drawdown = running_max - cumulative
+        max_dd = drawdown.max() if len(drawdown) > 0 else 0
+
+        # Ventana Modal
+        sw = ctk.CTkToplevel(self.root)
+        sw.title("Auditoría de Rendimiento")
+        sw.geometry("700x550")
+        sw.attributes("-topmost", True)
+        
+        # Tarjetas de Métricas
+        f_metrics = ctk.CTkFrame(sw, fg_color="transparent")
+        f_metrics.pack(fill="x", padx=10, pady=10)
+
+        def create_card(parent, title, value, color):
+            card = ctk.CTkFrame(parent, fg_color="#2b2b2b", corner_radius=10)
+            card.pack(side="left", expand=True, fill="both", padx=5)
+            ctk.CTkLabel(card, text=title, font=("Segoe UI", 11, "bold"), text_color="gray").pack(pady=(10, 0))
+            ctk.CTkLabel(card, text=value, font=("Segoe UI", 18, "bold"), text_color=color).pack(pady=(0, 10))
+
+        create_card(f_metrics, "WIN RATE", f"{win_rate:.1f}%", "#4ec9b0" if win_rate > 50 else "#f44747")
+        create_card(f_metrics, "PROFIT FACTOR", f"{profit_factor:.2f}", "#4ec9b0" if profit_factor > 1.5 else "#ffd700")
+        create_card(f_metrics, "MAX DRAWDOWN", f"-${max_dd:.2f}", "#f44747")
+        create_card(f_metrics, "OPERACIONES", f"{total_ops}", "white")
+
+        # Gráfico de Equity Curve
+        graph_frame = ctk.CTkFrame(sw, fg_color="#1e1e1e", corner_radius=10)
+        graph_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+        fig = Figure(figsize=(6, 4), dpi=100, facecolor="#1e1e1e")
+        ax = fig.add_subplot(111)
+        ax.set_facecolor("#1e1e1e")
+        
+        # Línea Verde Neón y Relleno
+        ax.plot(cumulative, color='#00ff00', linewidth=2, label="Capital Acumulado")
+        ax.fill_between(range(len(cumulative)), cumulative, color='#00ff00', alpha=0.1)
+        
+        ax.set_title("Equity Curve (Curva de Capital)", color="white", fontsize=10)
+        ax.grid(True, alpha=0.1, linestyle='--')
+        ax.tick_params(colors='white')
+        ax.spines['bottom'].set_color('white'); ax.spines['top'].set_color('#1e1e1e')
+        ax.spines['left'].set_color('white'); ax.spines['right'].set_color('#1e1e1e')
+
+        canvas = FigureCanvasTkAgg(fig, master=graph_frame)
+        canvas.get_tk_widget().pack(fill="both", expand=True, padx=5, pady=5)
+
+    def ver_correlaciones(self):
+        db_data = self.db.obtener_cartera(self.uid)
+        if not db_data or len(db_data) < 2: 
+            messagebox.showinfo("Requisito", "Necesitas al menos 2 activos en cartera para ver correlaciones.")
+            return
+
+        tickers = [row[0] for row in db_data]
+        
+        # Ventana de Carga
+        loading = ctk.CTkToplevel(self.root)
+        loading.geometry("200x100")
+        ctk.CTkLabel(loading, text="Calculando Matrix...").pack(pady=30)
+        self.root.update()
+
+        try:
+            # Descargamos solo los cierres ajustados de los últimos 6 meses
+            data = yf.download(tickers, period="6mo", progress=False)['Close']
+            corr_matrix = data.corr()
+            loading.destroy()
+
+            cw = ctk.CTkToplevel(self.root)
+            cw.title("Matriz de Riesgo y Correlación")
+            cw.geometry("700x700")
+            cw.attributes("-topmost", True)
+
+            fig = Figure(figsize=(6, 6), dpi=100, facecolor="#1e1e1e")
+            ax = fig.add_subplot(111)
+            
+            # Mapa de calor (Rojo = Alta correlación/Riesgo, Verde = Baja/Diversificación)
+            cax = ax.imshow(corr_matrix, cmap='RdYlGn_r', vmin=-1, vmax=1)
+            
+            # Etiquetas
+            ax.set_xticks(range(len(tickers)))
+            ax.set_yticks(range(len(tickers)))
+            ax.set_xticklabels(tickers, rotation=90, color="white")
+            ax.set_yticklabels(tickers, color="white")
+            
+            # Valores dentro de las celdas
+            for i in range(len(tickers)):
+                for j in range(len(tickers)):
+                    val = corr_matrix.iloc[i, j]
+                    text_color = "black" if abs(val) < 0.5 else "white"
+                    ax.text(j, i, f"{val:.2f}", ha="center", va="center", color=text_color, fontsize=9)
+
+            ax.set_title("Matriz de Correlación (1.0 = Mismo Riesgo)", color="white", pad=20)
+            fig.colorbar(cax, fraction=0.046, pad=0.04)
+            
+            canvas = FigureCanvasTkAgg(fig, master=cw)
+            canvas.get_tk_widget().pack(fill="both", expand=True)
+
+        except Exception as e:
+            loading.destroy()
+            messagebox.showerror("Error", f"No se pudo calcular correlación.\n{e}")
+
+    def ver_distribucion(self):
+        db_data = self.db.obtener_cartera(self.uid)
+        if not db_data: return
+
+        tickers = []
+        values = []
+        
+        # Calcular valor actual aproximado (Precio compra * Cantidad)
+        # Nota: Idealmente usarías precio actual, pero usamos precio compra para rapidez
+        for row in db_data:
+            val = row[1] * row[2]
+            if val > 0:
+                tickers.append(row[0])
+                values.append(val)
+
+        if sum(values) == 0: 
+            messagebox.showinfo("Info", "No tienes capital invertido.")
+            return
+
+        vw = ctk.CTkToplevel(self.root)
+        vw.title("Distribución de Activos")
+        vw.geometry("600x500")
+        vw.attributes("-topmost", True)
+
+        fig = Figure(figsize=(5, 4), dpi=100, facecolor="#1e1e1e")
+        ax = fig.add_subplot(111)
+        
+        # Gráfico de Donut Moderno
+        wedges, texts, autotexts = ax.pie(values, labels=tickers, autopct='%1.1f%%', 
+                                          startangle=90, pctdistance=0.85,
+                                          textprops={'color':"white"})
+        
+        # Círculo central para hacer el "Donut"
+        centre_circle = plt.Circle((0,0),0.70,fc='#1e1e1e')
+        ax.add_artist(centre_circle)
+        
+        ax.set_title("Asignación de Capital", color="white", fontsize=12, fontweight="bold")
+        
+        # Colorear los textos de porcentaje
+        for autotext in autotexts:
+            autotext.set_color('white')
+            autotext.set_fontsize(10)
+            autotext.set_weight('bold')
+
+        canvas = FigureCanvasTkAgg(fig, master=vw)
+        canvas.get_tk_widget().pack(fill="both", expand=True)
+
+    def exportar_cartera(self):
+        datos = self.db.obtener_cartera(self.uid)
+        if not datos: 
+            messagebox.showinfo("Info", "Cartera vacía.")
+            return
+            
+        # Convertimos a DataFrame para facilitar la exportación
+        df_export = pd.DataFrame(datos, columns=['Ticker', 'Precio Compra', 'Cantidad', 'Fecha', 'ID_DB'])
+        df_export = df_export.drop(columns=['ID_DB'])
+        
+        # Calcular valor total por posición
+        df_export['Total Invertido'] = df_export['Precio Compra'] * df_export['Cantidad']
+        
+        f = filedialog.asksaveasfilename(
+            defaultextension=".csv", 
+            filetypes=[("CSV (Excel)", "*.csv"), ("Texto", "*.txt")], 
+            title="Exportar Cartera"
+        )
+        
+        if f:
+            try: 
+                df_export.to_csv(f, index=False, encoding='utf-8-sig', sep=';') # Punto y coma para Excel europeo
+                messagebox.showinfo("Éxito", "✅ Cartera exportada correctamente.")
+            except Exception as e: 
+                messagebox.showerror("Error", str(e))
+
     def actualizar_mood(self):
         mood, vix = self.eng.obtener_sentimiento_mercado()
-        txt = ""; col = "gray"
-        if mood == "FEAR": txt = f"{self.texts['macro_fear']} (VIX {vix:.2f})"; col = C_RED
-        elif mood == "GREED": txt = f"{self.texts['macro_greed']} (VIX {vix:.2f})"; col = C_GREEN
-        else: txt = f"{self.texts['macro_neutral']} (VIX {vix:.2f})"; col = C_GOLD
-        self.lbl_mood.config(text=f"MERCADO: {txt}", foreground=col)
+        txt = ""
+        col = "gray"
+        
+        if mood == "FEAR": 
+            txt = f"{self.texts['macro_fear']} (VIX {vix:.2f})"
+            col = "#f44747" # Rojo (C_RED)
+        elif mood == "GREED": 
+            txt = f"{self.texts['macro_greed']} (VIX {vix:.2f})"
+            col = "#4ec9b0" # Verde (C_GREEN)
+        else: 
+            txt = f"{self.texts['macro_neutral']} (VIX {vix:.2f})"
+            col = "#ffd700" # Oro (C_GOLD)
+            
+        # CAMBIO CLAVE: .configure() y text_color
+        self.lbl_mood.configure(text=f"MERCADO: {txt}", text_color=col)
 
     def generar_reporte(self):
         tkr = self.e_tk.get()
@@ -694,8 +1313,8 @@ class AppBolsa:
             trh.insert("", "end", values=(d[0], f"{d[1]:.2f}", f"{d[2]:.2f}", f"{pl:+.2f}", d[4]), tags=(tag,))
         trh.tag_configure("win", foreground=C_GREEN); trh.tag_configure("loss", foreground=C_RED)
         lbl_tot = ttk.Label(hw, text=f"{self.texts['hist_tot']} ${total_pl:+.2f}", font=("Segoe UI", 12, "bold"))
-        if total_pl >= 0: lbl_tot.config(foreground=C_GREEN)
-        else: lbl_tot.config(foreground=C_RED)
+        if total_pl >= 0: lbl_tot.configure(foreground=C_GREEN)
+        else: lbl_tot.configure(foreground=C_RED)
         lbl_tot.pack(pady=10)
 
     def ver_estadisticas(self):
@@ -780,16 +1399,16 @@ class AppBolsa:
         def calcular():
             try:
                 cap = float(e_cap.get()); r_pct = float(e_risk.get()); ent = float(e_ent.get()); stop = float(e_stop.get())
-                if ent <= stop: lbl_res.config(text="Entry <= Stop!", foreground=C_RED); return
+                if ent <= stop: lbl_res.configure(text="Entry <= Stop!", foreground=C_RED); return
                 risk_amt = cap * (r_pct/100); diff = ent - stop; qty = int(risk_amt / diff)
-                lbl_res.config(text=f"{qty} Shares", foreground=C_GREEN); return qty
-            except: lbl_res.config(text="Error", foreground=C_RED)
+                lbl_res.configure(text=f"{qty} Shares", foreground=C_GREEN); return qty
+            except: lbl_res.configure(text="Error", foreground=C_RED)
         def aplicar():
             qty = calcular()
             if qty and qty > 0:
                 self.e_qt.delete(0, tk.END); self.e_qt.insert(0, str(qty)); self.e_pr.delete(0, tk.END); self.e_pr.insert(0, e_ent.get()); cw.destroy()
-        tk.Button(cw, text=self.texts["calc_btn"], command=calcular, bg="#333", fg="white", relief="flat").pack(fill=tk.X, padx=20, pady=2)
-        tk.Button(cw, text=self.texts["calc_apply"], command=aplicar, bg=C_GREEN, fg="black", relief="flat").pack(fill=tk.X, padx=20, pady=5)
+        ctk.CTkButton(cw, text=self.texts["calc_btn"], command=calcular, bg="#333", fg="white", relief="flat", corner_radius=8).pack(fill=tk.X, padx=20, pady=2)
+        ctk.CTkButton(cw, text=self.texts["calc_apply"], command=aplicar, bg=C_GREEN, fg="black", relief="flat", corner_radius=8).pack(fill=tk.X, padx=20, pady=5)
 
     def exportar_cartera(self):
         datos = self.db.obtener_cartera(self.uid)
@@ -812,24 +1431,52 @@ class AppBolsa:
         cb.bind("<<ComboboxSelected>>", change_lang)
         ttk.Separator(cw, orient='horizontal').pack(fill='x', pady=20)
         def realizar_logout(): cw.destroy(); self.logout()
-        tk.Button(cw, text=self.texts["conf_logout"], bg="#333", fg="white", font=("bold", 10), relief="flat", command=realizar_logout).pack(pady=5, fill=tk.X, padx=20)
-        tk.Button(cw, text=self.texts["conf_del"], bg="#800000", fg="white", font=("bold", 10), relief="flat", command=self.borrar_cuenta).pack(pady=5, fill=tk.X, padx=20)
+        ctk.CTkButton(cw, text=self.texts["conf_logout"], bg="#333", fg="white", font=("bold", 10), relief="flat", command=realizar_logout, corner_radius=8).pack(pady=5, fill=tk.X, padx=20)
+        ctk.CTkButton(cw, text=self.texts["conf_del"], bg="#800000", fg="white", font=("bold", 10), relief="flat", command=self.borrar_cuenta, corner_radius=8).pack(pady=5, fill=tk.X, padx=20)
 
     def update_ui_language(self):
-        t = self.texts; self.root.title(f"{t['app_title']} - {self.uid}")
-        self.lf1.config(text=t["port_title"]); self.tr1.heading("tk", text=t["col_ticker"]); self.tr1.heading("pr", text=t["col_entry"]); self.tr1.heading("sg", text=t["col_state"])
-        self.btn_act.config(text=t["scan_own"]); self.btn_save.config(text=t["save"]); self.btn_sell.config(text=t["sell"]); self.btn_exp.config(text=t["exp"]); self.btn_hist.config(text=t["hist"]); self.btn_del.config(text=t["del_btn"])
-        self.lf2.config(text=t["opp_title"]); self.tr2.heading("tk", text=t["col_ticker"]); self.tr2.heading("sc", text=t["col_score"]); self.tr2.heading("ms", text=t["col_diag"])
-        self.btn_gem.config(text=t["scan_mkt"]); self.btn_run.config(text=t["analyze"]); self.b_rst.config(text=t["reset_zoom"])
-        self.lbl_buy.config(text=t["buy_price"]); self.lbl_qty.config(text=t["qty"]); self.btn_refresh.config(text=t["refresh_all"])
-        self.lbl_invested.config(text=f"{t['dash_inv']} ---"); self.lbl_current.config(text=f"{t['dash_val']} ---"); self.lbl_pl.config(text=f"{t['dash_pl']} ---")
-        self.btn_viz.config(text=t["viz_btn"]); self.btn_stats.config(text=t["stats_btn"]); self.btn_risk.config(text=t["risk_btn"]); self.btn_snap.config(text=t["snap_btn"])
+        t = self.texts
+        self.root.title(f"{t['app_title']} - {self.uid}")
+        
+        # Títulos
+        if hasattr(self, 'lbl_port_title'): self.lbl_port_title.configure(text=t["port_title"])
+        
+        # Botones Principales
+        self.btn_act.configure(text=t["scan_own"])
+        self.btn_gem.configure(text=t["scan_mkt"])
+        self.btn_run.configure(text=t["analyze"])
+        self.btn_refresh.configure(text=t["refresh_all"])
+        
+        # Botones Herramientas (Solo si quieres que cambien de texto, aunque usan iconos mayormente)
+        # self.btn_stats.configure(text="📈") # Los iconos no necesitan traducción
+        # self.btn_viz.configure(text="📊")
+        
+        # Botones con Texto
+        self.btn_snap.configure(text=t["snap_btn"])
+        self.b_rst.configure(text=t["reset_zoom"])
+        
+        # Dashboard
+        self.lbl_invested.configure(text=f"{t['dash_inv']} ---")
+        self.lbl_current.configure(text=f"{t['dash_val']} ---")
+        self.lbl_pl.configure(text=f"{t['dash_pl']} ---")
+        
+        # Tablas
+        self.tr1.heading("tk", text=t["col_ticker"])
+        self.tr1.heading("pr", text=t["col_entry"])
+        self.tr1.heading("sg", text=t["col_state"])
+        self.tr2.heading("tk", text=t["col_ticker"])
+        self.tr2.heading("sc", text=t["col_score"])
+        self.tr2.heading("ms", text=t["col_diag"])
+        
         self.load_init()
 
     def logout(self):
-        self.root.withdraw(); 
-        for widget in self.root.winfo_children(): widget.destroy()
-        LoginWindow(self.root, self.db, lambda u, n: (self.root.deiconify(), AppBolsa(self.root, u, n, self.db)))
+        # Destruimos todos los hijos de la raíz (limpiamos la pantalla)
+        for widget in self.root.winfo_children():
+            widget.destroy()
+        
+        # Volvemos a cargar el Login en la misma raíz
+        LoginWindow(self.root, self.db, lambda u, n: AppBolsa(self.root, u, n, self.db))
 
     def borrar_cuenta(self):
         if messagebox.askyesno("!!!", self.texts["conf_del_confirm"]): self.db.borrar_usuario_completo(self.uid); self.root.destroy()
@@ -843,12 +1490,12 @@ class AppBolsa:
     def limpiar_campos(self): self.e_pr.delete(0, tk.END); self.e_qt.delete(0, tk.END)
 
     def scan_own(self):
-        self.btn_act.config(state="disabled", text=self.texts["msg_wait"])
+        # CAMBIO: .configure en lugar de .config
+        self.btn_act.configure(state="disabled", text=self.texts["msg_wait"])
         threading.Thread(target=self._th_own, daemon=True).start()
 
     def _th_own(self):
         total_inv = 0.0; total_val = 0.0
-        children = self.tr1.get_children()
         db_data = self.db.obtener_cartera(self.uid) 
         for row in db_data:
             tkr = row[0]; buy_p = row[1]; qty = row[2]; iid = row[4]
@@ -859,22 +1506,32 @@ class AppBolsa:
                 self.root.after(0, self.update_row_ui, iid, tkr, f"${buy_p}", res["msg"], res["tag"])
                 curr_p = res.get("price", buy_p); total_val += (curr_p * qty)
             except: total_val += (buy_p * qty)
+        
         self.root.after(0, self.update_dashboard_ui, total_inv, total_val)
-        self.root.after(0, lambda: self.btn_act.config(state="normal", text=self.texts["scan_own"]))
+        # CAMBIO: .configure para volver al estado normal
+        self.root.after(0, lambda: self.btn_act.configure(state="normal", text=self.texts["scan_own"]))
 
     def update_dashboard_ui(self, inv, val):
         pl = val - inv - (ETORO_ROUND_TRIP * len(self.db.obtener_cartera(self.uid)))
         pl_pct = (pl / inv * 100) if inv > 0 else 0.0
-        color = C_GREEN if pl >= 0 else C_RED
-        self.lbl_invested.config(text=f"{self.texts['dash_inv']} ${inv:,.2f}")
-        self.lbl_current.config(text=f"{self.texts['dash_val']} ${val:,.2f}")
-        self.lbl_pl.config(text=f"{self.texts['dash_pl']} ${pl:,.2f} ({pl_pct:+.2f}%)", foreground=color)
+        
+        # Elegir color
+        color = "#4ec9b0" if pl >= 0 else "#f44747"
+        
+        # Actualizar etiquetas con .configure y text_color
+        self.lbl_invested.configure(text=f"{self.texts['dash_inv']} ${inv:,.2f}")
+        self.lbl_current.configure(text=f"{self.texts['dash_val']} ${val:,.2f}")
+        self.lbl_pl.configure(
+            text=f"{self.texts['dash_pl']} ${pl:,.2f} ({pl_pct:+.2f}%)", 
+            text_color=color
+        )
 
     def update_row_ui(self, iid, tkr, pr_text, msg, tag):
         if self.tr1.exists(iid): self.tr1.item(iid, values=(tkr, pr_text, msg), tags=(tag,))
 
     def scan_mkt(self):
-        self.btn_gem.config(state="disabled", text=self.texts["msg_scan"])
+        # CAMBIO: .configure
+        self.btn_gem.configure(state="disabled", text=self.texts["msg_scan"])
         for i in self.tr2.get_children(): self.tr2.delete(i)
         threading.Thread(target=self._th_mkt, daemon=True).start()
 
@@ -892,7 +1549,9 @@ class AppBolsa:
             if c["score"] > 60:
                 final_msg += f" | 🎯 ${c['target']:.2f} (+{c['profit']:.1f}%)"
             self.root.after(0, self.tr2.insert, "", "end", values=(c["ticker"], c["score"], final_msg), tags=(c["tag"],))
-        self.root.after(0, lambda: self.btn_gem.config(state="normal", text=self.texts["scan_mkt"]))
+        
+        # CAMBIO: .configure
+        self.root.after(0, lambda: self.btn_gem.configure(state="normal", text=self.texts["scan_mkt"]))
 
     def sel_load(self, tree, is_own):
         s = tree.selection(); 
@@ -908,140 +1567,178 @@ class AppBolsa:
         self.run()
 
     def run(self):
-        tkr = self.e_tk.get().strip(); 
+        tkr = self.e_tk.get().strip().upper()
         if not tkr: return
-        pp=0; qq=0; pos=False
-        if self.e_pr.get(): 
-            try: pp=float(self.e_pr.get()); qq=float(self.e_qt.get()); pos=(pp>0)
-            except: pass
         
+        # Obtener parámetros de entrada (Precio y Cantidad)
+        pp = 0.0; qq = 0.0; pos = False
         try:
-            self.eng.descargar_datos(tkr); df = self.eng.calcular_indicadores()
-            prob_ai, acc, factors = self.eng.calcular_probabilidad_ia() # AHORA DEVUELVE 3 VALORES
-            spy = self.eng.obtener_benchmark() 
+            if self.e_pr.get(): pp = float(self.e_pr.get())
+            if self.e_qt.get(): qq = float(self.e_qt.get())
+            pos = (pp > 0)
+        except: pass
+        
+        # Cambiar cursor a "reloj" mientras procesa
+        self.root.configure(cursor="watch")
+        self.root.update()
+
+        try:
+            # 1. ANÁLISIS DE DATOS
+            self.eng.descargar_datos(tkr)
+            df = self.eng.calcular_indicadores()
+            
+            # IA y Métricas
+            prob_ai, acc, factors = self.eng.calcular_probabilidad_ia()
+            spy = self.eng.obtener_benchmark()
             fund = self.eng.obtener_fundamentales(tkr)
-            ws_rec, ws_target = self.eng.obtener_consenso_analistas(tkr) 
-            fibo = self.eng.calcular_fibonacci() 
+            ws_rec, ws_target = self.eng.obtener_consenso_analistas(tkr)
+            fibo = self.eng.calcular_fibonacci()
             noticias = self.eng.obtener_noticias_analizadas(tkr)
             sop, resi = self.eng.detectar_niveles()
-            sim = self.eng.simular(); ev = self.eng.generar_diagnostico_interno(pp)
+            sim = self.eng.simular()
+            ev = self.eng.generar_diagnostico_interno(pp)
             bench_stats = self.eng.calcular_beta_relativa(df, spy) if spy is not None else {"beta": 0, "rel_perf": 0}
             
+            # 2. GRAFICADO (MODO OSCURO PRO)
             self.fig.clear()
-            gs = self.fig.add_gridspec(3, 1, height_ratios=[3,1,1])
-            ax1=self.fig.add_subplot(gs[0]); ax2=self.fig.add_subplot(gs[1], sharex=ax1); ax3=self.fig.add_subplot(gs[2], sharex=ax1)
-            self.fig.subplots_adjust(left=0.1, right=0.95, top=0.92, bottom=0.15, hspace=0.15)
+            # Fondo exacto de la UI
+            self.fig.patch.set_facecolor('#1e1e1e')
             
-            d = df.tail(150)
-            ax1.plot(d.index, d['Close'], color='white', linewidth=1.2, label='Precio') 
-            ax1.plot(d.index, d['SMA_50'], color='orange', linestyle='--', linewidth=1, label='SMA 50')
-            ax1.plot(d.index, d['SMA_200'], color='cyan', linewidth=1.5, label='SMA 200')
-            ax1.fill_between(d.index, d['UpperBB'], d['LowerBB'], color='gray', alpha=0.15, label='BB')
+            gs = self.fig.add_gridspec(3, 1, height_ratios=[3, 1, 1])
+            ax1 = self.fig.add_subplot(gs[0])
+            ax2 = self.fig.add_subplot(gs[1], sharex=ax1)
+            ax3 = self.fig.add_subplot(gs[2], sharex=ax1)
+            
+            self.fig.subplots_adjust(left=0.08, right=0.95, top=0.92, bottom=0.15, hspace=0.15)
+            
+            # Estilos comunes para todos los ejes
+            for ax in [ax1, ax2, ax3]:
+                ax.set_facecolor('#1e1e1e')
+                ax.tick_params(colors='white', which='both')
+                ax.spines['bottom'].set_color('white')
+                ax.spines['top'].set_color('#1e1e1e') 
+                ax.spines['left'].set_color('white')
+                ax.spines['right'].set_color('#1e1e1e')
+                ax.grid(True, alpha=0.1, color='white', linestyle='--')
+
+            d = df
+
+            # --- PANEL 1: PRECIO ---
+            ax1.plot(d.index, d['Close'], color='white', linewidth=1.5, label='Precio')
+            ax1.plot(d.index, d['SMA_50'], color='#00ffff', linestyle='--', linewidth=1, label='SMA 50 (Cyan)') # Cyan
+            ax1.plot(d.index, d['SMA_200'], color='#ff00ff', linewidth=1.5, label='SMA 200 (Magenta)') # Magenta
+            ax1.fill_between(d.index, d['UpperBB'], d['LowerBB'], color='#1f6aa5', alpha=0.15, label='Bandas')
             
             if fibo:
-                ax1.axhline(fibo['0.382'], color=C_GOLD, linestyle=':', alpha=0.6, label="Fib 0.382")
-                ax1.axhline(fibo['0.5'], color=C_GOLD, linestyle='--', alpha=0.6, label="Fib 0.5")
-                ax1.axhline(fibo['0.618'], color=C_GOLD, linestyle=':', alpha=0.6, label="Fib 0.618")
+                ax1.axhline(fibo['0.382'], color='#ffd700', linestyle=':', alpha=0.5)
+                ax1.axhline(fibo['0.618'], color='#ffd700', linestyle=':', alpha=0.5)
 
-            if sop > 0: ax1.axhline(sop, color=C_GREEN, linestyle='--', linewidth=0.8, alpha=0.7)
-            if resi > 0: ax1.axhline(resi, color=C_RED, linestyle='--', linewidth=0.8, alpha=0.7)
-            if ev['stop_loss'] > 0: ax1.axhline(ev['stop_loss'], color='red', linestyle=':', linewidth=1.5, label='Stop Loss')
+            if sop > 0: ax1.axhline(sop, color='#4ec9b0', linestyle='--', linewidth=0.8, alpha=0.8) # Soporte Verde
+            if resi > 0: ax1.axhline(resi, color='#f44747', linestyle='--', linewidth=0.8, alpha=0.8) # Resistencia Roja
+            
+            if pos: ax1.axhline(pp, color='#e67e22', linewidth=2, label='TU ENTRADA')
 
-            if spy is not None:
-                d_spy = spy.tail(150)
-                ax1b = ax1.twinx() 
-                ax1b.plot(d_spy.index, d_spy['Close'], color='gray', alpha=0.3, linewidth=3, label='SPY (Ref)')
-                ax1b.set_yticks([]) 
-            if pos: ax1.axhline(pp, color=C_ACCENT, linewidth=1.5, label='Entry')
-            ax1.set_title(f"{tkr} (D) - {fund['sec']} / {fund['ind']}", fontsize=10, color="white"); 
-            ax1.legend(fontsize=8, facecolor=C_BG, edgecolor="white", labelcolor="white")
-            ax1.grid(True, alpha=0.1, color="white")
-            ax1.tick_params(colors='white')
+            ax1.set_title(f"{tkr} - {fund['sec']}", fontsize=12, color="white", fontweight="bold")
+            legend = ax1.legend(fontsize=8, facecolor='#2b2b2b', edgecolor="white", labelcolor="white", loc='upper left')
+            legend.get_frame().set_alpha(0.8)
+
+            # --- PANEL 2: RSI + ADX ---
+            ax2.plot(d.index, d['CRSI'], color='#1f6aa5', linewidth=1.5, label="RSI")
+            ax2.plot(d.index, d['ADX'], color='gray', linewidth=0.8, alpha=0.7, label="ADX")
+            ax2.axhline(80, color='#f44747', linestyle=':', alpha=0.5)
+            ax2.axhline(20, color='#4ec9b0', linestyle=':', alpha=0.5)
+            ax2.set_ylabel("RSI / ADX", fontsize=8, color="white")
+            ax2.set_ylim(-5, 105)
+
+            # --- PANEL 3: VOLUMEN OSC ---
+            # Colores condicionales (Verde si sube volumen, Rojo si baja)
+            colors_vol = np.where(d['Vol_Osc'] > 0, '#4ec9b0', '#f44747')
+            ax3.bar(d.index, d['Vol_Osc'], color=colors_vol, width=1.0, alpha=0.8)
+            ax3.axhline(0, color='white', linewidth=0.5)
+            ax3.set_ylabel("Vol%", fontsize=8, color="white")
+
+            # Limpiar ejes X duplicados
+            ax1.tick_params(axis='x', labelbottom=False)
+            ax2.tick_params(axis='x', labelbottom=False)
+            ax3.tick_params(axis='x', rotation=45)
+
+            self.cv.draw()
+            self.b_rst.configure(state="normal") # Reactivar botón reset
+
+            # 3. TEXTO DE DIAGNÓSTICO (ESTILIZADO)
+            self.txt.delete(1.0, tk.END)
+            self.txt.insert(tk.END, f"📊 ANÁLISIS: {tkr}\n", "t")
+            self.txt.insert(tk.END, f"Precio: ${d['Close'].iloc[-1]:.2f} | ", "w")
             
-            ax2.plot(d.index, d['CRSI'], color=C_ACCENT, linewidth=1.2)
-            ax2.axhline(80, color=C_RED, linestyle=':', alpha=0.5); ax2.axhline(20, color=C_GREEN, linestyle=':', alpha=0.5)
-            ax2.set_ylabel("CRSI", fontsize=8, color="white"); ax2.set_ylim(-5, 105); ax2.grid(True, alpha=0.1, color="white")
-            ax2.tick_params(colors='white')
-            cl = np.where(d['Vol_Osc']>0, C_GREEN, C_RED)
-            ax3.bar(d.index, d['Vol_Osc'], color=cl, width=0.8, alpha=0.7)
-            ax3.axhline(0, color='white', linewidth=0.5); ax3.set_ylabel("Vol%", fontsize=8, color="white"); ax3.grid(True, alpha=0.1, color="white")
-            ax1.tick_params(axis='x', labelbottom=False); ax2.tick_params(axis='x', labelbottom=False)
-            ax3.tick_params(colors='white')
-            self.cv.draw(); self.b_rst.config(state="normal")
-            
-            self.txt.delete(1.0, tk.END); self.txt.insert(tk.END, f"{tkr} - ${d['Close'].iloc[-1]:.2f}\n", "t")
+            # P/L de la posición
             if pos:
-                gross_pl = (d['Close'].iloc[-1]*qq) - (pp*qq)
+                gross_pl = (d['Close'].iloc[-1] * qq) - (pp * qq)
                 net_pl = gross_pl - ETORO_ROUND_TRIP
-                pc = (net_pl/(pp*qq))*100
-                tag = "p" if net_pl>=0 else "n"
+                pc = (net_pl / (pp * qq)) * 100
+                tag = "p" if net_pl >= 0 else "n"
                 self.txt.insert(tk.END, f"P&L: {net_pl:+.2f} ({pc:+.2f}%)\n", tag)
-            
-            self.txt.insert(tk.END, f"\n{self.texts['target_title']}\n", "gold")
-            self.txt.insert(tk.END, f"${ev['target']:.2f} (Potential: {ev['profit']:.1f}%)\n", "p")
-
-            self.txt.insert(tk.END, f"\n{self.texts['ai_title']}\n", "w")
-            ai_tag = "ai_good" if prob_ai > 55 else "ai_bad" if prob_ai < 45 else "w"
-            self.txt.insert(tk.END, f"{self.texts['ai_prob']} {prob_ai:.1f}%\n", ai_tag)
-            acc_tag = "p" if acc > 60 else "n"
-            self.txt.insert(tk.END, f"{self.texts['ai_acc']} {acc:.1f}%\n", acc_tag)
-            
-            # FACTORES CLAVE (NUEVO)
-            if factors:
-                self.txt.insert(tk.END, f"{self.texts['ai_factors']} ", "w")
-                for f, imp in factors:
-                    self.txt.insert(tk.END, f"{f}({imp*100:.0f}%) ", "gold")
+            else:
                 self.txt.insert(tk.END, "\n")
-            
-            self.txt.insert(tk.END, f"\n{self.texts['fund_title']}\n", "gold")
-            ws_col = "p" if "BUY" in ws_rec or "STRONG" in ws_rec else "n" if "SELL" in ws_rec else "w"
-            self.txt.insert(tk.END, f"{self.texts['ws_rating']} {ws_rec}\n", ws_col)
-            if ws_target > 0: self.txt.insert(tk.END, f"{self.texts['ws_target']} ${ws_target:.2f}\n", "w")
-            
-            self.txt.insert(tk.END, f"PER: {fund['per']} | Div: {fund['div']}\n")
-            g_tag = "p" if fund['graham'] > ev['price'] else "n"
-            self.txt.insert(tk.END, f"Intrinsic (Graham): ${fund['graham']:.2f}\n", g_tag)
 
-            self.txt.insert(tk.END, f"\n{self.texts['tech_title']}\n", "gold")
-            self.txt.insert(tk.END, f"{self.texts['tech_sup']} ${sop:.2f}\n", "p")
-            self.txt.insert(tk.END, f"{self.texts['tech_res']} ${resi:.2f}\n", "n")
-            self.txt.insert(tk.END, f"{self.texts['tech_sl']} ${ev['stop_loss']:.2f}\n", "n")
-            
-            w_col = "p" if ev['weekly'] == "Alcista" else "n" if ev['weekly'] == "Bajista" else "w"
-            self.txt.insert(tk.END, f"{self.texts['trend_wk']} {ev['weekly']}\n", w_col)
+            self.txt.insert(tk.END, f"\n🎯 OBJETIVO & DIAGNÓSTICO:\n", "gold")
+            self.txt.insert(tk.END, f"• {ev['msg']} (Score: {ev['score']}/100)\n", "t")
+            self.txt.insert(tk.END, f"• Target: ${ev['target']:.2f} (+{ev['profit']:.1f}%)\n", "p")
+            self.txt.insert(tk.END, f"• Stop Loss Sugerido: ${ev['stop_loss']:.2f}\n", "n")
 
-            self.txt.insert(tk.END, f"\n{self.texts['bench_title']}\n", "gold")
-            b_col = "news_bull" if bench_stats['rel_perf'] > 0 else "news_bear"
-            self.txt.insert(tk.END, f"{self.texts['bench_beta']} {bench_stats['beta']:.2f} | {self.texts['bench_rel']} ", "w")
-            self.txt.insert(tk.END, f"{bench_stats['rel_perf']:.2f}%\n", b_col)
+            self.txt.insert(tk.END, f"\n🤖 PREDICCIÓN IA (Gradient Boosting):\n", "w")
+            ai_tag = "ai_good" if prob_ai > 55 else "ai_bad" if prob_ai < 45 else "w"
+            self.txt.insert(tk.END, f"• Probabilidad Subida (3d): {prob_ai:.1f}%\n", ai_tag)
             
-            self.txt.insert(tk.END, f"\nADX: {ev.get('adx',0):.1f} | CRSI: {ev.get('crsi',0):.1f}\n")
-            self.txt.insert(tk.END, f"DX: {ev['msg']} (Score: {ev['score']})\n", "t")
-            self.txt.insert(tk.END, f"\n{self.texts['news_title']}\n", "w")
+            if factors:
+                self.txt.insert(tk.END, "• Factores Clave: ", "w")
+                for f, imp in factors:
+                    self.txt.insert(tk.END, f"{f} ", "gold")
+                self.txt.insert(tk.END, "\n")
+
+            self.txt.insert(tk.END, f"\n🏢 FUNDAMENTALES:\n", "gold")
+            self.txt.insert(tk.END, f"• Wall St: {ws_rec} (Obj: ${ws_target:.2f})\n", "w")
+            self.txt.insert(tk.END, f"• Valor Graham: ${fund['graham']:.2f}\n", "p" if fund['graham'] > ev['price'] else "n")
+            self.txt.insert(tk.END, f"• Beta: {bench_stats['beta']:.2f} (vs SPY)\n", "w")
+
+            self.txt.insert(tk.END, f"\n📰 NOTICIAS RECIENTES:\n", "w")
             if noticias:
                 for n in noticias:
-                    tag = "w"; prefix = "⚪"
-                    if n['sentiment'] == 'bull': tag = "news_bull"; prefix = "🟢"
-                    elif n['sentiment'] == 'bear': tag = "news_bear"; prefix = "🔴"
-                    self.txt.insert(tk.END, f"{prefix} {n['title']} ({n['source']})\n", tag)
-            else: self.txt.insert(tk.END, "(Sin noticias)\n")
-            self.txt.insert(tk.END, "\nFORECAST 7D:\n", "t")
-            hoy = datetime.date.today(); prev=d['Close'].iloc[-1]
-            for i in range(7):
-                v = np.mean(sim[i]); c="p" if v>prev else "n"
-                self.txt.insert(tk.END, f"{(hoy+datetime.timedelta(days=i+1)).strftime('%d-%m')}: ${v:.2f}\n", c); prev=v
-        except Exception as e: messagebox.showerror("Err", str(e))
+                    tag = "news_bull" if n['sentiment'] == 'bull' else "news_bear" if n['sentiment'] == 'bear' else "w"
+                    prefix = "🟢" if n['sentiment'] == 'bull' else "🔴" if n['sentiment'] == 'bear' else "⚪"
+                    self.txt.insert(tk.END, f"{prefix} {n['title'][:50]}...\n", tag)
+            else:
+                self.txt.insert(tk.END, "(Sin noticias relevantes)\n", "w")
 
-    def save(self):
-        t=self.e_tk.get(); p=self.e_pr.get(); q=self.e_qt.get()
-        if not p: p="0"; 
-        if not q: q="0"
-        if t: self.db.guardar_posicion(self.uid, t, float(p), float(q)); self.load_init()
+            # Forecast simple
+            self.txt.insert(tk.END, "\n🔮 SIMULACIÓN 7 DÍAS:\n", "t")
+            hoy = datetime.date.today()
+            prev = d['Close'].iloc[-1]
+            for i in range(5):
+                v = np.mean(sim[i])
+                c = "p" if v > prev else "n"
+                self.txt.insert(tk.END, f"{(hoy + datetime.timedelta(days=i+1)).strftime('%d/%m')}: ${v:.2f}\n", c)
+                prev = v
 
-    def zoom_rst(self): self.tb.home()
+        except Exception as e:
+            messagebox.showerror("Error de Análisis", f"No se pudo analizar {tkr}.\nDetalle: {str(e)}")
+        
+        finally:
+            self.root.configure(cursor="") # Restaurar cursor
 
 if __name__ == "__main__":
+    # Configuración global de CustomTkinter
+    ctk.set_appearance_mode("Dark")
+    ctk.set_default_color_theme("blue")
+    
     db = DatabaseManager()
-    root = tk.Tk(); root.withdraw()
-    LoginWindow(root, db, lambda u, n: (root.deiconify(), AppBolsa(root, u, n, db)))
+    
+    # Creamos la ventana PRINCIPAL una sola vez
+    root = ctk.CTk()
+    root.title("Quant Architect v26")
+    root.geometry("1600x950")
+    
+    # Lanzamos el Login dentro de la ventana principal
+    # Nota: Ya no usamos root.withdraw() ni root.deiconify()
+    LoginWindow(root, db, lambda u, n: AppBolsa(root, u, n, db))
+    
     root.mainloop()
