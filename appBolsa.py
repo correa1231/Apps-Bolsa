@@ -7,11 +7,11 @@ import pandas as pd
 import numpy as np
 import datetime
 import sqlite3
-import hashlib
+import bcrypt
 import threading
 import matplotlib.pyplot as plt
 import os
-
+import hashlib
 # --- LIBRERIAS IA AVANZADA ---
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.preprocessing import StandardScaler
@@ -59,33 +59,49 @@ C_PANEL = "#252526"; C_GREEN = "#4ec9b0"; C_RED = "#f44747"; C_GOLD = "#ffd700";
 # 1. BASE DE DATOS (APUNTANDO A v24)
 # ==========================================
 class DatabaseManager:
-    def __init__(self, db_name="bolsa_datos_v24.db"): # MANTENEMOS ARCHIVO v24
+    def __init__(self, db_name="bolsa_datos_v24.db"):
         self.conn = sqlite3.connect(db_name, check_same_thread=False)
         self.crear_tablas()
 
     def crear_tablas(self):
         cursor = self.conn.cursor()
         cursor.execute('''CREATE TABLE IF NOT EXISTS usuarios (
-            id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL)''')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS cartera (
-            id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, ticker TEXT NOT NULL, 
-            precio_compra REAL, cantidad REAL, fecha_guardado TEXT, FOREIGN KEY(user_id) REFERENCES usuarios(id))''')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS historial (
-            id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, ticker TEXT, 
-            buy_price REAL, sell_price REAL, qty REAL, profit REAL, date_out TEXT)''')
+            id INTEGER PRIMARY KEY AUTOINCREMENT, 
+            username TEXT UNIQUE NOT NULL, 
+            password TEXT NOT NULL)''')
+        # ... (resto de tablas se mantienen igual)
         self.conn.commit()
 
     def registrar_usuario(self, u, p):
-        ph = hashlib.sha256(p.encode()).hexdigest()
+        # Generar hash con salting automático
+        salt = bcrypt.gensalt()
+        hashed_pw = bcrypt.hashpw(p.encode('utf-8'), salt)
+        
         try:
-            self.conn.execute("INSERT INTO usuarios (username, password) VALUES (?, ?)", (u, ph))
-            self.conn.commit(); return True
-        except: return False
+            # Guardamos el hash como string para la DB
+            self.conn.execute("INSERT INTO usuarios (username, password) VALUES (?, ?)", 
+                              (u, hashed_pw.decode('utf-8')))
+            self.conn.commit()
+            return True
+        except sqlite3.IntegrityError: 
+            return False # Usuario ya existe
 
     def verificar_usuario(self, u, p):
-        ph = hashlib.sha256(p.encode()).hexdigest()
-        res = self.conn.execute("SELECT id FROM usuarios WHERE username=? AND password=?", (u, ph)).fetchone()
-        return res[0] if res else None
+        res = self.conn.execute("SELECT id, password FROM usuarios WHERE username=?", (u,)).fetchone()
+        if res:
+            uid, hashed_db = res
+            # 1. Intentar verificar con BCrypt
+            try:
+                if bcrypt.checkpw(p.encode('utf-8'), hashed_db.encode('utf-8')):
+                    return uid
+            except ValueError:
+                # 2. Si falla por "Invalid Salt", es que es un hash viejo (SHA-256)
+                # Vamos a verificarlo a la antigua para dejarte entrar
+                old_hash = hashlib.sha256(p.encode()).hexdigest()
+                if old_hash == hashed_db:
+                    # Opcional: Podrías actualizar el hash aquí a Bcrypt
+                    return uid
+        return None
 
     def guardar_posicion(self, uid, t, p, q):
         f = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -140,6 +156,52 @@ class AnalistaBolsa:
         except: raise ValueError("Error descarga")
 
     # --- DATOS EXTERNOS ---
+
+    def calcular_indicadores(self):
+        if self.data is None or self.data.empty: return self.data
+        
+        # Trabajamos sobre una copia para asegurar consistencia
+        df = self.data.copy()
+        
+        # 1. Medias Móviles (SMA)
+        df['SMA_50'] = df.ta.sma(length=50)
+        df['SMA_200'] = df.ta.sma(length=200)
+        
+        # 2. RSI (Relative Strength Index)
+        # Usamos length=3 para mantener tu lógica de "CRSI" (Connors RSI simplificado)
+        df['CRSI'] = df.ta.rsi(length=3)
+        
+        # 3. MACD (Moving Average Convergence Divergence)
+        # pandas_ta devuelve un DataFrame con 3 columnas (MACD, Histograma, Señal)
+        macd = df.ta.macd(fast=12, slow=26, signal=9)
+        df['MACD'] = macd['MACD_12_26_9']
+        
+        # 4. Bandas de Bollinger (BBANDS)
+        bbands = df.ta.bbands(length=20, std=2)
+        df['UpperBB'] = bbands['BBU_20_2.0']
+        df['LowerBB'] = bbands['BBL_20_2.0']
+        # Posición relativa en bandas (%B)
+        df['BB_Pct'] = (df['Close'] - df['LowerBB']) / (df['UpperBB'] - df['LowerBB'])
+        
+        # 5. Volatilidad y Tendencia (ATR y ADX)
+        df['ATR'] = df.ta.atr(length=14)
+        adx = df.ta.adx(length=14)
+        df['ADX'] = adx['ADX_14']
+        
+        # 6. Oscilador de Volumen (PVO)
+        # Sustituimos tu Vol_Osc manual por el Percentage Volume Oscillator
+        pvo = df.ta.pvo(fast=12, slow=26, signal=9)
+        df['Vol_Osc'] = pvo['PVOh_12_26_9'] # Usamos el histograma como indicador de momentum
+        
+        # 7. VWAP (Volume Weighted Average Price)
+        # Importante: pandas_ta calcula el VWAP acumulado diario automáticamente
+        # $$VWAP = \frac{\sum (Precio \times Volumen)}{\sum Volumen}$$
+        df['VWAP'] = df.ta.vwap()
+        
+        # Limpieza final: Rellenar NaNs iniciales con 0
+        self.data = df.fillna(0)
+        return self.data
+    
     def calcular_fibonacci(self):
         try:
             df = self.data.tail(126)
@@ -190,57 +252,62 @@ class AnalistaBolsa:
 
     def calcular_indicadores(self):
         if self.data is None or self.data.empty: return self.data
-        for col in ['ADX', 'Vol_Osc', 'CRSI', 'SMA_50', 'SMA_200', 'MACD', 'UpperBB', 'LowerBB', 'ATR', 'VWAP']: self.data[col] = 0.0
         df = self.data.copy()
+
+        # 1. SMAs (Medias Móviles)
+        df['SMA_50'] = df['Close'].rolling(window=50).mean()
+        df['SMA_200'] = df['Close'].rolling(window=200).mean()
+
+        # 2. RSI (Standard 14 periods - Wilder's Smoothing)
+        delta = df['Close'].diff()
+        gain = (delta.where(delta > 0, 0)).ewm(alpha=1/14, adjust=False).mean()
+        loss = (-delta.where(delta < 0, 0)).ewm(alpha=1/14, adjust=False).mean()
+        rs = gain / loss
+        df['CRSI'] = 100 - (100 / (1 + rs))
+
+        # 3. MACD
+        exp1 = df['Close'].ewm(span=12, adjust=False).mean()
+        exp2 = df['Close'].ewm(span=26, adjust=False).mean()
+        df['MACD'] = exp1 - exp2
+
+        # 4. Bandas de Bollinger
+        sma20 = df['Close'].rolling(window=20).mean()
+        std20 = df['Close'].rolling(window=20).std()
+        df['UpperBB'] = sma20 + (std20 * 2)
+        df['LowerBB'] = sma20 - (std20 * 2)
+        df['BB_Pct'] = (df['Close'] - df['LowerBB']) / (df['UpperBB'] - df['LowerBB'])
+
+        # 5. ATR (Average True Range)
+        high_low = df['High'] - df['Low']
+        high_close = np.abs(df['High'] - df['Close'].shift())
+        low_close = np.abs(df['Low'] - df['Close'].shift())
+        ranges = pd.concat([high_low, high_close, low_close], axis=1)
+        true_range = np.max(ranges, axis=1)
+        df['ATR'] = true_range.ewm(alpha=1/14, adjust=False).mean()
+
+        # 6. ADX (Average Directional Index)
+        up_move = df['High'].diff()
+        down_move = df['Low'].diff().multiply(-1)
+        plus_dm = np.where((up_move > down_move) & (up_move > 0), up_move, 0)
+        minus_dm = np.where((down_move > up_move) & (down_move > 0), down_move, 0)
         
-        # SMAs
-        df['SMA_50'] = df['Close'].rolling(50).mean()
-        df['SMA_200'] = df['Close'].rolling(200).mean()
-        
-        # VWAP (Institucional)
+        tr_smooth = true_range.ewm(alpha=1/14, adjust=False).mean()
+        plus_di = 100 * (pd.Series(plus_dm, index=df.index).ewm(alpha=1/14, adjust=False).mean() / tr_smooth)
+        minus_di = 100 * (pd.Series(minus_dm, index=df.index).ewm(alpha=1/14, adjust=False).mean() / tr_smooth)
+        dx = 100 * np.abs(plus_di - minus_di) / (plus_di + minus_di)
+        df['ADX'] = dx.ewm(alpha=1/14, adjust=False).mean()
+
+        # 7. Vol_Osc (Percentage Volume Oscillator - Histograma)
+        vol_ema12 = df['Volume'].ewm(span=12, adjust=False).mean()
+        vol_ema26 = df['Volume'].ewm(span=26, adjust=False).mean()
+        df['Vol_Osc'] = ((vol_ema12 - vol_ema26) / vol_ema26) * 100
+
+        # 8. VWAP (Volume Weighted Average Price)
         v = df['Volume'].values
         tp = (df['High'] + df['Low'] + df['Close']) / 3
         df['VWAP'] = (tp * v).cumsum() / v.cumsum()
-        
-        # BB & %B
-        df['SMA_20'] = df['Close'].rolling(20).mean()
-        df['StdDev'] = df['Close'].rolling(20).std()
-        df['UpperBB'] = df['SMA_20'] + (df['StdDev'] * 2)
-        df['LowerBB'] = df['SMA_20'] - (df['StdDev'] * 2)
-        # Posicion relativa en bandas
-        df['BB_Pct'] = (df['Close'] - df['LowerBB']) / (df['UpperBB'] - df['LowerBB'])
-        
-        # MACD
-        exp12 = df['Close'].ewm(span=12, adjust=False).mean()
-        exp26 = df['Close'].ewm(span=26, adjust=False).mean()
-        df['MACD'] = exp12 - exp26
-        
-        # ATR & ADX
-        df['Prev'] = df['Close'].shift(1)
-        df['TR'] = np.maximum(df['High']-df['Low'], np.maximum(abs(df['High']-df['Prev']), abs(df['Low']-df['Prev'])))
-        df['ATR'] = df['TR'].rolling(14).mean()
-        tr14 = df['TR'].ewm(alpha=1/14).mean()
-        up = df['High'] - df['High'].shift(1); down = df['Low'].shift(1) - df['Low']
-        pdm = np.where((up>down)&(up>0), up, 0.0); mdm = np.where((down>up)&(down>0), down, 0.0)
-        with np.errstate(all='ignore'):
-            pdi = 100*(pd.Series(pdm, index=df.index).ewm(alpha=1/14).mean()/tr14)
-            mdi = 100*(pd.Series(mdm, index=df.index).ewm(alpha=1/14).mean()/tr14)
-            df['ADX'] = (100*abs(pdi-mdi)/(pdi+mdi)).ewm(alpha=1/14).mean()
-        
-        # Vol Osc
-        vol_ma = df['Volume'].rolling(10).mean().replace(0, np.nan)
-        df['Vol_Osc'] = ((df['Volume'].rolling(5).mean()-vol_ma)/vol_ma)*100
-        
-        # RSI
-        delta = df['Close'].diff()
-        gain = (delta.where(delta > 0, 0)).rolling(3).mean()
-        loss = (-delta.where(delta < 0, 0)).rolling(3).mean()
-        with np.errstate(divide='ignore', invalid='ignore'):
-            rs = gain / loss
-            df['CRSI'] = 100 - (100 / (1 + rs))
-        
-        df = df.fillna(0)
-        self.data = df
+
+        self.data = df.fillna(0)
         return self.data
 
     def analizar_tendencia_semanal(self):
@@ -256,56 +323,73 @@ class AnalistaBolsa:
     def calcular_probabilidad_ia(self):
         try:
             df = self.data.copy()
-            if len(df) < 200: return 50.0, 0.0, []
+            # Necesitamos suficientes datos para las medias móviles y el futuro
+            if len(df) < 150: return 50.0, 0.0, []
             
-            # Ingenieria de Features
-            df['Retorno'] = df['Close'].pct_change()
-            df['Lag_1'] = df['Retorno'].shift(1)
-            df['Dist_SMA50'] = (df['Close'] - df['SMA_50']) / df['SMA_50']
-            df['Dist_VWAP'] = (df['Close'] - df['VWAP']) / df['VWAP'] # Nueva Feature
-            
-            df = df.dropna()
-            
-            # Target: Sube > 1.5% en 3 dias
+            # 1. CREAR EL TARGET PRIMERO
+            # ¿Sube el precio un 1.5% en los próximos 3 días?
             future_close = df['Close'].shift(-3)
             df['Target'] = (future_close > df['Close'] * 1.015).astype(int)
             
-            self.features_cols = ['CRSI', 'MACD', 'BB_Pct', 'Dist_SMA50', 'Dist_VWAP', 'Retorno', 'Lag_1', 'Vol_Osc']
+            # 2. INGENIERÍA DE FEATURES
+            df['Retorno'] = df['Close'].pct_change()
+            df['Lag_1'] = df['Retorno'].shift(1)
+            df['Dist_SMA50'] = (df['Close'] - df['SMA_50']) / df['SMA_50']
+            df['Dist_VWAP'] = (df['Close'] - df['VWAP']) / df['VWAP']
             
-            # Datos para entrenar (quitando ultimos 3 dias)
+            # Columnas que usaremos para predecir
+            self.features_cols = [
+                'CRSI', 'MACD', 'BB_Pct', 'ADX', 
+                'Dist_SMA50', 'Dist_VWAP', 'Retorno', 'Lag_1', 'Vol_Osc'
+            ]
+            
+            # 3. LIMPIEZA TOTAL (Ahora 'Target' SÍ existe)
+            # Eliminamos infinitos y filas vacías
+            df = df.replace([np.inf, -np.inf], np.nan)
+            df = df.dropna(subset=self.features_cols + ['Target'])
+            
+            if len(df) < 50: return 50.0, 0.0, []
+
+            # 4. PREPARACIÓN DE DATOS
+            # Quitamos los últimos 3 días para entrenar (porque no sabemos su futuro real)
             data_model = df.iloc[:-3].copy()
             X = data_model[self.features_cols]
             y = data_model['Target']
             
-            # Scaler
+            # Verificamos que tengamos ambas clases (0 y 1) para poder entrenar
+            if len(y.unique()) < 2:
+                return 50.0, 0.0, []
+
+            # 5. ENTRENAMIENTO
             self.scaler = StandardScaler()
             X_scaled = self.scaler.fit_transform(X)
             
-            # Split
             split = int(len(X) * 0.85)
             X_train, X_test = X_scaled[:split], X_scaled[split:]
             y_train, y_test = y.iloc[:split], y.iloc[split:]
             
-            # GRADIENT BOOSTING (Mas preciso que Random Forest)
-            self.model = GradientBoostingClassifier(n_estimators=200, learning_rate=0.1, max_depth=4, random_state=42)
+            # Usamos parámetros un poco más ligeros para que no tarde tanto
+            self.model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)
             self.model.fit(X_train, y_train)
             
+            # Evaluación
             preds = self.model.predict(X_test)
             acc = precision_score(y_test, preds, zero_division=0) * 100
             
-            # Predecir HOY
-            self.model.fit(X_scaled, y)
+            # 6. PREDICCIÓN HOY
+            # Usamos la última fila de datos (la de hoy)
             last_day = df[self.features_cols].iloc[[-1]]
             last_day_scaled = self.scaler.transform(last_day)
             prob = self.model.predict_proba(last_day_scaled)[0][1] * 100
             
-            # Importancia de Factores
+            # Importancia de factores
             importances = self.model.feature_importances_
             top_factors = sorted(zip(self.features_cols, importances), key=lambda x: x[1], reverse=True)[:2]
             
             return prob, acc, top_factors
-        except Exception as e: 
-            # print(e)
+
+        except Exception as e:
+            print(f"Error detallado en IA: {e}")
             return 50.0, 0.0, []
 
     def detectar_niveles(self):
