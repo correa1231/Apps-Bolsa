@@ -11,15 +11,27 @@ import hashlib
 import threading
 import matplotlib.pyplot as plt
 import os
+import nltk
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import ssl
 
+# Bypass para errores de certificado SSL en la descarga
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    pass
+else:
+    ssl._create_default_https_context = _create_unverified_https_context
+
+# Forzar la descarga del léxico
+nltk.download('vader_lexicon', quiet=False)
 # --- LIBRERIAS IA ---
 try:
     from sklearn.ensemble import GradientBoostingClassifier
     from sklearn.preprocessing import StandardScaler
     from sklearn.metrics import precision_score
 except ImportError:
-    pass # Se maneja si no esta instalado
-
+    pass
 # ==========================================
 # 0. CONFIGURACIÓN E IDIOMAS
 # ==========================================
@@ -386,7 +398,43 @@ class AnalistaBolsa:
             return {"beta": beta, "rel_perf": (stock_ret - spy_ret) * 100}
         except: return {"beta": 0, "rel_perf": 0}
         
-    def obtener_noticias_analizadas(self, ticker): return []
+    def obtener_noticias_analizadas(self, ticker):
+        try:
+            t = yf.Ticker(ticker)
+            news = t.news
+            if not news: return []
+            
+            analisis_noticias = []
+            sia = SentimentIntensityAnalyzer() # El motor de IA para sentimiento
+
+            for n in news[:5]: # Analizamos las 5 noticias más recientes
+                tit = n.get('title', '')
+                if not tit: continue
+                
+                # SIA analiza el titular y devuelve 4 puntuaciones. 
+                # 'compound' es la puntuación general de -1 (muy malo) a 1 (muy bueno).
+                scores = sia.polarity_scores(tit)
+                compound = scores['compound']
+                
+                # Clasificamos según la intensidad real del lenguaje
+                if compound >= 0.05:
+                    sent = "bull"
+                elif compound <= -0.05:
+                    sent = "bear"
+                else:
+                    sent = "neutral"
+                
+                src = n.get('publisher', 'Yahoo Finance')
+                analisis_noticias.append({
+                    "title": tit, 
+                    "source": src, 
+                    "sentiment": sent,
+                    "score": compound # Guardamos el valor exacto por si lo necesitamos
+                })
+            return analisis_noticias
+        except Exception as e:
+            print(f"Error NLP: {e}")
+            return []
 
 # ==========================================
 # 3. GUI THEME MANAGER
